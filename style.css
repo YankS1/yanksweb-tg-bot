@@ -1,0 +1,295 @@
+/* === Reset & Base === */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: var(--tg-theme-bg-color, #ffffff);
+    --text: var(--tg-theme-text-color, #1a1a1a);
+    --hint: var(--tg-theme-hint-color, #999999);
+    --link: var(--tg-theme-link-color, #2481cc);
+    --btn-bg: var(--tg-theme-button-color, #2481cc);
+    --btn-text: var(--tg-theme-button-text-color, #ffffff);
+    --secondary-bg: var(--tg-theme-secondary-bg-color, #f0f0f0);
+    --radius: 16px;
+    --radius-sm: 10px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* === App === */
+
+.app {
+    max-width: 100%;
+    min-height: 100vh;
+    padding: 20px 16px 80px;
+    position: relative;
+}
+
+/* === Steps === */
+
+.step {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.step--active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step__header {
+    margin-bottom: 24px;
+}
+
+.step__counter {
+    font-size: 13px;
+    color: var(--hint);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.step__title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.step__subtitle {
+    font-size: 15px;
+    color: var(--hint);
+}
+
+/* === Option buttons === */
+
+.step__options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--secondary-bg);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: 0.2s ease;
+    text-align: left;
+    font-size: 15px;
+    color: var(--text);
+    width: 100%;
+}
+
+.option:active {
+    transform: scale(0.97);
+}
+
+.option--selected {
+    border-color: var(--btn-bg);
+    background: color-mix(in srgb, var(--btn-bg) 10%, var(--bg));
+}
+
+.option__icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+}
+
+.option__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.option__text strong {
+    font-weight: 600;
+}
+
+.option__text small {
+    font-size: 13px;
+    color: var(--hint);
+}
+
+.option__price {
+    font-size: 13px;
+    color: var(--hint);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.option--compact {
+    padding: 14px 16px;
+}
+
+/* === Chips (features) === */
+
+.step__options--grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    padding: 10px 16px;
+    background: var(--secondary-bg);
+    border: 2px solid transparent;
+    border-radius: 100px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    transition: 0.2s ease;
+    white-space: nowrap;
+}
+
+.chip:active {
+    transform: scale(0.95);
+}
+
+.chip--selected {
+    border-color: var(--btn-bg);
+    background: color-mix(in srgb, var(--btn-bg) 10%, var(--bg));
+}
+
+/* === Buttons === */
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn--next {
+    margin-top: 20px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+}
+
+.btn--primary {
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    margin-bottom: 10px;
+}
+
+.btn--secondary {
+    background: var(--secondary-bg);
+    color: var(--text);
+}
+
+/* === Result === */
+
+.result {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.result__icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.result__title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.result__price {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--btn-bg);
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.result__summary {
+    text-align: left;
+    background: var(--secondary-bg);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.result__summary span {
+    color: var(--hint);
+}
+
+.result__note {
+    font-size: 13px;
+    color: var(--hint);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* === Progress bar === */
+
+.progress {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--secondary-bg);
+    z-index: 10;
+}
+
+.progress__bar {
+    height: 100%;
+    background: var(--btn-bg);
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+/* === Back button === */
+
+.back-btn {
+    position: fixed;
+    bottom: 12px;
+    left: 16px;
+    background: none;
+    border: none;
+    color: var(--link);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 0;
+    z-index: 20;
+    transition: 0.2s ease;
+}

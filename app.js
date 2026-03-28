@@ -188,7 +188,29 @@ const HomePage = {
         const MONTHS_RU = ['', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
             'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
         const now = new Date();
+        const banner = document.getElementById('bookingBanner');
+        const form = document.getElementById('bookingForm');
         const datesContainer = document.getElementById('bookingDates');
+        const submitBtn = document.getElementById('bookingSubmitBtn');
+        const nameInput = document.getElementById('bookingName');
+        const taskInput = document.getElementById('bookingTask');
+        let selectedDate = null;
+
+        document.getElementById('bookingOpenBtn').addEventListener('click', () => {
+            haptic();
+            banner.style.display = 'none';
+            form.style.display = 'block';
+        });
+
+        const tgUser = tg?.initDataUnsafe?.user;
+        if (tgUser?.first_name) {
+            nameInput.value = tgUser.first_name;
+        }
+
+        function checkFormReady() {
+            submitBtn.disabled = !(selectedDate !== null && nameInput.value.trim());
+        }
+        nameInput.addEventListener('input', checkFormReady);
 
         for (let i = 0; i < 4; i++) {
             let month = now.getMonth() + 1 + i;
@@ -196,25 +218,48 @@ const HomePage = {
             if (month > 12) { month -= 12; year++; }
             const value = `${year}-${String(month).padStart(2, '0')}`;
             const btn = document.createElement('button');
-            btn.className = 'btn btn--secondary vip-banner__date-btn';
+            btn.className = 'btn btn--secondary booking-form__date-btn';
             btn.textContent = `${MONTHS_RU[month]} ${year}`;
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', () => {
                 haptic();
-                datesContainer.innerHTML = '<p class="vip-banner__sent">Записал! Свяжусь ближе к дате.</p>';
-                await submitToApi('waitlist', { start_date: value });
+                datesContainer.querySelectorAll('.booking-form__date-btn').forEach(b => b.classList.remove('booking-form__date-btn--active'));
+                btn.classList.add('booking-form__date-btn--active');
+                selectedDate = value;
+                checkFormReady();
             });
             datesContainer.appendChild(btn);
         }
 
         const notSureBtn = document.createElement('button');
-        notSureBtn.className = 'btn btn--ghost vip-banner__date-btn';
+        notSureBtn.className = 'btn btn--ghost booking-form__date-btn';
         notSureBtn.textContent = 'Пока не определился';
-        notSureBtn.addEventListener('click', async () => {
+        notSureBtn.addEventListener('click', () => {
             haptic();
-            datesContainer.innerHTML = '<p class="vip-banner__sent">Записал! Свяжусь, когда будете готовы.</p>';
-            await submitToApi('waitlist', { start_date: '' });
+            datesContainer.querySelectorAll('.booking-form__date-btn').forEach(b => b.classList.remove('booking-form__date-btn--active'));
+            notSureBtn.classList.add('booking-form__date-btn--active');
+            selectedDate = '';
+            checkFormReady();
         });
         datesContainer.appendChild(notSureBtn);
+
+        submitBtn.addEventListener('click', async () => {
+            haptic();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправляю...';
+            await submitToApi('waitlist', {
+                start_date: selectedDate,
+                client_name: nameInput.value.trim(),
+                task: taskInput.value.trim(),
+            });
+            form.innerHTML = `
+                <div class="booking-form__done">
+                    <i data-lucide="check-circle"></i>
+                    <h3>Бронь отправлена!</h3>
+                    <p>Свяжусь с вами ${selectedDate ? 'ближе к выбранной дате' : 'когда будете готовы'}</p>
+                </div>
+            `;
+            lucide.createIcons();
+        });
     },
 };
 

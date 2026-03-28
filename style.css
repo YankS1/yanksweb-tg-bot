@@ -399,35 +399,90 @@ img {
     width: 100%;
 }
 
-.vip-banner__dates {
+.booking-form {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 16px;
+}
+
+.booking-form__title {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.booking-form__subtitle {
+    font-size: 13px;
+    color: var(--hint);
+    margin: 0 0 16px;
+    line-height: 1.4;
+}
+
+.booking-form__label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+
+.booking-form__dates {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
 }
 
-.vip-banner__date-btn {
+.booking-form__date-btn {
     font-size: 13px;
     padding: 10px 8px;
+    transition: 0.3s ease;
 }
 
-.vip-banner__date-btn:last-child {
+.booking-form__date-btn:last-child {
     grid-column: 1 / -1;
 }
 
-.vip-banner__hint {
-    font-size: 11px;
-    color: var(--hint);
-    text-align: center;
-    margin: 0;
-    opacity: 0.7;
+.booking-form__date-btn--active {
+    background: var(--accent) !important;
+    color: #fff !important;
 }
 
-.vip-banner__sent {
+.booking-form__input {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.booking-form__submit {
+    width: 100%;
+}
+
+.booking-form__submit:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.booking-form__done {
     text-align: center;
+    padding: 20px 0;
+}
+
+.booking-form__done i {
+    width: 48px;
+    height: 48px;
     color: var(--accent);
+    margin-bottom: 12px;
+}
+
+.booking-form__done h3 {
+    font-size: 17px;
+    margin: 0 0 8px;
+}
+
+.booking-form__done p {
     font-size: 14px;
-    padding: 8px 0;
+    color: var(--hint);
     margin: 0;
 }
 

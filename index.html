@@ -51,14 +51,29 @@
                     </div>
                 </div>
 
-                <div class="vip-banner">
+                <div class="vip-banner" id="bookingBanner">
                     <div class="vip-banner__content">
                         <i class="vip-banner__icon" data-lucide="calendar-check"></i>
                         <h3 class="vip-banner__title">Забронируйте дату старта</h3>
-                        <p class="vip-banner__text">Планируете проект? Выберите дату начала работы - ваша задача будет в приоритете</p>
+                        <p class="vip-banner__text">Планируете проект? Забронируйте дату начала работы заранее - ваша задача будет в приоритете</p>
                     </div>
-                    <div class="vip-banner__dates" id="bookingDates"></div>
-                    <p class="vip-banner__hint">Дата = начало обсуждений и работы, не дедлайн</p>
+                    <button class="btn btn--primary vip-banner__btn" id="bookingOpenBtn">Забронировать</button>
+                </div>
+
+                <div class="booking-form" id="bookingForm" style="display:none;">
+                    <h3 class="booking-form__title">Бронирование даты старта</h3>
+                    <p class="booking-form__subtitle">Дата - это примерное начало обсуждений и работы, не дедлайн</p>
+
+                    <label class="booking-form__label">Когда хотите начать?</label>
+                    <div class="booking-form__dates" id="bookingDates"></div>
+
+                    <label class="booking-form__label">Ваше имя</label>
+                    <input class="input booking-form__input" id="bookingName" type="text" placeholder="Как к вам обращаться">
+
+                    <label class="booking-form__label">Кратко о задаче</label>
+                    <input class="input booking-form__input" id="bookingTask" type="text" placeholder="Например: интернет-магазин одежды">
+
+                    <button class="btn btn--primary booking-form__submit" id="bookingSubmitBtn" disabled>Отправить бронь</button>
                 </div>
             </section>
 

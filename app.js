@@ -531,7 +531,7 @@ const PortfolioPage = {
     render(filter) {
         filter = filter || 'all';
         const items = DATA.portfolio.filter(
-            p => filter === 'all' || p.category === filter
+            p => filter === 'all' || (p.category && p.category.split(',').includes(filter))
         );
         const feed = document.getElementById('portfolio-feed');
         const empty = document.getElementById('portfolioEmpty');

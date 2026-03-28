@@ -185,10 +185,36 @@ const HomePage = {
             }
         });
 
-        document.getElementById('vipBtn').addEventListener('click', () => {
+        const MONTHS_RU = ['', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        const now = new Date();
+        const datesContainer = document.getElementById('bookingDates');
+
+        for (let i = 0; i < 4; i++) {
+            let month = now.getMonth() + 1 + i;
+            let year = now.getFullYear();
+            if (month > 12) { month -= 12; year++; }
+            const value = `${year}-${String(month).padStart(2, '0')}`;
+            const btn = document.createElement('button');
+            btn.className = 'btn btn--secondary vip-banner__date-btn';
+            btn.textContent = `${MONTHS_RU[month]} ${year}`;
+            btn.addEventListener('click', async () => {
+                haptic();
+                datesContainer.innerHTML = '<p class="vip-banner__sent">Записал! Свяжусь ближе к дате.</p>';
+                await submitToApi('waitlist', { start_date: value });
+            });
+            datesContainer.appendChild(btn);
+        }
+
+        const notSureBtn = document.createElement('button');
+        notSureBtn.className = 'btn btn--ghost vip-banner__date-btn';
+        notSureBtn.textContent = 'Пока не определился';
+        notSureBtn.addEventListener('click', async () => {
             haptic();
-            submitToApi('waitlist', { month: 'april' });
+            datesContainer.innerHTML = '<p class="vip-banner__sent">Записал! Свяжусь, когда будете готовы.</p>';
+            await submitToApi('waitlist', { start_date: '' });
         });
+        datesContainer.appendChild(notSureBtn);
     },
 };
 

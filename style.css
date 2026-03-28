@@ -1969,16 +1969,20 @@ img {
 }
 
 .overlay__header {
-    display: flex;
-    justify-content: flex-end;
-    padding: 8px 16px;
     position: sticky;
     top: 0;
-    background: var(--bg);
     z-index: 10;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+    height: 0;
 }
 
 .overlay__close {
+    position: sticky;
+    top: 12px;
+    right: 0;
+    margin: 12px 16px 0 auto;
     width: 36px;
     height: 36px;
     display: flex;
@@ -1988,6 +1992,7 @@ img {
     background: var(--secondary-bg);
     min-height: 44px;
     min-width: 44px;
+    z-index: 11;
     transition: background 0.3s ease, transform 0.3s ease;
 }
 
@@ -2001,7 +2006,7 @@ img {
 }
 
 .overlay__content {
-    padding: 0 16px 32px;
+    padding: 16px 16px 32px;
 }
 
 /* === UTILITY === */

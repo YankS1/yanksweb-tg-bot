@@ -67,7 +67,10 @@
                     <p class="booking-form__subtitle">Выберите дату, когда хотите начать обсуждение и работу. Это не дедлайн - просто ориентир, чтобы я зарезервировал время</p>
 
                     <label class="booking-form__label">Когда планируете начать?</label>
-                    <input class="booking-form__input booking-form__date-input" id="bookingDate" type="date" placeholder="Выберите дату">
+                    <div class="booking-form__date-wrap">
+                        <input class="booking-form__input booking-form__date-input" id="bookingDate" type="date">
+                        <span class="booking-form__date-hint" id="bookingDateHint">Нажмите, чтобы выбрать дату</span>
+                    </div>
 
                     <label class="booking-form__label">Ваше имя</label>
                     <input class="input booking-form__input" id="bookingName" type="text" placeholder="Как к вам обращаться">

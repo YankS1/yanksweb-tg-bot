@@ -269,11 +269,19 @@ const HomePage = {
             nameInput.value = tgUser.first_name;
         }
 
+        const dateHint = document.getElementById('bookingDateHint');
+
         function checkFormReady() {
             submitBtn.disabled = !(dateInput.value && nameInput.value.trim());
+            if (dateInput.value) {
+                dateHint.classList.add('booking-form__date-hint--hidden');
+            } else {
+                dateHint.classList.remove('booking-form__date-hint--hidden');
+            }
         }
         nameInput.addEventListener('input', checkFormReady);
         dateInput.addEventListener('input', checkFormReady);
+        dateInput.addEventListener('change', checkFormReady);
 
         submitBtn.addEventListener('click', async () => {
             haptic();

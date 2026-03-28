@@ -307,7 +307,7 @@ const HomePage = {
                 <div class="booking-form__done">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
                     <h3>Бронь отправлена!</h3>
-                    <p>Свяжусь с вами ближе к ${startDate}</p>
+                    <p>Свяжусь с вами в ближайшее время для уточнения деталей</p>
                 </div>
             `;
         });

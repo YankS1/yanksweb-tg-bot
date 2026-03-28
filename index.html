@@ -71,8 +71,9 @@
 
             <!-- Portfolio -->
             <section class="page" data-page="portfolio">
-                <header class="page__header">
+                <header class="page__header page__header--row">
                     <h1 class="page__title">Мои работы</h1>
+                    <span class="page__badge" id="favoritesCount"></span>
                 </header>
                 <div class="filter-chips" id="portfolioFilters">
                     <button class="filter-chips__btn filter-chips__btn--active" data-filter="all">Все</button>
@@ -80,7 +81,7 @@
                     <button class="filter-chips__btn" data-filter="shops">Магазины</button>
                     <button class="filter-chips__btn" data-filter="design">Дизайн</button>
                 </div>
-                <div id="portfolio-grid"></div>
+                <div class="portfolio-feed" id="portfolio-feed"></div>
                 <div class="empty-state" id="portfolioEmpty">
                     <i data-lucide="image"></i>
                     <p>Работы скоро появятся</p>

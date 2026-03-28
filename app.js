@@ -56,6 +56,7 @@ const AppState = {
     portfolio: {
         filter: 'all',
     },
+    favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
 };
 
 /* === Router === */
@@ -353,10 +354,37 @@ const ServicesPage = {
 
 /* === Portfolio Page === */
 
+const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.webm'];
+
+const CATEGORY_LABELS = {
+    sites: 'Сайты',
+    shops: 'Магазины',
+    design: 'Дизайн',
+};
+
+function isVideoUrl(url) {
+    if (!url) return false;
+    const lower = url.toLowerCase();
+    return VIDEO_EXTENSIONS.some(ext => lower.endsWith(ext));
+}
+
+function toggleFavorite(id) {
+    const idx = AppState.favorites.indexOf(id);
+    if (idx > -1) {
+        AppState.favorites.splice(idx, 1);
+    } else {
+        AppState.favorites.push(id);
+    }
+    localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+    PortfolioPage.updateFavoritesCount();
+}
+
 const PortfolioPage = {
     init() {
         this.render();
         this.initFilters();
+        this.initEvents();
+        this.updateFavoritesCount();
     },
 
     render(filter) {
@@ -364,44 +392,86 @@ const PortfolioPage = {
         const items = DATA.portfolio.filter(
             p => filter === 'all' || p.category === filter
         );
-        const grid = document.getElementById('portfolio-grid');
+        const feed = document.getElementById('portfolio-feed');
         const empty = document.getElementById('portfolioEmpty');
 
         if (!items.length) {
-            grid.innerHTML = '';
+            feed.innerHTML = '';
             empty.style.display = 'flex';
             return;
         }
 
         empty.style.display = 'none';
-        grid.innerHTML = items.map(item => `
-            <button class="portfolio-card" data-pf-id="${escapeHtml(item.id || '')}">
-                ${item.image ? `<img class="portfolio-card__img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy">` : ''}
-                <strong class="portfolio-card__title">${escapeHtml(item.title)}</strong>
-                ${item.tags ? `<small class="portfolio-card__tags">${escapeHtml(item.tags)}</small>` : ''}
-            </button>
-        `).join('');
+        feed.innerHTML = items.map(item => {
+            const isFav = AppState.favorites.includes(item.id);
+            const media = this.renderMedia(item);
 
-        grid.querySelectorAll('.portfolio-card').forEach(card => {
-            card.addEventListener('click', () => {
-                haptic();
-                const item = items.find(i => String(i.id) === card.dataset.pfId);
-                if (item) this.showDetail(item);
-            });
-        });
+            return `
+                <article class="portfolio-item" data-pf-id="${escapeHtml(String(item.id || ''))}">
+                    ${media}
+                    <div class="portfolio-item__body">
+                        <h3 class="portfolio-item__title">${escapeHtml(item.title)}</h3>
+                        ${item.description ? `<p class="portfolio-item__desc">${nl2br(escapeHtml(item.description))}</p>` : ''}
+                        <div class="portfolio-item__actions">
+                            ${item.url ? `
+                                <a class="portfolio-item__btn" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">
+                                    <i data-lucide="external-link"></i>
+                                    Открыть сайт
+                                </a>
+                            ` : ''}
+                            <button class="portfolio-item__btn portfolio-item__btn--fav ${isFav ? 'portfolio-item__btn--fav-active' : ''}" data-fav-id="${escapeHtml(String(item.id || ''))}">
+                                <i data-lucide="heart"></i>
+                                ${isFav ? 'В избранном' : 'В избранное'}
+                            </button>
+                        </div>
+                        ${item.tags ? `<span class="portfolio-item__tag">${escapeHtml(CATEGORY_LABELS[item.tags] || item.tags)}</span>` : ''}
+                    </div>
+                </article>
+            `;
+        }).join('');
 
         lucide.createIcons();
     },
 
-    showDetail(item) {
-        openOverlay(`
-            <div class="portfolio-detail">
-                ${item.image ? `<img class="portfolio-detail__img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}">` : ''}
-                <h2 class="portfolio-detail__title">${escapeHtml(item.title)}</h2>
-                ${item.description ? `<p class="portfolio-detail__desc">${nl2br(escapeHtml(item.description))}</p>` : ''}
-                ${item.url ? `<a class="btn btn--primary portfolio-detail__link" href="${escapeHtml(item.url)}" target="_blank">Открыть сайт</a>` : ''}
-            </div>
-        `);
+    renderMedia(item) {
+        if (!item.image) return '';
+
+        if (isVideoUrl(item.image)) {
+            return `<video class="portfolio-item__media" src="${escapeHtml(item.image)}" autoplay muted loop playsinline></video>`;
+        }
+
+        return `<img class="portfolio-item__media" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
+    },
+
+    initEvents() {
+        document.getElementById('portfolio-feed').addEventListener('click', e => {
+            const favBtn = e.target.closest('[data-fav-id]');
+            if (!favBtn) return;
+            haptic();
+
+            const id = Number(favBtn.dataset.favId) || favBtn.dataset.favId;
+            toggleFavorite(id);
+
+            const isFav = AppState.favorites.includes(id);
+            favBtn.classList.toggle('portfolio-item__btn--fav-active', isFav);
+
+            const textNode = favBtn.lastChild;
+            if (textNode) textNode.textContent = isFav ? ' В избранном' : ' В избранное';
+
+            const icon = favBtn.querySelector('[data-lucide]');
+            if (icon) {
+                icon.setAttribute('data-lucide', 'heart');
+                lucide.createIcons({ nodes: [icon] });
+            }
+        });
+    },
+
+    updateFavoritesCount() {
+        const badge = document.getElementById('favoritesCount');
+        if (!badge) return;
+        const count = AppState.favorites.length;
+        badge.textContent = count ? `♥ ${count}` : '';
+        badge.style.display = count ? 'inline-flex' : 'none';
     },
 
     initFilters() {
@@ -1071,11 +1141,18 @@ const QuizPage = {
             </div>
         `;
 
-        sendData({
+        const payload = {
             action: 'quiz_submit',
             quiz_type: AppState.quiz.type,
             ...AppState.quiz.answers,
-        });
+        };
+
+        if (AppState.favorites.length) {
+            const favItems = DATA.portfolio.filter(p => AppState.favorites.includes(p.id));
+            payload.favorites = favItems.map(p => p.title).join(', ');
+        }
+
+        sendData(payload);
 
         AppState.quiz.prefill = null;
 

@@ -948,9 +948,11 @@ img {
 }
 
 .feature-list li {
-    padding: 10px 0 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    border-left: 3px solid var(--accent);
     font-size: 14px;
     line-height: 1.4;
     color: var(--text);
@@ -958,6 +960,18 @@ img {
 
 .feature-list li:last-child {
     border-bottom: none;
+}
+
+.feature-list li svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--accent);
+    margin-top: 1px;
+}
+
+.feature-list li span {
+    flex: 1;
 }
 
 .tariff-detail__cta {

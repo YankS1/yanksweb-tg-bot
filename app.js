@@ -10,11 +10,27 @@ function haptic() {
     tg?.HapticFeedback?.impactOccurred('light');
 }
 
-function sendData(payload) {
-    if (tg) {
-        tg.sendData(JSON.stringify(payload));
-    } else {
-        alert('Откройте через Telegram для отправки данных');
+function getTgUser() {
+    const user = tg?.initDataUnsafe?.user;
+    if (!user) return {};
+    return {
+        telegram_id: user.id,
+        username: user.username || '',
+        first_name: user.first_name || '',
+    };
+}
+
+async function submitToApi(endpoint, payload) {
+    const userInfo = getTgUser();
+    try {
+        const res = await fetch(`${API_URL}/api/${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...userInfo, ...payload }),
+        });
+        return res.ok;
+    } catch {
+        return false;
     }
 }
 
@@ -159,7 +175,7 @@ const HomePage = {
             const input = document.getElementById('quickQuestionInput');
             const text = input.value.trim();
             if (!text) return;
-            sendData({ action: 'quick_question', text });
+            submitToApi('quick-question', { text });
             input.value = '';
         });
 
@@ -171,7 +187,7 @@ const HomePage = {
 
         document.getElementById('vipBtn').addEventListener('click', () => {
             haptic();
-            sendData({ action: 'waitlist_join', month: 'april' });
+            submitToApi('waitlist', { month: 'april' });
         });
     },
 };
@@ -711,18 +727,7 @@ const CalculatorPage = {
 
         document.getElementById('calcSubmitBtn').addEventListener('click', () => {
             haptic();
-            const st = AppState.calculator;
-            const { min, max } = this.calculatePrice();
-            sendData({
-                action: 'calculator_result',
-                type: st.type,
-                pages: st.pages,
-                design: st.design,
-                features: st.features,
-                timeline: st.timeline,
-                price_min: min,
-                price_max: max,
-            });
+            this.showResult();
         });
     },
 };
@@ -1151,7 +1156,6 @@ const QuizPage = {
         `;
 
         const payload = {
-            action: 'quiz_submit',
             quiz_type: AppState.quiz.type,
             ...AppState.quiz.answers,
         };
@@ -1161,7 +1165,7 @@ const QuizPage = {
             payload.favorites = favItems.map(p => p.title).join(', ');
         }
 
-        sendData(payload);
+        submitToApi('quiz-submit', payload);
 
         AppState.quiz.prefill = null;
 
@@ -1178,7 +1182,7 @@ const QuizPage = {
 
 const AuditPage = {
     init() {
-        document.getElementById('auditSubmitBtn').addEventListener('click', () => {
+        document.getElementById('auditSubmitBtn').addEventListener('click', async () => {
             haptic();
             const input = document.getElementById('auditUrlInput');
             const url = input.value.trim();
@@ -1189,13 +1193,17 @@ const AuditPage = {
                 return;
             }
 
-            sendData({ action: 'audit_request', url });
-
-            input.value = '';
             const note = document.querySelector('.audit__note');
             if (note) {
-                note.textContent = 'Запрос отправлен! Результат придет в этот чат.';
-                note.classList.add('audit__note--success');
+                note.textContent = 'Анализирую сайт...';
+                note.classList.remove('audit__note--success');
+            }
+
+            const ok = await submitToApi('audit', { url });
+            input.value = '';
+            if (note) {
+                note.textContent = ok ? 'Результат отправлен в чат с ботом' : 'Ошибка, попробуйте позже';
+                if (ok) note.classList.add('audit__note--success');
             }
         });
     },

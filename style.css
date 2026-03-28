@@ -417,6 +417,8 @@ img {
     color: var(--hint);
     margin: 0 0 20px;
     line-height: 1.4;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .booking-form__label {
@@ -424,7 +426,7 @@ img {
     font-size: 13px;
     font-weight: 500;
     margin-bottom: 8px;
-    color: var(--text);
+    color: var(--hint);
 }
 
 .booking-form__dates {
@@ -432,12 +434,15 @@ img {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .booking-form__date-btn {
     font-size: 13px;
     padding: 10px 8px;
-    border: 1.5px solid transparent;
+    background: var(--bg);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
     transition: 0.3s ease;
 }
 
@@ -454,6 +459,8 @@ img {
 .booking-form__input {
     width: 100%;
     margin-bottom: 16px;
+    background: var(--bg);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
 }
 
 .booking-form__submit {

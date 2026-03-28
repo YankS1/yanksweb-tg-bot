@@ -859,6 +859,15 @@ const QuizPage = {
         AppState.quiz.answers = {};
         AppState.quiz.currentStep = 0;
 
+        const tgUser = tg?.initDataUnsafe?.user;
+        if (tgUser?.id) {
+            fetch(`${API_URL}/api/quiz-start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ telegram_id: tgUser.id, quiz_type: type }),
+            }).catch(() => {});
+        }
+
         const prefill = AppState.quiz.prefill || {};
 
         if (type === 'quick') {

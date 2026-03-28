@@ -88,6 +88,11 @@ const Router = {
         if (pageId === 'quiz') {
             QuizPage.renderTypeChoice();
         }
+        if (pageId === 'reviews') ReviewsPage.render();
+        if (pageId === 'cases') CasesPage.render();
+        if (pageId === 'faq') FaqPage.render();
+        if (pageId === 'promos') PromosPage.render();
+        if (pageId === 'portfolio') PortfolioPage.render();
 
         lucide.createIcons();
     },
@@ -199,12 +204,12 @@ const ServicesPage = {
             </button>
         `).join('');
 
-        container.addEventListener('click', e => {
-            const card = e.target.closest('[data-cat-id]');
-            if (!card) return;
-            haptic();
-            this.renderSubcategories(card.dataset.catId);
-        }, { once: true });
+        container.querySelectorAll('[data-cat-id]').forEach(card => {
+            card.addEventListener('click', () => {
+                haptic();
+                this.renderSubcategories(card.dataset.catId);
+            });
+        });
 
         lucide.createIcons();
     },
@@ -244,12 +249,12 @@ const ServicesPage = {
             this.renderCategories();
         });
 
-        container.addEventListener('click', e => {
-            const card = e.target.closest('[data-subcat-id]');
-            if (!card) return;
-            haptic();
-            this.renderTariffs(catId, card.dataset.subcatId);
-        }, { once: true });
+        container.querySelectorAll('[data-subcat-id]').forEach(card => {
+            card.addEventListener('click', () => {
+                haptic();
+                this.renderTariffs(catId, card.dataset.subcatId);
+            });
+        });
 
         lucide.createIcons();
     },

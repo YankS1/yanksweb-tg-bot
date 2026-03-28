@@ -1495,6 +1495,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await loadLiveData();
 
+    const validIds = DATA.portfolio.map(p => p.id);
+    AppState.favorites = AppState.favorites.filter(id => validIds.includes(id));
+    localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+
     PortfolioPage.init();
     ReviewsPage.render();
     CasesPage.render();

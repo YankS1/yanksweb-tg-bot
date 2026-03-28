@@ -4,6 +4,15 @@ const tg = window.Telegram?.WebApp;
 if (tg) {
     tg.ready();
     tg.expand();
+    tg.BackButton?.onClick(() => {
+        if (Router.history.length > 0) {
+            const prev = Router.history.pop();
+            Router.history.pop();
+            Router.navigate(prev);
+        } else {
+            Router.navigate('home');
+        }
+    });
 }
 
 function haptic() {
@@ -87,6 +96,8 @@ const AppState = {
 /* === Router === */
 
 const Router = {
+    history: [],
+
     navigate(pageId) {
         if (pageId === 'more') {
             toggleMoreMenu();
@@ -94,6 +105,10 @@ const Router = {
         }
 
         closeMoreMenu();
+
+        if (AppState.currentPage && AppState.currentPage !== pageId) {
+            this.history.push(AppState.currentPage);
+        }
 
         document.querySelectorAll('.page').forEach(p => p.classList.remove('page--active'));
         const target = document.querySelector(`[data-page="${pageId}"]`);
@@ -103,6 +118,14 @@ const Router = {
 
         AppState.currentPage = pageId;
         updateTabBar(pageId);
+
+        if (tg?.BackButton) {
+            if (pageId === 'home') {
+                tg.BackButton.hide();
+            } else {
+                tg.BackButton.show();
+            }
+        }
         window.scrollTo({ top: 0 });
 
         if (pageId === 'services' && AppState.services.level === 'categories') {

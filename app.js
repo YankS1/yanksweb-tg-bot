@@ -5,13 +5,10 @@ if (tg) {
     tg.ready();
     tg.expand();
     tg.BackButton?.onClick(() => {
-        if (Router.history.length > 0) {
-            const prev = Router.history.pop();
-            Router.history.pop();
-            Router.navigate(prev);
-        } else {
-            Router.navigate('home');
-        }
+        const prev = Router.history.pop() || 'home';
+        Router._isBack = true;
+        Router.navigate(prev);
+        Router._isBack = false;
     });
 }
 
@@ -135,7 +132,7 @@ const Router = {
 
         closeMoreMenu();
 
-        if (AppState.currentPage && AppState.currentPage !== pageId) {
+        if (AppState.currentPage && AppState.currentPage !== pageId && !this._isBack) {
             this.history.push(AppState.currentPage);
         }
 

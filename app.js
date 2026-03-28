@@ -70,7 +70,7 @@ function formatDescription(str) {
                 html += '<ul class="feature-list">';
                 inList = true;
             }
-            html += `<li><i data-lucide="circle-check-big"></i><span>${clean}</span></li>`;
+            html += `<li><i data-lucide="sparkles"></i><span>${clean}</span></li>`;
         } else {
             if (inList) {
                 html += '</ul>';

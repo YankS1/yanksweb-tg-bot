@@ -949,28 +949,35 @@ img {
 
 .feature-list li {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
     font-size: 14px;
     line-height: 1.4;
     color: var(--text);
 }
 
-.feature-list li:last-child {
-    border-bottom: none;
-}
-
-.feature-list li svg {
-    width: 18px;
-    height: 18px;
+.feature-list__icon {
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
-    color: var(--accent);
-    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 15%, var(--bg));
 }
 
-.feature-list li span {
+.feature-list__icon svg {
+    width: 14px;
+    height: 14px;
+    color: var(--accent);
+}
+
+.feature-list li > span:last-child {
     flex: 1;
 }
 

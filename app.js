@@ -5,6 +5,16 @@ if (tg) {
     tg.ready();
     tg.expand();
     tg.BackButton?.onClick(() => {
+        if (AppState.currentPage === 'services') {
+            if (AppState.services.level === 'tariffs') {
+                ServicesPage.renderSubcategories(AppState.services.catId);
+                return;
+            }
+            if (AppState.services.level === 'subcategories') {
+                ServicesPage.renderCategories();
+                return;
+            }
+        }
         const prev = Router.history.pop() || 'home';
         Router._isBack = true;
         Router.navigate(prev);

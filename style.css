@@ -27,10 +27,11 @@
     --radius-lg: 24px;
     --radius-pill: 100px;
 
-    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-    --shadow-sheet: 0 -4px 24px rgba(0, 0, 0, 0.12);
-    --card-border: 1px solid rgba(255, 255, 255, 0.06);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.2), 0 1px 4px rgba(0, 0, 0, 0.15);
+    --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.3);
+    --card-border: 1px solid rgba(255, 255, 255, 0.1);
+    --card-glow: 0 0 0 1px rgba(255, 255, 255, 0.05), var(--shadow-card);
 
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --tab-height: 56px;
@@ -171,16 +172,15 @@ img {
 
 .tab-bar__tab--active {
     color: var(--accent);
+    position: relative;
 }
 
-.tab-bar__tab--active::after {
-    content: '';
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--accent);
-    display: block;
-    margin-top: 2px;
+.tab-bar__tab--active svg {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    border-radius: 12px;
+    padding: 4px;
+    width: 30px;
+    height: 30px;
 }
 
 .tab-bar__tab:active {
@@ -194,50 +194,59 @@ img {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 32px 16px 24px;
+    padding: 40px 20px 32px;
+    margin: -16px -16px 0;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--btn-bg) 10%, var(--bg)) 0%, var(--bg) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--btn-bg) 15%, transparent) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .hero__icon {
-    width: 80px;
-    height: 80px;
-    border-radius: var(--radius-lg);
-    background: linear-gradient(135deg, var(--btn-bg), color-mix(in srgb, var(--btn-bg) 70%, #8b5cf6));
+    width: 88px;
+    height: 88px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, var(--btn-bg), color-mix(in srgb, var(--btn-bg) 60%, #8b5cf6));
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 16px;
-    box-shadow: 0 8px 32px color-mix(in srgb, var(--btn-bg) 35%, transparent),
-                0 0 64px color-mix(in srgb, var(--btn-bg) 15%, transparent);
+    margin-bottom: 20px;
+    box-shadow: 0 12px 40px color-mix(in srgb, var(--btn-bg) 40%, transparent),
+                0 0 80px color-mix(in srgb, var(--btn-bg) 12%, transparent);
     position: relative;
 }
 
-.hero__icon::before {
-    content: '';
-    position: absolute;
-    inset: -16px;
-    border-radius: 50%;
-    background: radial-gradient(circle, color-mix(in srgb, var(--btn-bg) 12%, transparent) 0%, transparent 70%);
-    z-index: -1;
-}
-
 .hero__icon svg {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     color: #fff;
-    stroke-width: 1.8;
+    stroke-width: 1.6;
 }
 
 .hero__title {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 800;
-    letter-spacing: -0.3px;
-    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
 }
 
 .hero__tagline {
     font-size: 14px;
     color: var(--hint);
     line-height: 1.4;
+    max-width: 260px;
 }
 
 /* === QUICK ACTIONS === */
@@ -253,54 +262,58 @@ img {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 20px 12px;
+    gap: 10px;
+    padding: 24px 12px 20px;
     min-height: 44px;
     background: var(--secondary-bg);
     border: var(--card-border);
     border-radius: var(--radius);
-    box-shadow: var(--shadow-card);
-    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--card-glow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .quick-actions__btn:active {
-    transform: scale(0.97);
-    box-shadow: none;
+    transform: scale(0.95);
+    box-shadow: var(--shadow-card);
 }
 
 .quick-actions__icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .quick-actions__icon svg {
-    width: 24px;
-    height: 24px;
-    stroke-width: 1.8;
+    width: 26px;
+    height: 26px;
+    stroke-width: 1.6;
 }
 
 .quick-actions__icon--blue {
-    background: color-mix(in srgb, #3b82f6 15%, var(--bg));
-    color: #3b82f6;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.08));
+    color: #60a5fa;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
 }
 
 .quick-actions__icon--green {
-    background: color-mix(in srgb, #22c55e 15%, var(--bg));
-    color: #22c55e;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.08));
+    color: #4ade80;
+    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.15);
 }
 
 .quick-actions__icon--purple {
-    background: color-mix(in srgb, #8b5cf6 15%, var(--bg));
-    color: #8b5cf6;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.08));
+    color: #a78bfa;
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
 }
 
 .quick-actions__icon--orange {
-    background: color-mix(in srgb, #f59e0b 15%, var(--bg));
-    color: #f59e0b;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.08));
+    color: #fbbf24;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
 }
 
 .quick-actions__label {
@@ -551,6 +564,7 @@ img {
 .btn--primary {
     background: var(--btn-bg);
     color: var(--btn-text);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--btn-bg) 30%, transparent);
 }
 
 .btn--secondary {
@@ -743,15 +757,16 @@ img {
 }
 
 .service-card__icon {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
-    border-radius: 12px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, var(--bg)), color-mix(in srgb, var(--accent) 8%, var(--bg)));
+    border-radius: 14px;
     color: var(--accent);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 .service-card__icon svg {
@@ -813,10 +828,23 @@ img {
     gap: 8px;
     background: var(--secondary-bg);
     border-radius: var(--radius);
-    padding: 20px;
-    box-shadow: var(--shadow-card);
+    padding: 24px;
+    box-shadow: var(--card-glow);
     border: var(--card-border);
     transition: transform 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.tariff-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #8b5cf6));
+    opacity: 0.6;
 }
 
 .tariff-card:active {
@@ -1105,7 +1133,8 @@ img {
 
 .option--selected {
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg));
+    box-shadow: 0 0 0 1px var(--accent), 0 4px 16px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 .option--compact {
@@ -1409,14 +1438,16 @@ img {
     align-items: center;
     gap: 10px;
     width: 100%;
-    padding: 24px 16px;
+    padding: 28px 16px;
     background: var(--secondary-bg);
     border-radius: var(--radius);
     border: var(--card-border);
     text-align: center;
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--card-glow);
     min-height: 44px;
     transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .quiz-type-card:active {
@@ -1433,13 +1464,15 @@ img {
 }
 
 .quiz-type-card__icon--quick {
-    background: color-mix(in srgb, #f59e0b 15%, var(--bg));
-    color: #f59e0b;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.08));
+    color: #fbbf24;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
 }
 
 .quiz-type-card__icon--detailed {
-    background: color-mix(in srgb, #8b5cf6 15%, var(--bg));
-    color: #8b5cf6;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.08));
+    color: #a78bfa;
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
 }
 
 .quiz-type-card__icon svg {
@@ -1661,14 +1694,15 @@ img {
 }
 
 .contact-card__avatar {
-    width: 72px;
-    height: 72px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, var(--bg)), color-mix(in srgb, var(--accent) 8%, var(--bg)));
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .contact-card__avatar svg {
@@ -1810,7 +1844,9 @@ img {
 .more-menu__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -1867,15 +1903,16 @@ img {
 }
 
 .more-menu__item-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, var(--bg)), color-mix(in srgb, var(--accent) 8%, var(--bg)));
     color: var(--accent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 .more-menu__item-icon svg {
@@ -1968,13 +2005,13 @@ img {
 /* === SECTION TITLE === */
 
 .section-title {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--hint);
+    letter-spacing: 1px;
+    color: var(--subtitle);
     margin-bottom: 12px;
-    padding-left: 4px;
+    padding-left: 2px;
 }
 
 /* === ANIMATE IN === */

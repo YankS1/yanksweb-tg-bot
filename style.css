@@ -27,9 +27,10 @@
     --radius-lg: 24px;
     --radius-pill: 100px;
 
-    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
     --shadow-sheet: 0 -4px 24px rgba(0, 0, 0, 0.12);
+    --card-border: 1px solid rgba(255, 255, 255, 0.06);
 
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --tab-height: 56px;
@@ -172,6 +173,16 @@ img {
     color: var(--accent);
 }
 
+.tab-bar__tab--active::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: block;
+    margin-top: 2px;
+}
+
 .tab-bar__tab:active {
     transform: scale(0.9);
 }
@@ -187,20 +198,31 @@ img {
 }
 
 .hero__icon {
-    width: 72px;
-    height: 72px;
+    width: 80px;
+    height: 80px;
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, var(--btn-bg), color-mix(in srgb, var(--btn-bg) 70%, #8b5cf6));
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 16px;
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--btn-bg) 30%, transparent);
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--btn-bg) 35%, transparent),
+                0 0 64px color-mix(in srgb, var(--btn-bg) 15%, transparent);
+    position: relative;
+}
+
+.hero__icon::before {
+    content: '';
+    position: absolute;
+    inset: -16px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--btn-bg) 12%, transparent) 0%, transparent 70%);
+    z-index: -1;
 }
 
 .hero__icon svg {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     color: #fff;
     stroke-width: 1.8;
 }
@@ -235,26 +257,29 @@ img {
     padding: 20px 12px;
     min-height: 44px;
     background: var(--secondary-bg);
+    border: var(--card-border);
     border-radius: var(--radius);
-    transition: transform 0.3s ease, background 0.3s ease;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .quick-actions__btn:active {
     transform: scale(0.97);
+    box-shadow: none;
 }
 
 .quick-actions__icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .quick-actions__icon svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     stroke-width: 1.8;
 }
 
@@ -289,12 +314,6 @@ img {
 
 .quick-question {
     padding-bottom: 24px;
-}
-
-.quick-question__title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 12px;
 }
 
 .quick-question__field {
@@ -349,7 +368,8 @@ img {
     background: var(--secondary-bg);
     border-radius: var(--radius);
     padding: 20px;
-    border: 1.5px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    box-shadow: var(--shadow-card);
     position: relative;
     overflow: hidden;
 }
@@ -401,9 +421,11 @@ img {
 
 .booking-form {
     background: var(--secondary-bg);
+    border: var(--card-border);
     border-radius: var(--radius);
     padding: 20px;
     margin-top: 16px;
+    box-shadow: var(--shadow-card);
 }
 
 .booking-form__title {
@@ -631,6 +653,24 @@ img {
     color: var(--hint);
 }
 
+.empty-state__icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--secondary-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.empty-state__icon svg {
+    width: 36px;
+    height: 36px;
+    stroke-width: 1.2;
+    opacity: 0.5;
+}
+
 .empty-state svg {
     width: 48px;
     height: 48px;
@@ -640,8 +680,9 @@ img {
 }
 
 .empty-state p {
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5;
+    font-weight: 500;
 }
 
 /* === BREADCRUMB === */
@@ -686,6 +727,7 @@ img {
     width: 100%;
     padding: 16px;
     background: var(--secondary-bg);
+    border: var(--card-border);
     border-radius: var(--radius);
     box-shadow: var(--shadow-card);
     text-align: left;
@@ -773,7 +815,7 @@ img {
     border-radius: var(--radius);
     padding: 20px;
     box-shadow: var(--shadow-card);
-    border: 1.5px solid transparent;
+    border: var(--card-border);
     transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
@@ -858,6 +900,7 @@ img {
 
 .portfolio-item {
     background: var(--secondary-bg);
+    border: var(--card-border);
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow-card);
@@ -954,7 +997,7 @@ img {
 /* === CALCULATOR === */
 
 .calc-progress {
-    height: 3px;
+    height: 4px;
     background: var(--secondary-bg);
     border-radius: 2px;
     margin-bottom: 12px;
@@ -963,7 +1006,7 @@ img {
 
 .calc-progress__bar {
     height: 100%;
-    background: var(--accent);
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #8b5cf6));
     border-radius: 2px;
     width: 0%;
     transition: width 0.4s ease;
@@ -1048,12 +1091,12 @@ img {
     width: 100%;
     padding: 16px;
     background: var(--secondary-bg);
-    border: 1.5px solid transparent;
+    border: var(--card-border);
     border-radius: var(--radius);
     text-align: left;
     font-size: 15px;
     min-height: 44px;
-    transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease;
+    transition: border-color 0.3s ease, background 0.3s ease, transform 0.2s ease;
 }
 
 .option:active {
@@ -1106,12 +1149,12 @@ img {
 .chip {
     padding: 10px 16px;
     background: var(--secondary-bg);
-    border: 1.5px solid transparent;
+    border: var(--card-border);
     border-radius: var(--radius-pill);
     font-size: 13px;
     white-space: nowrap;
     min-height: 44px;
-    transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease;
+    transition: border-color 0.3s ease, background 0.3s ease, transform 0.2s ease;
 }
 
 .chip:active {
@@ -1175,6 +1218,7 @@ img {
 
 .review-card {
     background: var(--secondary-bg);
+    border: var(--card-border);
     border-radius: var(--radius);
     padding: 20px;
     box-shadow: var(--shadow-card);
@@ -1212,6 +1256,7 @@ img {
 
 .case-card {
     background: var(--secondary-bg);
+    border: var(--card-border);
     border-radius: var(--radius);
     padding: 20px;
     box-shadow: var(--shadow-card);
@@ -1266,6 +1311,7 @@ img {
 
 .accordion__item {
     background: var(--secondary-bg);
+    border: var(--card-border);
     border-radius: var(--radius);
     overflow: hidden;
     transition: background 0.3s ease;
@@ -1296,6 +1342,24 @@ img {
 
 .accordion__item--active .accordion__header svg {
     transform: rotate(180deg);
+}
+
+.accordion__q-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.accordion__q-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
 }
 
 .accordion__question {
@@ -1343,12 +1407,12 @@ img {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
     padding: 24px 16px;
     background: var(--secondary-bg);
     border-radius: var(--radius);
-    border: 1.5px solid transparent;
+    border: var(--card-border);
     text-align: center;
     box-shadow: var(--shadow-card);
     min-height: 44px;
@@ -1357,6 +1421,31 @@ img {
 
 .quiz-type-card:active {
     transform: scale(0.97);
+}
+
+.quiz-type-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quiz-type-card__icon--quick {
+    background: color-mix(in srgb, #f59e0b 15%, var(--bg));
+    color: #f59e0b;
+}
+
+.quiz-type-card__icon--detailed {
+    background: color-mix(in srgb, #8b5cf6 15%, var(--bg));
+    color: #8b5cf6;
+}
+
+.quiz-type-card__icon svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 1.8;
 }
 
 .quiz-type-card svg {
@@ -1377,23 +1466,18 @@ img {
 }
 
 .quiz-progress {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 24px;
-}
-
-.quiz-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    height: 4px;
     background: var(--secondary-bg);
-    transition: background 0.3s ease, transform 0.3s ease;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    overflow: hidden;
 }
 
-.quiz-dot--active {
-    background: var(--accent);
-    transform: scale(1.2);
+.quiz-progress__bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #8b5cf6));
+    border-radius: 2px;
+    transition: width 0.4s ease;
 }
 
 .quiz-back {
@@ -1450,13 +1534,13 @@ img {
     width: 100%;
     padding: 16px;
     background: var(--secondary-bg);
-    border: 1.5px solid transparent;
+    border: var(--card-border);
     border-radius: var(--radius);
     text-align: left;
     font-size: 15px;
     font-weight: 500;
     min-height: 44px;
-    transition: border-color 0.3s ease, background 0.3s ease, transform 0.15s ease;
+    transition: border-color 0.3s ease, background 0.3s ease, transform 0.2s ease;
 }
 
 .quiz-option:active {
@@ -1570,6 +1654,7 @@ img {
     align-items: center;
     text-align: center;
     background: var(--secondary-bg);
+    border: var(--card-border);
     border-radius: var(--radius);
     padding: 32px 20px;
     box-shadow: var(--shadow-card);
@@ -1623,7 +1708,7 @@ img {
     padding: 20px;
     position: relative;
     overflow: hidden;
-    border: 1.5px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
     box-shadow: var(--shadow-card);
 }
 
@@ -1770,10 +1855,33 @@ img {
     text-align: left;
     min-height: 44px;
     transition: background 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.more-menu__item:last-child {
+    border-bottom: none;
 }
 
 .more-menu__item:active {
     background: var(--secondary-bg);
+}
+
+.more-menu__item-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+    color: var(--accent);
+}
+
+.more-menu__item-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.8;
 }
 
 .more-menu__item svg {
@@ -1790,13 +1898,15 @@ img {
     position: fixed;
     inset: 0;
     z-index: 200;
-    background: var(--bg);
+    background: color-mix(in srgb, var(--bg) 95%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(20px);
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transform: translateY(40px);
+    transition: opacity 0.35s ease, visibility 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .overlay--open {
@@ -1855,6 +1965,34 @@ img {
     border: 0;
 }
 
+/* === SECTION TITLE === */
+
+.section-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--hint);
+    margin-bottom: 12px;
+    padding-left: 4px;
+}
+
+/* === ANIMATE IN === */
+
+.animate-in {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: animateIn 0.4s ease forwards;
+    animation-delay: var(--delay, 0ms);
+}
+
+@keyframes animateIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* === ANIMATIONS === */
 
 @keyframes fadeIn {
@@ -1896,5 +2034,11 @@ img {
     *, *::before, *::after {
         animation-duration: 0.01ms;
         transition-duration: 0.01ms;
+    }
+
+    .animate-in {
+        opacity: 1;
+        transform: none;
+        animation: none;
     }
 }

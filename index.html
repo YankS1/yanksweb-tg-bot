@@ -22,27 +22,28 @@
                     <p class="hero__tagline">Сайты под ключ - от дизайна до запуска</p>
                 </div>
 
+                <h2 class="section-title">Быстрые действия</h2>
                 <div class="quick-actions">
-                    <button class="quick-actions__btn" data-navigate="services">
+                    <button class="quick-actions__btn animate-in" data-navigate="services">
                         <span class="quick-actions__icon quick-actions__icon--blue"><i data-lucide="wrench"></i></span>
                         <span class="quick-actions__label">Услуги</span>
                     </button>
-                    <button class="quick-actions__btn" data-navigate="calculator">
+                    <button class="quick-actions__btn animate-in" data-navigate="calculator">
                         <span class="quick-actions__icon quick-actions__icon--green"><i data-lucide="calculator"></i></span>
                         <span class="quick-actions__label">Расчет</span>
                     </button>
-                    <button class="quick-actions__btn" data-navigate="quiz">
+                    <button class="quick-actions__btn animate-in" data-navigate="quiz">
                         <span class="quick-actions__icon quick-actions__icon--purple"><i data-lucide="message-square"></i></span>
                         <span class="quick-actions__label">Обсудить проект</span>
                     </button>
-                    <button class="quick-actions__btn" data-navigate="audit">
+                    <button class="quick-actions__btn animate-in" data-navigate="audit">
                         <span class="quick-actions__icon quick-actions__icon--orange"><i data-lucide="search"></i></span>
                         <span class="quick-actions__label">Аудит сайта</span>
                     </button>
                 </div>
 
+                <h2 class="section-title">Быстрый вопрос</h2>
                 <div class="quick-question">
-                    <h2 class="quick-question__title">Быстрый вопрос</h2>
                     <div class="quick-question__field">
                         <input class="quick-question__input" id="quickQuestionInput" type="text" placeholder="Напишите ваш вопрос...">
                         <button class="quick-question__send" id="quickQuestionSend" aria-label="Отправить">
@@ -51,6 +52,7 @@
                     </div>
                 </div>
 
+                <h2 class="section-title">Бронирование</h2>
                 <div class="vip-banner" id="bookingBanner">
                     <div class="vip-banner__content">
                         <i class="vip-banner__icon" data-lucide="calendar-check"></i>
@@ -99,7 +101,7 @@
                 </div>
                 <div class="portfolio-feed" id="portfolio-feed"></div>
                 <div class="empty-state" id="portfolioEmpty">
-                    <i data-lucide="image"></i>
+                    <div class="empty-state__icon"><i data-lucide="image"></i></div>
                     <p>Работы скоро появятся</p>
                 </div>
             </section>
@@ -268,7 +270,7 @@
                 </header>
                 <div id="reviews-list"></div>
                 <div class="empty-state" id="reviewsEmpty">
-                    <i data-lucide="message-square"></i>
+                    <div class="empty-state__icon"><i data-lucide="message-square"></i></div>
                     <p>Отзывы скоро появятся</p>
                 </div>
             </section>
@@ -280,7 +282,7 @@
                 </header>
                 <div id="cases-list"></div>
                 <div class="empty-state" id="casesEmpty">
-                    <i data-lucide="bar-chart-2"></i>
+                    <div class="empty-state__icon"><i data-lucide="bar-chart-2"></i></div>
                     <p>Кейсы скоро появятся</p>
                 </div>
             </section>
@@ -292,7 +294,7 @@
                 </header>
                 <div id="faq-list"></div>
                 <div class="empty-state" id="faqEmpty">
-                    <i data-lucide="help-circle"></i>
+                    <div class="empty-state__icon"><i data-lucide="help-circle"></i></div>
                     <p>Раздел в разработке</p>
                 </div>
             </section>
@@ -340,7 +342,7 @@
                 </header>
                 <div id="promos-list"></div>
                 <div class="empty-state" id="promosEmpty">
-                    <i data-lucide="tag"></i>
+                    <div class="empty-state__icon"><i data-lucide="tag"></i></div>
                     <p>Сейчас акций нет, но они скоро появятся</p>
                 </div>
             </section>
@@ -377,27 +379,27 @@
             <div class="more-menu__sheet">
                 <div class="more-menu__handle"></div>
                 <button class="more-menu__item" data-navigate="reviews">
-                    <i data-lucide="star"></i>
+                    <span class="more-menu__item-icon"><i data-lucide="star"></i></span>
                     <span>Отзывы</span>
                 </button>
                 <button class="more-menu__item" data-navigate="cases">
-                    <i data-lucide="bar-chart-2"></i>
+                    <span class="more-menu__item-icon"><i data-lucide="bar-chart-2"></i></span>
                     <span>Кейсы</span>
                 </button>
                 <button class="more-menu__item" data-navigate="faq">
-                    <i data-lucide="help-circle"></i>
+                    <span class="more-menu__item-icon"><i data-lucide="help-circle"></i></span>
                     <span>FAQ</span>
                 </button>
                 <button class="more-menu__item" data-navigate="audit">
-                    <i data-lucide="search"></i>
+                    <span class="more-menu__item-icon"><i data-lucide="search"></i></span>
                     <span>Аудит сайта</span>
                 </button>
                 <button class="more-menu__item" data-navigate="contact">
-                    <i data-lucide="message-circle"></i>
+                    <span class="more-menu__item-icon"><i data-lucide="message-circle"></i></span>
                     <span>Контакт</span>
                 </button>
                 <button class="more-menu__item" data-navigate="promos">
-                    <i data-lucide="tag"></i>
+                    <span class="more-menu__item-icon"><i data-lucide="tag"></i></span>
                     <span>Акции</span>
                 </button>
             </div>

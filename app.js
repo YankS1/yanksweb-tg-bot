@@ -45,6 +45,15 @@ function nl2br(str) {
     return str.replace(/\n/g, '<br>');
 }
 
+/* === Animate In === */
+
+function animateIn(container) {
+    const items = container.querySelectorAll('.animate-in');
+    items.forEach((el, i) => {
+        el.style.setProperty('--delay', `${i * 50}ms`);
+    });
+}
+
 /* === App State === */
 
 const AppState = {
@@ -112,6 +121,8 @@ const Router = {
         if (pageId === 'portfolio') PortfolioPage.render();
 
         lucide.createIcons();
+
+        if (target) animateIn(target);
     },
 };
 
@@ -282,7 +293,7 @@ const ServicesPage = {
         const cats = DATA.services;
 
         container.innerHTML = cats.map(cat => `
-            <button class="service-card" data-cat-id="${cat.id}">
+            <button class="service-card animate-in" data-cat-id="${cat.id}">
                 <span class="service-card__icon"><i data-lucide="${escapeHtml(cat.icon)}"></i></span>
                 <span class="service-card__body">
                     <strong class="service-card__name">${escapeHtml(DATA.categoryNames[cat.id])}</strong>
@@ -300,6 +311,7 @@ const ServicesPage = {
         });
 
         lucide.createIcons();
+        animateIn(container);
     },
 
     renderSubcategories(catId) {
@@ -321,7 +333,7 @@ const ServicesPage = {
         `;
 
         const cards = cat.subcategories.map(sub => `
-            <button class="service-card" data-subcat-id="${sub.id}">
+            <button class="service-card animate-in" data-subcat-id="${sub.id}">
                 <span class="service-card__body">
                     <strong class="service-card__name">${escapeHtml(DATA.subcategoryNames[sub.id] || sub.id)}</strong>
                     <small class="service-card__desc">${sub.tariffs.length} ${this.tariffsWord(sub.tariffs.length)}</small>
@@ -345,6 +357,7 @@ const ServicesPage = {
         });
 
         lucide.createIcons();
+        animateIn(container);
     },
 
     renderTariffs(catId, subcatId) {
@@ -373,7 +386,7 @@ const ServicesPage = {
         const cards = sub.tariffs.map(t => {
             const shortDesc = t.description.split('\n')[0];
             return `
-                <button class="tariff-card" data-tariff-id="${t.id}">
+                <button class="tariff-card animate-in" data-tariff-id="${t.id}">
                     <span class="tariff-card__badge">${escapeHtml(t.name)}</span>
                     <strong class="tariff-card__price">${escapeHtml(t.price)}</strong>
                     <small class="tariff-card__desc">${escapeHtml(shortDesc)}</small>
@@ -402,6 +415,7 @@ const ServicesPage = {
         });
 
         lucide.createIcons();
+        animateIn(container);
     },
 
     showTariffDetail(catId, tariff) {
@@ -494,7 +508,7 @@ const PortfolioPage = {
             const media = this.renderMedia(item);
 
             return `
-                <article class="portfolio-item" data-pf-id="${escapeHtml(String(item.id || ''))}">
+                <article class="portfolio-item animate-in" data-pf-id="${escapeHtml(String(item.id || ''))}">
                     ${media}
                     <div class="portfolio-item__body">
                         <h3 class="portfolio-item__title">${escapeHtml(item.title)}</h3>
@@ -518,6 +532,7 @@ const PortfolioPage = {
         }).join('');
 
         lucide.createIcons();
+        animateIn(feed);
     },
 
     renderMedia(item) {
@@ -818,7 +833,7 @@ const ReviewsPage = {
 
         empty.style.display = 'none';
         list.innerHTML = DATA.reviews.map(r => `
-            <div class="review-card">
+            <div class="review-card animate-in">
                 <div class="review-card__header">
                     <strong class="review-card__name">${escapeHtml(r.name || '')}</strong>
                     ${r.company ? `<span class="review-card__company">${escapeHtml(r.company)}</span>` : ''}
@@ -826,6 +841,8 @@ const ReviewsPage = {
                 <p class="review-card__text">${nl2br(escapeHtml(r.text || ''))}</p>
             </div>
         `).join('');
+
+        animateIn(list);
     },
 };
 
@@ -844,7 +861,7 @@ const CasesPage = {
 
         empty.style.display = 'none';
         list.innerHTML = DATA.cases.map(c => `
-            <div class="case-card">
+            <div class="case-card animate-in">
                 <h3 class="case-card__title">${escapeHtml(c.title || '')}</h3>
                 ${c.task ? `<div class="case-card__section"><strong>Задача:</strong><p>${nl2br(escapeHtml(c.task))}</p></div>` : ''}
                 ${c.solution ? `<div class="case-card__section"><strong>Решение:</strong><p>${nl2br(escapeHtml(c.solution))}</p></div>` : ''}
@@ -852,6 +869,8 @@ const CasesPage = {
                 ${c.url ? `<a class="btn btn--secondary case-card__link" href="${escapeHtml(c.url)}" target="_blank">Открыть сайт</a>` : ''}
             </div>
         `).join('');
+
+        animateIn(list);
     },
 };
 
@@ -870,8 +889,9 @@ const FaqPage = {
 
         empty.style.display = 'none';
         list.innerHTML = `<div class="accordion">${DATA.faq.map((item, i) => `
-            <div class="accordion__item" data-faq-index="${i}">
+            <div class="accordion__item animate-in" data-faq-index="${i}">
                 <button class="accordion__header">
+                    <span class="accordion__q-icon"><i data-lucide="help-circle"></i></span>
                     <span class="accordion__question">${escapeHtml(item.question || '')}</span>
                     <i data-lucide="chevron-down"></i>
                 </button>
@@ -890,6 +910,7 @@ const FaqPage = {
         });
 
         lucide.createIcons();
+        animateIn(list);
     },
 };
 
@@ -907,13 +928,13 @@ const QuizPage = {
             </header>
             <p class="quiz-intro">Выберите формат - отвечу в ближайшее время</p>
             <div class="quiz-types">
-                <button class="quiz-type-card" data-quiz-type="quick">
-                    <i data-lucide="zap"></i>
+                <button class="quiz-type-card animate-in" data-quiz-type="quick">
+                    <span class="quiz-type-card__icon quiz-type-card__icon--quick"><i data-lucide="zap"></i></span>
                     <strong>Быстрый опрос</strong>
                     <small>4 вопроса - 1 минута</small>
                 </button>
-                <button class="quiz-type-card" data-quiz-type="detailed">
-                    <i data-lucide="clipboard-list"></i>
+                <button class="quiz-type-card animate-in" data-quiz-type="detailed">
+                    <span class="quiz-type-card__icon quiz-type-card__icon--detailed"><i data-lucide="clipboard-list"></i></span>
                     <strong>Подробный опрос</strong>
                     <small>7 вопросов - 3 минуты</small>
                 </button>
@@ -928,6 +949,7 @@ const QuizPage = {
         });
 
         lucide.createIcons();
+        animateIn(container);
     },
 
     startQuiz(type) {
@@ -986,9 +1008,7 @@ const QuizPage = {
         const total = AppState.quiz.steps.length;
         const current = AppState.quiz.currentStep + 1;
 
-        const dots = AppState.quiz.steps.map((_, i) =>
-            `<span class="quiz-dot ${i <= AppState.quiz.currentStep ? 'quiz-dot--active' : ''}"></span>`
-        ).join('');
+        const progressWidth = (current / total) * 100;
 
         let backBtn = '';
         if (AppState.quiz.currentStep > 0) {
@@ -1078,7 +1098,7 @@ const QuizPage = {
         }
 
         container.innerHTML = `
-            <div class="quiz-progress">${dots}</div>
+            <div class="quiz-progress"><div class="quiz-progress__bar" style="width: ${progressWidth}%"></div></div>
             ${backBtn}
             <div class="quiz-step">
                 <span class="quiz-step__counter">${current} / ${total}</span>
@@ -1094,11 +1114,12 @@ const QuizPage = {
         }
 
         lucide.createIcons();
+        animateIn(container);
     },
 
     renderOptions(title, options, key) {
         const items = options.map(opt => `
-            <button class="quiz-option" data-quiz-value="${escapeHtml(opt.value)}">
+            <button class="quiz-option animate-in" data-quiz-value="${escapeHtml(opt.value)}">
                 ${opt.icon ? `<i data-lucide="${escapeHtml(opt.icon)}"></i>` : ''}
                 <span>${escapeHtml(opt.label)}</span>
             </button>
@@ -1311,7 +1332,7 @@ const PromosPage = {
 
         empty.style.display = 'none';
         list.innerHTML = DATA.promos.map((promo, i) => `
-            <div class="promo-card">
+            <div class="promo-card animate-in">
                 ${promo.discount ? `<span class="promo-card__badge">${escapeHtml(promo.discount)}</span>` : ''}
                 <h3 class="promo-card__title">${escapeHtml(promo.title || '')}</h3>
                 <p class="promo-card__text">${nl2br(escapeHtml(promo.text || ''))}</p>
@@ -1372,6 +1393,7 @@ const PromosPage = {
         });
 
         lucide.createIcons();
+        animateIn(list);
     },
 };
 

@@ -1249,7 +1249,10 @@ function initOverlay() {
 
 /* === Load Live Data from API === */
 
-const API_URL = 'http://94.198.217.56:8080';
+/* Detect if running from API server or GitHub Pages */
+const API_URL = window.location.hostname === 'yanks1.github.io'
+    ? 'https://bot.yanksweb.ru'
+    : '';
 
 async function loadLiveData() {
     const endpoints = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];

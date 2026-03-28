@@ -573,13 +573,31 @@ const PortfolioPage = {
 
         lucide.createIcons();
         animateIn(feed);
+        this.observeVideos();
+    },
+
+    observeVideos() {
+        const videos = document.querySelectorAll('video[data-src]');
+        if (!videos.length) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                if (entry.isIntersecting && !video.src) {
+                    video.src = video.dataset.src;
+                    video.play().catch(() => {});
+                }
+            });
+        }, { rootMargin: '200px' });
+
+        videos.forEach(v => observer.observe(v));
     },
 
     renderMedia(item) {
         if (!item.image) return '';
 
         if (isVideoUrl(item.image)) {
-            return `<video class="portfolio-item__media" src="${escapeHtml(item.image)}" autoplay muted loop playsinline></video>`;
+            return `<video class="portfolio-item__media" data-src="${escapeHtml(item.image)}" muted loop playsinline preload="none"></video>`;
         }
 
         return `<img class="portfolio-item__media" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;

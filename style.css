@@ -925,9 +925,6 @@ img {
     font-size: 14px;
     color: var(--text);
     line-height: 1.7;
-    background: var(--secondary-bg);
-    border-radius: var(--radius);
-    padding: 16px;
 }
 
 .tariff-detail__desc p {
@@ -949,31 +946,37 @@ img {
 
 .feature-list li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
-    padding: 12px;
-    background: var(--bg);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
+    padding: 11px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     font-size: 14px;
     line-height: 1.4;
     color: var(--text);
 }
 
+.feature-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.feature-list li:first-child {
+    padding-top: 0;
+}
+
 .feature-list__icon {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--accent) 15%, var(--bg));
+    margin-top: 0;
 }
 
 .feature-list__icon svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     color: var(--accent);
 }
 

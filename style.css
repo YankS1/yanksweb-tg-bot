@@ -930,6 +930,52 @@ img {
     padding: 16px;
 }
 
+.tariff-detail__desc p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.tariff-detail__desc p:last-child {
+    margin-bottom: 0;
+}
+
+.feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 8px 0;
+}
+
+.feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+}
+
+.feature-list li:last-child {
+    border-bottom: none;
+}
+
+.feature-list li i,
+.feature-list li svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--accent);
+    stroke-width: 1.8;
+    margin-top: 1px;
+}
+
+.feature-list li span {
+    flex: 1;
+}
+
 .tariff-detail__cta {
     margin-top: 8px;
 }

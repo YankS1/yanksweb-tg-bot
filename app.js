@@ -54,6 +54,35 @@ function nl2br(str) {
     return str.replace(/\n/g, '<br>');
 }
 
+function formatDescription(str) {
+    if (!str) return '';
+    const escaped = escapeHtml(str);
+    const lines = escaped.split('\n').filter(l => l.trim());
+    let html = '';
+    let inList = false;
+
+    for (const line of lines) {
+        const clean = line.replace(/^[\u2705\u2714\u2611\u2022\u25CF\u25E6\u25AA\u25AB]\s*/u, '').trim();
+        const isListItem = /^[\u2705\u2714\u2611\u2022\u25CF\u25E6\u25AA\u25AB]/u.test(line.trim());
+
+        if (isListItem) {
+            if (!inList) {
+                html += '<ul class="feature-list">';
+                inList = true;
+            }
+            html += `<li><i data-lucide="circle-check-big"></i><span>${clean}</span></li>`;
+        } else {
+            if (inList) {
+                html += '</ul>';
+                inList = false;
+            }
+            html += `<p>${line}</p>`;
+        }
+    }
+    if (inList) html += '</ul>';
+    return html;
+}
+
 /* === Animate In === */
 
 function animateIn(container) {
@@ -449,7 +478,7 @@ const ServicesPage = {
                 <span class="tariff-detail__badge">${escapeHtml(tariff.name)}</span>
                 <h2 class="tariff-detail__cat">${escapeHtml(catName)}</h2>
                 <div class="tariff-detail__price">${escapeHtml(tariff.price)}</div>
-                <div class="tariff-detail__desc">${nl2br(escapeHtml(tariff.description))}</div>
+                <div class="tariff-detail__desc">${formatDescription(tariff.description)}</div>
                 <button class="btn btn--primary tariff-detail__cta" data-tariff-quiz="${tariff.id}">Обсудить этот вариант</button>
             </div>
         `);

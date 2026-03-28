@@ -1247,20 +1247,88 @@ function initOverlay() {
     });
 }
 
+/* === Load Live Data from API === */
+
+const API_URL = 'http://94.198.217.56:8080';
+
+async function loadLiveData() {
+    const endpoints = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];
+
+    for (const key of endpoints) {
+        try {
+            const res = await fetch(`${API_URL}/api/${key}`);
+            if (res.ok) {
+                const json = await res.json();
+                if (json.success && json.items) {
+                    if (key === 'portfolio') {
+                        DATA.portfolio = json.items.map(i => ({
+                            id: i.id,
+                            category: i.category || 'sites',
+                            title: i.title_ru || i.title || '',
+                            description: i.description_ru || i.description || '',
+                            image: i.media_file_id || i.media_url || '',
+                            url: i.url || '',
+                            tags: i.category || '',
+                        }));
+                    } else if (key === 'reviews') {
+                        DATA.reviews = json.items.map(i => ({
+                            id: i.id,
+                            name: i.client_name || '',
+                            company: i.company || '',
+                            text: i.text_ru || '',
+                            image: i.media_file_id || '',
+                        }));
+                    } else if (key === 'cases') {
+                        DATA.cases = json.items.map(i => ({
+                            id: i.id,
+                            title: i.title_ru || '',
+                            task: i.task_ru || '',
+                            solution: i.solution_ru || '',
+                            result: i.result_ru || '',
+                            url: i.url || '',
+                            image: i.before_media_id || '',
+                        }));
+                    } else if (key === 'faq') {
+                        DATA.faq = json.items.map(i => ({
+                            id: i.id,
+                            question: i.question_ru || '',
+                            answer: i.answer_ru || '',
+                        }));
+                    } else if (key === 'promos') {
+                        DATA.promos = json.items.filter(i => i.is_active).map(i => ({
+                            id: i.id,
+                            title: i.title_ru || '',
+                            text: i.text_ru || '',
+                            code: i.promo_code || '',
+                            discount: i.discount_percent ? `-${i.discount_percent}%` : '',
+                            deadline: i.deadline || '',
+                        }));
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(`Failed to load ${key}, using static data`);
+        }
+    }
+}
+
 /* === Init === */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initTabBar();
     initMoreMenu();
     initOverlay();
     HomePage.init();
     CalculatorPage.initEvents();
+    AuditPage.init();
+    ContactPage.init();
+
+    await loadLiveData();
+
     PortfolioPage.init();
     ReviewsPage.render();
     CasesPage.render();
     FaqPage.render();
-    AuditPage.init();
-    ContactPage.init();
     PromosPage.render();
     ServicesPage.renderCategories();
 

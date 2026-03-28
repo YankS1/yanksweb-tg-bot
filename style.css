@@ -400,8 +400,8 @@ img {
 }
 
 .booking-form {
-    background: var(--card-bg);
-    border-radius: 16px;
+    background: var(--secondary-bg);
+    border-radius: var(--radius);
     padding: 20px;
     margin-top: 16px;
 }
@@ -415,7 +415,7 @@ img {
 .booking-form__subtitle {
     font-size: 13px;
     color: var(--hint);
-    margin: 0 0 16px;
+    margin: 0 0 20px;
     line-height: 1.4;
 }
 
@@ -431,12 +431,13 @@ img {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .booking-form__date-btn {
     font-size: 13px;
     padding: 10px 8px;
+    border: 1.5px solid transparent;
     transition: 0.3s ease;
 }
 
@@ -445,8 +446,9 @@ img {
 }
 
 .booking-form__date-btn--active {
-    background: var(--accent) !important;
-    color: #fff !important;
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
 }
 
 .booking-form__input {
@@ -456,6 +458,7 @@ img {
 
 .booking-form__submit {
     width: 100%;
+    margin-top: 4px;
 }
 
 .booking-form__submit:disabled {

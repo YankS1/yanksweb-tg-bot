@@ -30,8 +30,8 @@
     --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.2), 0 1px 4px rgba(0, 0, 0, 0.15);
     --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
     --shadow-sheet: 0 -8px 40px rgba(0, 0, 0, 0.3);
-    --card-border: 1px solid rgba(255, 255, 255, 0.1);
-    --card-glow: 0 0 0 1px rgba(255, 255, 255, 0.05), var(--shadow-card);
+    --card-border: 1px solid rgba(255, 255, 255, 0.12);
+    --card-glow: 0 0 0 1px rgba(255, 255, 255, 0.08), var(--shadow-card);
 
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --tab-height: 56px;
@@ -263,7 +263,7 @@ img {
     gap: 8px;
     padding: 16px 12px 14px;
     min-height: 44px;
-    background: var(--secondary-bg);
+    background: color-mix(in srgb, var(--text) 8%, var(--bg));
     border: var(--card-border);
     border-radius: var(--radius);
     box-shadow: var(--card-glow);
@@ -756,7 +756,7 @@ img {
     gap: 14px;
     width: 100%;
     padding: 16px;
-    background: var(--secondary-bg);
+    background: color-mix(in srgb, var(--text) 8%, var(--bg));
     border: var(--card-border);
     border-radius: var(--radius);
     box-shadow: var(--shadow-card);
@@ -841,7 +841,7 @@ img {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background: var(--secondary-bg);
+    background: color-mix(in srgb, var(--text) 8%, var(--bg));
     border-radius: var(--radius);
     padding: 24px;
     box-shadow: var(--card-glow);
@@ -948,19 +948,13 @@ img {
     align-items: flex-start;
     gap: 12px;
     padding: 11px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     font-size: 14px;
     line-height: 1.4;
     color: var(--text);
 }
 
-.feature-list li:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.feature-list li:first-child {
-    padding-top: 0;
+.feature-list li + li {
+    border-top: 2px solid rgba(255, 255, 255, 0.08);
 }
 
 .feature-list__icon {
@@ -970,7 +964,6 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 0;
 }
 
 .feature-list__icon svg {

@@ -245,16 +245,18 @@ const HomePage = {
             }
         });
 
-        const MONTHS_RU = ['', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-        const now = new Date();
         const banner = document.getElementById('bookingBanner');
         const form = document.getElementById('bookingForm');
-        const datesContainer = document.getElementById('bookingDates');
+        const dateInput = document.getElementById('bookingDate');
         const submitBtn = document.getElementById('bookingSubmitBtn');
         const nameInput = document.getElementById('bookingName');
         const taskInput = document.getElementById('bookingTask');
-        let selectedDate = null;
+
+        const today = new Date();
+        const minDate = today.toISOString().split('T')[0];
+        const maxDate = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate()).toISOString().split('T')[0];
+        dateInput.min = minDate;
+        dateInput.max = maxDate;
 
         document.getElementById('bookingOpenBtn').addEventListener('click', () => {
             haptic();
@@ -268,57 +270,28 @@ const HomePage = {
         }
 
         function checkFormReady() {
-            submitBtn.disabled = !(selectedDate !== null && nameInput.value.trim());
+            submitBtn.disabled = !(dateInput.value && nameInput.value.trim());
         }
         nameInput.addEventListener('input', checkFormReady);
-
-        for (let i = 0; i < 4; i++) {
-            let month = now.getMonth() + 1 + i;
-            let year = now.getFullYear();
-            if (month > 12) { month -= 12; year++; }
-            const value = `${year}-${String(month).padStart(2, '0')}`;
-            const btn = document.createElement('button');
-            btn.className = 'btn btn--secondary booking-form__date-btn';
-            btn.textContent = `${MONTHS_RU[month]} ${year}`;
-            btn.addEventListener('click', () => {
-                haptic();
-                datesContainer.querySelectorAll('.booking-form__date-btn').forEach(b => b.classList.remove('booking-form__date-btn--active'));
-                btn.classList.add('booking-form__date-btn--active');
-                selectedDate = value;
-                checkFormReady();
-            });
-            datesContainer.appendChild(btn);
-        }
-
-        const notSureBtn = document.createElement('button');
-        notSureBtn.className = 'btn btn--ghost booking-form__date-btn';
-        notSureBtn.textContent = 'Пока не определился';
-        notSureBtn.addEventListener('click', () => {
-            haptic();
-            datesContainer.querySelectorAll('.booking-form__date-btn').forEach(b => b.classList.remove('booking-form__date-btn--active'));
-            notSureBtn.classList.add('booking-form__date-btn--active');
-            selectedDate = '';
-            checkFormReady();
-        });
-        datesContainer.appendChild(notSureBtn);
+        dateInput.addEventListener('input', checkFormReady);
 
         submitBtn.addEventListener('click', async () => {
             haptic();
             submitBtn.disabled = true;
             submitBtn.textContent = 'Отправляю...';
+            const startDate = dateInput.value;
             await submitToApi('waitlist', {
-                start_date: selectedDate,
+                start_date: startDate,
                 client_name: nameInput.value.trim(),
                 task: taskInput.value.trim(),
             });
             form.innerHTML = `
                 <div class="booking-form__done">
-                    <i data-lucide="check-circle"></i>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
                     <h3>Бронь отправлена!</h3>
-                    <p>Свяжусь с вами ${selectedDate ? 'ближе к выбранной дате' : 'когда будете готовы'}</p>
+                    <p>Свяжусь с вами ближе к ${startDate}</p>
                 </div>
             `;
-            lucide.createIcons();
         });
     },
 };

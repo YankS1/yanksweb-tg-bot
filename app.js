@@ -1249,17 +1249,19 @@ function initOverlay() {
 
 /* === Load Live Data from API === */
 
-/* Detect if running from API server or GitHub Pages */
-const API_URL = window.location.hostname === 'yanks1.github.io'
-    ? 'https://bot.yanksweb.ru'
-    : '';
+/* API URL - relative when on same server, absolute for GitHub Pages */
+const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.location.hostname === '94.198.217.56')
+    ? ''
+    : 'https://bot.yanksweb.ru';
 
 async function loadLiveData() {
     const endpoints = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];
 
     for (const key of endpoints) {
         try {
-            const res = await fetch(`${API_URL}/api/${key}`);
+            const res = await fetch(`${API_URL}/api/${key}`, {
+                headers: { 'X-App-Key': 'yanksweb-miniapp' }
+            });
             if (res.ok) {
                 const json = await res.json();
                 if (json.success && json.items) {

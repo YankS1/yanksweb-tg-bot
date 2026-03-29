@@ -1513,3 +1513,218 @@ const DATA_LIVE = {
     "usd_rate": 85.0
   }
 };
+const DATA_LIVE_ICON_MAP = {
+  "sites": "globe",
+  "shops": "shopping-cart",
+  "support": "wrench",
+  "design": "palette"
+};
+
+(function () {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const live = typeof DATA_LIVE !== "undefined" ? DATA_LIVE : {};
+  const iconMap = typeof DATA_LIVE_ICON_MAP !== "undefined" ? DATA_LIVE_ICON_MAP : {};
+  const base = (typeof DATA !== "undefined" && DATA && typeof DATA === "object")
+    ? DATA
+    : ((window.DATA && typeof window.DATA === "object") ? window.DATA : {});
+
+  const pick = (...values) => {
+    for (const value of values) {
+      if (typeof value === "string") {
+        const trimmed = value.trim();
+        if (trimmed) return trimmed;
+        continue;
+      }
+      if (value !== null && value !== undefined) {
+        return value;
+      }
+    }
+    return "";
+  };
+
+  const stripHtml = (value) => {
+    if (!value) return "";
+    return String(value)
+      .replace(/<tg-emoji[^>]*>(.*?)<\/tg-emoji>/gi, "$1")
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<[^>]+>/g, "")
+      .trim();
+  };
+
+  const mapServiceTariff = (item) => ({
+    id: item.id,
+    name: pick(item.name_ru, item.name_en, item.name),
+    price: pick(item.price_ru, item.price_en, item.price),
+    description: pick(item.description_ru, item.description_en, item.description),
+  });
+
+  const mapServiceSubcategory = (item) => ({
+    id: item.id,
+    name: pick(item.name_ru, item.name_en, item.name, item.id),
+    tariffs: Array.isArray(item.tariffs) ? item.tariffs.map(mapServiceTariff) : [],
+  });
+
+  const mapServiceCategory = (item) => ({
+    id: item.id,
+    icon: pick(item.icon, iconMap[item.id], "circle"),
+    name: pick(item.name_ru, item.name_en, item.name, item.id),
+    description: pick(item.description_ru, item.description_en, item.description),
+    subcategories: Array.isArray(item.subcategories) ? item.subcategories.map(mapServiceSubcategory) : [],
+  });
+
+  const mapPortfolioItem = (item) => ({
+    id: item.id,
+    category: pick(item.category, "sites"),
+    title: pick(item.title_ru, item.title_en, item.title),
+    description: pick(item.description_ru, item.description_en, item.description),
+    image: pick(item.media_file_id, item.media_url, item.image),
+    url: pick(item.url),
+    tags: pick(item.category, item.tags),
+  });
+
+  const mapReview = (item) => ({
+    id: item.id,
+    name: pick(item.client_name, item.name),
+    company: pick(item.company),
+    text: pick(item.text_ru, item.text_en, item.text),
+    image: pick(item.media_file_id, item.media_url, item.image),
+  });
+
+  const mapCase = (item) => ({
+    id: item.id,
+    title: pick(item.title_ru, item.title_en, item.title),
+    task: pick(item.task_ru, item.task_en, item.task),
+    solution: pick(item.solution_ru, item.solution_en, item.solution),
+    result: pick(item.result_ru, item.result_en, item.result),
+    url: pick(item.url),
+    image: pick(item.before_media_id, item.before_media_url, item.image),
+  });
+
+  const mapFaq = (item) => ({
+    id: item.id,
+    question: pick(item.question_ru, item.question_en, item.question),
+    answer: pick(item.answer_ru, item.answer_en, item.answer),
+  });
+
+  const mapPromo = (item) => ({
+    id: item.id,
+    title: pick(item.title_ru, item.title_en, item.title),
+    text: pick(item.text_ru, item.text_en, item.text),
+    code: pick(item.promo_code, item.code),
+    discount: item.discount_percent ? `-${item.discount_percent}%` : pick(item.discount),
+    deadline: pick(item.deadline),
+  });
+
+  const applyCalculator = (liveCalc) => {
+    if (!liveCalc || typeof liveCalc !== "object") {
+      return;
+    }
+
+    const calc = (base.calculator && typeof base.calculator === "object") ? base.calculator : {};
+    calc.basePrices = calc.basePrices || {};
+    calc.pageMultipliers = calc.pageMultipliers || {};
+    calc.designMultipliers = calc.designMultipliers || {};
+    calc.featureCosts = calc.featureCosts || {};
+    calc.urgencyMultiplier = calc.urgencyMultiplier || {};
+
+    for (const [key, value] of Object.entries(liveCalc)) {
+      if (typeof value !== "number") continue;
+      if (key === "usd_rate") calc.usdRate = value;
+      else if (key.startsWith("base_price.")) calc.basePrices[key.slice("base_price.".length)] = value;
+      else if (key.startsWith("page_mult.")) calc.pageMultipliers[key.slice("page_mult.".length)] = value;
+      else if (key.startsWith("design_mult.")) calc.designMultipliers[key.slice("design_mult.".length)] = value;
+      else if (key.startsWith("feature_cost.")) calc.featureCosts[key.slice("feature_cost.".length)] = value;
+      else if (key.startsWith("urgency_mult.")) calc.urgencyMultiplier[key.slice("urgency_mult.".length)] = value;
+    }
+
+    base.calculator = calc;
+  };
+
+  const applyQuizLabels = (texts) => {
+    if (!texts || !base.quiz) {
+      return;
+    }
+
+    const updateLabels = (items, mapping) => {
+      if (!Array.isArray(items)) return;
+      items.forEach((item) => {
+        const key = mapping[item.value];
+        const label = key ? stripHtml(texts[key]) : "";
+        if (label) item.label = label;
+      });
+    };
+
+    updateLabels(base.quiz.siteTypes, {
+      landing: "quiz.site_landing",
+      corporate: "quiz.site_corporate",
+      shop: "quiz.site_shop",
+      card: "quiz.site_card",
+      improve: "quiz.site_improve",
+      other: "quiz.site_other",
+    });
+    updateLabels(base.quiz.designOptions, {
+      yes: "quiz.design_yes",
+      no: "quiz.design_no",
+      examples: "quiz.design_examples",
+    });
+    updateLabels(base.quiz.budgetOptions, {
+      "30": "quiz.budget_30",
+      "50": "quiz.budget_50",
+      "100": "quiz.budget_100",
+      "200": "quiz.budget_200",
+      "200plus": "quiz.budget_200plus",
+      unknown: "quiz.budget_unknown",
+    });
+    updateLabels(base.quiz.featureOptions, {
+      forms: "quiz.feat_forms",
+      crm: "quiz.feat_crm",
+      catalog: "quiz.feat_catalog",
+      payment: "quiz.feat_payment",
+      account: "quiz.feat_account",
+      blog: "quiz.feat_blog",
+      i18n: "quiz.feat_i18n",
+      seo: "quiz.feat_seo",
+    });
+  };
+
+  if (Array.isArray(live.services)) {
+    const services = live.services.map(mapServiceCategory);
+    base.services = services;
+    base.categoryNames = Object.fromEntries(services.map((item) => [item.id, item.name]));
+    base.subcategoryNames = Object.fromEntries(
+      services.flatMap((cat) => cat.subcategories.map((sub) => [sub.id, sub.name]))
+    );
+  }
+
+  if (Array.isArray(live.portfolio)) base.portfolio = live.portfolio.map(mapPortfolioItem);
+  if (Array.isArray(live.reviews)) base.reviews = live.reviews.map(mapReview);
+  if (Array.isArray(live.cases)) base.cases = live.cases.map(mapCase);
+  if (Array.isArray(live.faq)) base.faq = live.faq.map(mapFaq);
+  if (Array.isArray(live.promos)) base.promos = live.promos.filter((item) => item.is_active !== false).map(mapPromo);
+
+  applyCalculator(live.calculator);
+
+  const texts = (live.texts && (live.texts.ru || live.texts.en)) || {};
+  applyQuizLabels(texts);
+
+  if (Object.keys(texts).length) {
+    base.liveTexts = texts;
+
+    if (!base.contact || typeof base.contact !== "object") {
+      base.contact = {};
+    }
+
+    const contactDescription = stripHtml(pick(texts["contact.text"]));
+    const contactWrite = stripHtml(pick(texts["contact.write"]));
+    if (contactDescription) base.contact.description = contactDescription;
+    if (contactWrite) base.contact.write = contactWrite;
+  }
+
+  window.DATA = base;
+  window.DATA_LIVE = live;
+  window.MINIAPP_TEXTS = texts;
+})();
+

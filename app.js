@@ -42,7 +42,7 @@ async function submitToApi(endpoint, payload) {
         const res = await fetch(`${API_URL}/api/${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...userInfo, ...payload }),
+            body: JSON.stringify({ ...userInfo, ...payload, initData: tg?.initData || '' }),
         });
         return res.ok;
     } catch {
@@ -88,6 +88,76 @@ function formatDescription(str) {
     }
     if (inList) html += '</ul>';
     return html;
+}
+
+function getLiveTexts() {
+    return window.MINIAPP_TEXTS || DATA.liveTexts || {};
+}
+
+function plainText(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/<tg-emoji[^>]*>(.*?)<\/tg-emoji>/gi, '$1')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<[^>]+>/g, '')
+        .trim();
+}
+
+function stripLeadingDecorators(str) {
+    return String(str || '').replace(/^[^A-Za-zА-Яа-я0-9]+/u, '').trim();
+}
+
+function text(key, fallback = '') {
+    const value = getLiveTexts()[key];
+    return value ? plainText(value) : fallback;
+}
+
+function labelText(key, fallback = '') {
+    const value = text(key, fallback);
+    return stripLeadingDecorators(value || fallback);
+}
+
+function applyStaticTexts() {
+    const setText = (selector, value) => {
+        const el = document.querySelector(selector);
+        if (el && value) el.textContent = value;
+    };
+
+    const setPlaceholder = (selector, value) => {
+        const el = document.querySelector(selector);
+        if (el && value) el.setAttribute('placeholder', value);
+    };
+
+    setText('[data-page="services"] .page__title', text('services.title', 'Услуги и цены'));
+    setText('[data-page="portfolio"] .page__title', text('portfolio.title', 'Мои работы'));
+    setText('[data-page="reviews"] .page__title', text('reviews.title', 'Отзывы клиентов'));
+    setText('[data-page="cases"] .page__title', text('reviews.cases_title', 'Кейсы'));
+    setText('[data-page="faq"] .page__title', text('faq.title', 'Частые вопросы'));
+    setText('[data-page="audit"] .page__title', text('audit.title', 'Экспресс-аудит сайта'));
+    setText('[data-page="contact"] .page__title', labelText('contact.title', 'Написать напрямую'));
+    setText('[data-page="promos"] .page__title', text('promo.title', 'Акции'));
+
+    setText('[data-navigate="services"] .quick-actions__label', labelText('menu.services', 'Услуги'));
+    setText('[data-navigate="calculator"] .quick-actions__label', labelText('menu.calculator', 'Расчет'));
+    setText('[data-navigate="quiz"] .quick-actions__label', labelText('menu.request', 'Обсудить проект'));
+    setText('[data-navigate="audit"] .quick-actions__label', labelText('audit.title', 'Аудит сайта'));
+
+    setPlaceholder('#quickQuestionInput', text('quick_question.prompt', 'Напишите ваш вопрос...'));
+    setText('[data-page="audit"] .audit__desc', text('audit.prompt', 'Укажите адрес вашего сайта, и я проведу быстрый анализ: скорость загрузки, SEO, мобильная версия, основные ошибки.'));
+    setPlaceholder('#auditUrlInput', text('audit.enter_url', 'https://example.com'));
+    setText('#contactLink', labelText('contact.write', 'Написать в Telegram'));
+    setText('.contact-card__desc', text('contact.text', DATA.contact.description || ''));
+
+    setText('#tab-bar [data-page="services"] span', labelText('menu.services', 'Услуги'));
+    setText('#tab-bar [data-page="portfolio"] span', labelText('menu.portfolio', 'Работы'));
+    setText('#tab-bar [data-page="calculator"] span', labelText('menu.calculator', 'Расчет'));
+
+    setText('#more-menu [data-navigate="reviews"] span:last-child', labelText('menu.reviews', 'Отзывы'));
+    setText('#more-menu [data-navigate="cases"] span:last-child', labelText('reviews.cases_title', 'Кейсы'));
+    setText('#more-menu [data-navigate="faq"] span:last-child', labelText('menu.faq', 'FAQ'));
+    setText('#more-menu [data-navigate="audit"] span:last-child', labelText('audit.title', 'Аудит сайта'));
+    setText('#more-menu [data-navigate="contact"] span:last-child', labelText('menu.contact', 'Контакт'));
+    setText('#more-menu [data-navigate="promos"] span:last-child', labelText('menu.promos', 'Акции'));
 }
 
 /* === Animate In === */
@@ -307,7 +377,7 @@ const HomePage = {
                 <div class="booking-form__done">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
                     <h3>Бронь отправлена!</h3>
-                    <p>Свяжусь с вами в ближайшее время для уточнения деталей</p>
+                    <p>${escapeHtml(text('waitlist.webapp_confirmed', 'Свяжусь с вами в ближайшее время для уточнения деталей'))}</p>
                 </div>
             `;
         });
@@ -317,27 +387,20 @@ const HomePage = {
 /* === Services Page === */
 
 const ServicesPage = {
-    categoryDescriptions: {
-        sites: 'Верстка, WordPress, кастомная разработка - сайт под вашу задачу с нуля и под ключ',
-        shops: 'Каталог-магазин, WooCommerce, OpenCart или кастомное решение. Корзина, оплата, доставка, CRM.',
-        support: 'Правки, баги, копирование, интеграции, оптимизация скорости, перенос.',
-        design: 'Дизайн лендинга или редизайн существующего сайта. Макет в Figma, адаптив.',
-    },
-
     renderCategories() {
         AppState.services.level = 'categories';
         AppState.services.catId = null;
         AppState.services.subcatId = null;
 
         const container = document.getElementById('services-content');
-        const cats = DATA.services;
+        const cats = Array.isArray(DATA.services) ? DATA.services : [];
 
         container.innerHTML = cats.map(cat => `
             <button class="service-card animate-in" data-cat-id="${cat.id}">
-                <span class="service-card__icon"><i data-lucide="${escapeHtml(cat.icon)}"></i></span>
+                <span class="service-card__icon"><i data-lucide="${escapeHtml(cat.icon || 'circle')}"></i></span>
                 <span class="service-card__body">
-                    <strong class="service-card__name">${escapeHtml(DATA.categoryNames[cat.id])}</strong>
-                    <small class="service-card__desc">${escapeHtml(this.categoryDescriptions[cat.id] || '')}</small>
+                    <strong class="service-card__name">${escapeHtml(cat.name || DATA.categoryNames[cat.id] || cat.id)}</strong>
+                    <small class="service-card__desc">${escapeHtml(cat.description || '')}</small>
                 </span>
                 <span class="service-card__arrow"><i data-lucide="chevron-right"></i></span>
             </button>
@@ -361,12 +424,12 @@ const ServicesPage = {
         const cat = DATA.services.find(c => c.id === catId);
         if (!cat) return;
 
-        const catName = DATA.categoryNames[catId];
+        const catName = cat.name || DATA.categoryNames[catId] || catId;
         const container = document.getElementById('services-content');
 
         const breadcrumb = `
             <div class="breadcrumb">
-                <button class="breadcrumb__link" data-back="categories">Услуги</button>
+                <button class="breadcrumb__link" data-back="categories">${escapeHtml(labelText('menu.services', 'Услуги'))}</button>
                 <span class="breadcrumb__sep">/</span>
                 <span class="breadcrumb__current">${escapeHtml(catName)}</span>
             </div>
@@ -375,7 +438,7 @@ const ServicesPage = {
         const cards = cat.subcategories.map(sub => `
             <button class="service-card animate-in" data-subcat-id="${sub.id}">
                 <span class="service-card__body">
-                    <strong class="service-card__name">${escapeHtml(DATA.subcategoryNames[sub.id] || sub.id)}</strong>
+                    <strong class="service-card__name">${escapeHtml(sub.name || DATA.subcategoryNames[sub.id] || sub.id)}</strong>
                     <small class="service-card__desc">${sub.tariffs.length} ${this.tariffsWord(sub.tariffs.length)}</small>
                 </span>
                 <span class="service-card__arrow"><i data-lucide="chevron-right"></i></span>
@@ -409,13 +472,13 @@ const ServicesPage = {
         const sub = cat.subcategories.find(s => s.id === subcatId);
         if (!sub) return;
 
-        const catName = DATA.categoryNames[catId];
-        const subName = DATA.subcategoryNames[subcatId] || subcatId;
+        const catName = cat.name || DATA.categoryNames[catId] || catId;
+        const subName = sub.name || DATA.subcategoryNames[subcatId] || subcatId;
         const container = document.getElementById('services-content');
 
         const breadcrumb = `
             <div class="breadcrumb">
-                <button class="breadcrumb__link" data-back="categories">Услуги</button>
+                <button class="breadcrumb__link" data-back="categories">${escapeHtml(labelText('menu.services', 'Услуги'))}</button>
                 <span class="breadcrumb__sep">/</span>
                 <button class="breadcrumb__link" data-back="subcategories">${ escapeHtml(catName)}</button>
                 <span class="breadcrumb__sep">/</span>
@@ -424,7 +487,7 @@ const ServicesPage = {
         `;
 
         const cards = sub.tariffs.map(t => {
-            const shortDesc = t.description.split('\n')[0];
+            const shortDesc = String(t.description || '').split('\n')[0];
             return `
                 <button class="tariff-card animate-in" data-tariff-id="${t.id}">
                     <span class="tariff-card__badge">${escapeHtml(t.name)}</span>
@@ -459,7 +522,7 @@ const ServicesPage = {
     },
 
     showTariffDetail(catId, tariff) {
-        const catName = DATA.categoryNames[catId];
+        const catName = DATA.categoryNames[catId] || catId;
 
         openOverlay(`
             <div class="tariff-detail">
@@ -467,7 +530,7 @@ const ServicesPage = {
                 <h2 class="tariff-detail__cat">${escapeHtml(catName)}</h2>
                 <div class="tariff-detail__price">${escapeHtml(tariff.price)}</div>
                 <div class="tariff-detail__desc">${formatDescription(tariff.description)}</div>
-                <button class="btn btn--primary tariff-detail__cta" data-tariff-quiz="${tariff.id}">Обсудить этот вариант</button>
+                <button class="btn btn--primary tariff-detail__cta" data-tariff-quiz="${tariff.id}">${escapeHtml(labelText('services.order', 'Обсудить этот вариант'))}</button>
             </div>
         `);
 
@@ -982,19 +1045,19 @@ const QuizPage = {
 
         container.innerHTML = `
             <header class="page__header">
-                <h1 class="page__title">Обсудить проект</h1>
+                <h1 class="page__title">${escapeHtml(labelText('menu.request', 'Обсудить проект'))}</h1>
             </header>
-            <p class="quiz-intro">Выберите формат - отвечу в ближайшее время</p>
+            <p class="quiz-intro">${escapeHtml(text('quiz.choose_type', 'Выберите формат - отвечу в ближайшее время'))}</p>
             <div class="quiz-types">
                 <button class="quiz-type-card animate-in" data-quiz-type="quick">
                     <span class="quiz-type-card__icon quiz-type-card__icon--quick"><i data-lucide="zap"></i></span>
-                    <strong>Быстрый опрос</strong>
-                    <small>4 вопроса - 1 минута</small>
+                    <strong>${escapeHtml(labelText('quiz.quick', 'Быстрый опрос'))}</strong>
+                    <small>${escapeHtml(text('quiz.quick_desc', '4 вопроса - 1 минута'))}</small>
                 </button>
                 <button class="quiz-type-card animate-in" data-quiz-type="detailed">
                     <span class="quiz-type-card__icon quiz-type-card__icon--detailed"><i data-lucide="clipboard-list"></i></span>
-                    <strong>Подробный опрос</strong>
-                    <small>7 вопросов - 3 минуты</small>
+                    <strong>${escapeHtml(labelText('quiz.detailed', 'Подробный опрос'))}</strong>
+                    <small>${escapeHtml(text('quiz.detailed_desc', '7 вопросов - 3 минуты'))}</small>
                 </button>
             </div>
         `;
@@ -1020,7 +1083,7 @@ const QuizPage = {
             fetch(`${API_URL}/api/quiz-start`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ telegram_id: tgUser.id, quiz_type: type }),
+                body: JSON.stringify({ telegram_id: tgUser.id, quiz_type: type, initData: tg?.initData || '' }),
             }).catch(() => {});
         }
 
@@ -1078,7 +1141,7 @@ const QuizPage = {
         switch (step) {
             case 'site_type':
                 content = this.renderOptions(
-                    'Какой сайт нужен?',
+                    text('quiz.q_site_type', 'Какой сайт нужен?'),
                     DATA.quiz.siteTypes.map(t => ({
                         value: t.value,
                         label: t.label,
@@ -1090,7 +1153,7 @@ const QuizPage = {
 
             case 'has_design':
                 content = this.renderOptions(
-                    'Есть дизайн-макет?',
+                    text('quiz.q_has_design', 'Есть дизайн-макет?'),
                     DATA.quiz.designOptions.map(d => ({
                         value: d.value,
                         label: d.label,
@@ -1101,7 +1164,7 @@ const QuizPage = {
 
             case 'budget':
                 content = this.renderOptions(
-                    'Какой бюджет планируете?',
+                    text('quiz.q_budget', 'Какой бюджет планируете?'),
                     DATA.quiz.budgetOptions.map(b => ({
                         value: b.value,
                         label: b.label,
@@ -1112,7 +1175,7 @@ const QuizPage = {
 
             case 'contact':
                 content = this.renderTextStep(
-                    'Как с вами связаться?',
+                    text('quiz.q_contact', 'Как с вами связаться?'),
                     'Имя, Telegram или телефон',
                     'contact'
                 );
@@ -1120,7 +1183,7 @@ const QuizPage = {
 
             case 'about':
                 content = this.renderTextStep(
-                    'Расскажите о проекте',
+                    text('quiz.q_about', 'Расскажите о проекте'),
                     'Чем занимается компания, для чего сайт...',
                     'about'
                 );
@@ -1128,7 +1191,7 @@ const QuizPage = {
 
             case 'features':
                 content = this.renderMultiSelect(
-                    'Какой функционал нужен?',
+                    text('quiz.q_features', 'Какой функционал нужен?'),
                     DATA.quiz.featureOptions.map(f => ({
                         value: f.value,
                         label: f.label,
@@ -1139,7 +1202,7 @@ const QuizPage = {
 
             case 'examples':
                 content = this.renderTextStep(
-                    'Есть примеры сайтов, которые нравятся?',
+                    text('quiz.q_examples', 'Есть примеры сайтов, которые нравятся?'),
                     'Ссылки или описание (можно пропустить)',
                     'examples',
                     true
@@ -1148,7 +1211,7 @@ const QuizPage = {
 
             case 'budget_timeline':
                 content = this.renderTextStep(
-                    'Бюджет и сроки',
+                    text('quiz.q_budget_timeline', 'Бюджет и сроки'),
                     'Примерный бюджет и когда нужен сайт',
                     'budget_timeline'
                 );
@@ -1237,7 +1300,7 @@ const QuizPage = {
         return `
             <h2 class="quiz-step__title">${escapeHtml(title)}</h2>
             <div class="quiz-chips">${items}</div>
-            <button class="btn btn--primary quiz-next" data-quiz-next>Далее</button>
+            <button class="btn btn--primary quiz-next" data-quiz-next>${escapeHtml(labelText('common.next', 'Далее'))}</button>
         `;
     },
 
@@ -1271,8 +1334,8 @@ const QuizPage = {
             <div class="quiz-text-field">
                 <input class="input" type="text" data-quiz-text placeholder="${escapeHtml(placeholder)}">
             </div>
-            <button class="btn btn--primary quiz-next" data-quiz-send>Далее</button>
-            ${skippable ? '<button class="btn btn--secondary quiz-skip" data-quiz-skip>Пропустить</button>' : ''}
+            <button class="btn btn--primary quiz-next" data-quiz-send>${escapeHtml(labelText('common.next', 'Далее'))}</button>
+            ${skippable ? `<button class="btn btn--secondary quiz-skip" data-quiz-skip>${escapeHtml(labelText('quiz.skip', 'Пропустить'))}</button>` : ''}
         `;
     },
 
@@ -1299,9 +1362,9 @@ const QuizPage = {
         container.innerHTML = `
             <div class="quiz-done">
                 <div class="quiz-done__icon"><i data-lucide="check-circle"></i></div>
-                <h2 class="quiz-done__title">Заявка отправлена</h2>
-                <p class="quiz-done__text">Свяжусь с вами в ближайшее время</p>
-                <button class="btn btn--secondary quiz-done__home" data-quiz-home>На главную</button>
+                <h2 class="quiz-done__title">${escapeHtml(text('quiz.thank_you', 'Заявка отправлена'))}</h2>
+                <p class="quiz-done__text">${escapeHtml(text('quick_question.webapp_sent', 'Свяжусь с вами в ближайшее время'))}</p>
+                <button class="btn btn--secondary quiz-done__home" data-quiz-home>${escapeHtml(labelText('menu.main_menu', 'На главную'))}</button>
             </div>
         `;
 
@@ -1345,7 +1408,7 @@ const AuditPage = {
 
             const note = document.querySelector('.audit__note');
             if (note) {
-                note.textContent = 'Анализирую сайт...';
+                note.textContent = text('audit.loading', 'Анализирую сайт...');
                 note.classList.remove('audit__note--success');
             }
 
@@ -1565,6 +1628,7 @@ async function loadLiveData() {
 /* === Init === */
 
 document.addEventListener('DOMContentLoaded', async () => {
+    applyStaticTexts();
     initTabBar();
     initMoreMenu();
     initOverlay();

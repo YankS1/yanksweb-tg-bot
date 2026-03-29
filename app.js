@@ -3,6 +3,9 @@
 const tg = window.Telegram?.WebApp;
 const PROD_HOSTS = new Set(['bot.yanksweb.ru', '94.198.217.56']);
 const IS_PROD_MINIAPP = PROD_HOSTS.has(window.location.hostname);
+const BOOT_STARTED_AT = performance.now();
+const MIN_LOADER_VISIBLE_MS = 320;
+const LOADER_FADE_MS = 240;
 if (tg) {
     tg.ready();
     tg.expand();
@@ -33,11 +36,19 @@ function setBootStatus(message) {
     if (label && message) label.textContent = message;
 }
 
-function revealApp() {
-    document.body.classList.remove('app-loading');
+async function revealApp() {
+    const elapsed = performance.now() - BOOT_STARTED_AT;
+    const remaining = Math.max(0, MIN_LOADER_VISIBLE_MS - elapsed);
+    if (remaining) {
+        await new Promise(resolve => setTimeout(resolve, remaining));
+    }
+
     document.body.classList.add('app-ready');
     document.getElementById('app')?.setAttribute('aria-busy', 'false');
     document.getElementById('app-loader')?.classList.add('app-loader--hidden');
+    window.setTimeout(() => {
+        document.body.classList.remove('app-loading');
+    }, LOADER_FADE_MS);
 }
 
 function nextFrame() {
@@ -1861,7 +1872,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         Router.navigate('home');
         await nextFrame();
         await nextFrame();
-        revealApp();
+        await revealApp();
 
         if (shouldWarmRemoteContent()) {
             const schedule = window.requestIdleCallback
@@ -1881,6 +1892,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (e) {
         console.error('Mini App boot failed', e);
-        revealApp();
+        await revealApp();
     }
 });

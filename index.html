@@ -18,6 +18,11 @@
             pointer-events: none;
         }
 
+        body.app-ready #app {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         #app-loader {
             position: fixed;
             inset: 0;
@@ -32,7 +37,7 @@
             transition: opacity 0.24s ease, visibility 0.24s ease;
         }
 
-        body:not(.app-loading) #app-loader {
+        #app-loader.app-loader--hidden {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;

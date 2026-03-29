@@ -113,8 +113,34 @@ function text(key, fallback = '') {
 }
 
 function labelText(key, fallback = '') {
-    const value = text(key, fallback);
-    return stripLeadingDecorators(value || fallback);
+    const liveValue = text(key, '');
+    const normalized = stripLeadingDecorators(liveValue);
+    if (normalized) return normalized;
+    const fallbackNormalized = stripLeadingDecorators(fallback);
+    return fallbackNormalized || fallback;
+}
+
+function interpolateText(template, values = {}) {
+    let result = String(template || '');
+    for (const [key, value] of Object.entries(values)) {
+        result = result.replaceAll(`{${key}}`, String(value ?? ''));
+    }
+    return result;
+}
+
+function formatCompactRub(amount) {
+    return `${Math.round(amount || 0).toLocaleString('ru-RU')} ₽`;
+}
+
+function portfolioCategoryLabel(category) {
+    const mapping = {
+        all: ['portfolio.cat_all', 'Все'],
+        sites: ['portfolio.cat_sites', 'Сайты'],
+        shops: ['portfolio.cat_shops', 'Магазины'],
+        design: ['portfolio.cat_design', 'Дизайн'],
+    };
+    const [key, fallback] = mapping[category] || [];
+    return key ? labelText(key, fallback) : category;
 }
 
 function applyStaticTexts() {
@@ -127,6 +153,13 @@ function applyStaticTexts() {
         const el = document.querySelector(selector);
         if (el && value) el.setAttribute('placeholder', value);
     };
+
+    setText('.hero__tagline', text('home.tagline', 'Сайты под ключ - от дизайна до запуска'));
+
+    const homeSectionTitles = document.querySelectorAll('[data-page="home"] .section-title');
+    if (homeSectionTitles[0]) homeSectionTitles[0].textContent = text('home.quick_actions_title', 'Быстрые действия');
+    if (homeSectionTitles[1]) homeSectionTitles[1].textContent = text('home.quick_question_title', 'Быстрый вопрос');
+    if (homeSectionTitles[2]) homeSectionTitles[2].textContent = text('home.booking_title', 'Бронирование');
 
     setText('[data-page="services"] .page__title', text('services.title', 'Услуги и цены'));
     setText('[data-page="portfolio"] .page__title', text('portfolio.title', 'Мои работы'));
@@ -143,11 +176,39 @@ function applyStaticTexts() {
     setText('[data-navigate="audit"] .quick-actions__label', labelText('audit.title', 'Аудит сайта'));
 
     setPlaceholder('#quickQuestionInput', text('quick_question.prompt', 'Напишите ваш вопрос...'));
+    setText('#bookingBanner .vip-banner__title', text('waitlist.webapp_banner_title', 'Проект не сейчас, а через неделю-месяц-два?'));
+    setText('#bookingBanner .vip-banner__text', text('waitlist.webapp_banner_text', 'Забронируйте дату старта - так я точно смогу выделить время под ваш проект. Без брони свободного окна может не оказаться'));
+    setText('#bookingOpenBtn', text('waitlist.webapp_open', 'Забронировать дату'));
+    setText('#bookingForm .booking-form__title', text('waitlist.webapp_form_title', 'Бронирование даты'));
+    setText('#bookingForm .booking-form__subtitle', text('waitlist.webapp_form_subtitle', 'Выберите дату, когда хотите начать обсуждение и работу. Это не дедлайн - просто ориентир, чтобы я зарезервировал время'));
+    setText('#bookingDateHint', text('waitlist.webapp_date_hint', 'Нажмите, чтобы выбрать дату'));
+    setPlaceholder('#bookingName', text('waitlist.webapp_name_placeholder', 'Как к вам обращаться'));
+    setPlaceholder('#bookingTask', text('waitlist.webapp_task_placeholder', 'Например: интернет-магазин одежды'));
+    setText('#bookingSubmitBtn', text('waitlist.webapp_submit', 'Отправить бронь'));
+    const bookingLabels = document.querySelectorAll('#bookingForm .booking-form__label');
+    if (bookingLabels[0]) bookingLabels[0].textContent = text('waitlist.webapp_date_label', 'Когда планируете начать?');
+    if (bookingLabels[1]) bookingLabels[1].textContent = text('waitlist.webapp_name_label', 'Ваше имя');
+    if (bookingLabels[2]) bookingLabels[2].textContent = text('waitlist.webapp_task_label', 'Кратко о задаче');
+
+    setText('#portfolioFilters [data-filter="all"]', labelText('portfolio.cat_all', 'Все'));
+    setText('#portfolioFilters [data-filter="sites"]', labelText('portfolio.cat_sites', 'Сайты'));
+    setText('#portfolioFilters [data-filter="shops"]', labelText('portfolio.cat_shops', 'Магазины'));
+    setText('#portfolioFilters [data-filter="design"]', labelText('portfolio.cat_design', 'Дизайн'));
+    setText('#portfolioEmpty p', text('portfolio.empty', 'Работы скоро появятся'));
+    setText('#reviewsEmpty p', text('reviews.empty', 'Отзывы скоро появятся'));
+    setText('#casesEmpty p', text('reviews.cases_empty', 'Кейсы скоро появятся'));
+    setText('#faqEmpty p', text('faq.empty', 'Раздел в разработке'));
+    setText('#promosEmpty p', text('promo.empty', 'Сейчас акций нет, но они скоро появятся'));
+
     setText('[data-page="audit"] .audit__desc', text('audit.prompt', 'Укажите адрес вашего сайта, и я проведу быстрый анализ: скорость загрузки, SEO, мобильная версия, основные ошибки.'));
     setPlaceholder('#auditUrlInput', text('audit.enter_url', 'https://example.com'));
+    setText('#auditSubmitBtn', text('audit.webapp_submit', 'Проверить'));
+    setText('.audit__note', text('audit.webapp_ready_note', 'Результат придет в течение 5-10 минут в этот чат'));
+    setText('.contact-card__name', text('contact.name', 'Даниил'));
     setText('#contactLink', labelText('contact.write', 'Написать в Telegram'));
     setText('.contact-card__desc', text('contact.text', DATA.contact.description || ''));
 
+    setText('#tab-bar [data-page="home"] span', text('menu.home', 'Главная'));
     setText('#tab-bar [data-page="services"] span', labelText('menu.services', 'Услуги'));
     setText('#tab-bar [data-page="portfolio"] span', labelText('menu.portfolio', 'Работы'));
     setText('#tab-bar [data-page="calculator"] span', labelText('menu.calculator', 'Расчет'));
@@ -158,6 +219,10 @@ function applyStaticTexts() {
     setText('#more-menu [data-navigate="audit"] span:last-child', labelText('audit.title', 'Аудит сайта'));
     setText('#more-menu [data-navigate="contact"] span:last-child', labelText('menu.contact', 'Контакт'));
     setText('#more-menu [data-navigate="promos"] span:last-child', labelText('menu.promos', 'Акции'));
+
+    if (typeof CalculatorPage !== 'undefined' && CalculatorPage?.syncTexts) {
+        CalculatorPage.syncTexts();
+    }
 }
 
 /* === Animate In === */
@@ -366,7 +431,7 @@ const HomePage = {
         submitBtn.addEventListener('click', async () => {
             haptic();
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Отправляю...';
+            submitBtn.textContent = text('waitlist.webapp_sending', 'Отправляю...');
             const startDate = dateInput.value;
             await submitToApi('waitlist', {
                 start_date: startDate,
@@ -376,7 +441,7 @@ const HomePage = {
             form.innerHTML = `
                 <div class="booking-form__done">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
-                    <h3>Бронь отправлена!</h3>
+                    <h3>${escapeHtml(text('waitlist.webapp_sent_title', 'Бронь отправлена!'))}</h3>
                     <p>${escapeHtml(text('waitlist.webapp_confirmed', 'Свяжусь с вами в ближайшее время для уточнения деталей'))}</p>
                 </div>
             `;
@@ -560,12 +625,6 @@ const ServicesPage = {
 
 const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.webm'];
 
-const CATEGORY_LABELS = {
-    sites: 'Сайты',
-    shops: 'Магазины',
-    design: 'Дизайн',
-};
-
 function isVideoUrl(url) {
     if (!url) return false;
     const lower = url.toLowerCase();
@@ -620,15 +679,15 @@ const PortfolioPage = {
                             ${item.url ? `
                                 <a class="portfolio-item__btn" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">
                                     <i data-lucide="external-link"></i>
-                                    Открыть сайт
+                                    ${escapeHtml(labelText('portfolio.open_site', 'Открыть сайт'))}
                                 </a>
                             ` : ''}
                             <button class="portfolio-item__btn portfolio-item__btn--fav ${isFav ? 'portfolio-item__btn--fav-active' : ''}" data-fav-id="${escapeHtml(String(item.id || ''))}">
                                 <i data-lucide="heart"></i>
-                                ${isFav ? 'В избранном' : 'В избранное'}
+                                ${escapeHtml(text(isFav ? 'portfolio.favorites_added' : 'portfolio.favorites_add', isFav ? 'В избранном' : 'В избранное'))}
                             </button>
                         </div>
-                        ${item.tags ? `<span class="portfolio-item__tag">${escapeHtml(CATEGORY_LABELS[item.tags] || item.tags)}</span>` : ''}
+                        ${item.tags ? `<span class="portfolio-item__tag">${escapeHtml(portfolioCategoryLabel(item.tags) || item.tags)}</span>` : ''}
                     </div>
                 </article>
             `;
@@ -679,7 +738,9 @@ const PortfolioPage = {
             favBtn.classList.toggle('portfolio-item__btn--fav-active', isFav);
 
             const textNode = favBtn.lastChild;
-            if (textNode) textNode.textContent = isFav ? ' В избранном' : ' В избранное';
+            if (textNode) {
+                textNode.textContent = ` ${text(isFav ? 'portfolio.favorites_added' : 'portfolio.favorites_add', isFav ? 'В избранном' : 'В избранное')}`;
+            }
 
             const icon = favBtn.querySelector('[data-lucide]');
             if (icon) {
@@ -715,38 +776,147 @@ const PortfolioPage = {
 const CalculatorPage = {
     TOTAL_STEPS: 5,
 
-    TYPE_LABELS: {
-        landing: 'Лендинг',
-        card: 'Сайт-визитка',
-        corporate: 'Корпоративный сайт',
-        shop: 'Интернет-магазин',
+    TYPE_TEXT_KEYS: {
+        landing: 'calculator.type_landing',
+        card: 'calculator.type_card',
+        corporate: 'calculator.type_corporate',
+        shop: 'calculator.type_shop',
     },
 
-    PAGES_LABELS: {
-        '1_3': '1-3 страницы',
-        '4_7': '4-7 страниц',
-        '8_15': '8-15 страниц',
-        '15plus': '15+ страниц',
+    TYPE_HINT_KEYS: {
+        landing: 'calculator.type_landing_hint',
+        card: 'calculator.type_card_hint',
+        corporate: 'calculator.type_corporate_hint',
+        shop: 'calculator.type_shop_hint',
     },
 
-    DESIGN_LABELS: {
-        ready: 'Есть макет',
-        examples: 'Есть референсы',
-        needed: 'Дизайн с нуля',
+    PAGES_TEXT_KEYS: {
+        '1_3': 'calculator.pages_1_3',
+        '4_7': 'calculator.pages_4_7',
+        '8_15': 'calculator.pages_8_15',
+        '15plus': 'calculator.pages_15plus',
     },
 
-    FEATURE_LABELS: {
-        forms: 'Формы',
-        crm: 'CRM',
-        catalog: 'Каталог',
-        payment: 'Оплата',
-        i18n: 'Мультиязычность',
-        seo: 'SEO',
+    DESIGN_TEXT_KEYS: {
+        ready: 'calculator.design_ready',
+        examples: 'calculator.design_examples',
+        needed: 'calculator.design_needed',
     },
 
-    TIMELINE_LABELS: {
-        standard: 'Стандартные сроки',
-        urgent: 'Срочно',
+    FEATURE_TEXT_KEYS: {
+        forms: 'calculator.feat_forms',
+        crm: 'calculator.feat_crm',
+        catalog: 'calculator.feat_catalog',
+        payment: 'calculator.feat_payment',
+        i18n: 'calculator.feat_i18n',
+        seo: 'calculator.feat_seo',
+    },
+
+    TIMELINE_TEXT_KEYS: {
+        standard: 'calculator.timeline_standard',
+        urgent: 'calculator.timeline_urgent',
+    },
+
+    resolveLabel(mapping, value, fallback = '') {
+        const key = mapping[value];
+        return key ? text(key, fallback || value || '') : (fallback || value || '');
+    },
+
+    getTypeLabel(value) {
+        return this.resolveLabel(this.TYPE_TEXT_KEYS, value, value);
+    },
+
+    getPagesLabel(value) {
+        return this.resolveLabel(this.PAGES_TEXT_KEYS, value, value);
+    },
+
+    getDesignLabel(value) {
+        return this.resolveLabel(this.DESIGN_TEXT_KEYS, value, value);
+    },
+
+    getFeatureLabel(value) {
+        return this.resolveLabel(this.FEATURE_TEXT_KEYS, value, value);
+    },
+
+    getTimelineLabel(value) {
+        return this.resolveLabel(this.TIMELINE_TEXT_KEYS, value, value);
+    },
+
+    getTypeBasePrice(value) {
+        const basePrices = DATA.calculator?.basePrices || {};
+        return basePrices[value] || basePrices.default || 0;
+    },
+
+    syncTexts() {
+        const setCalcText = (selector, value) => {
+            const el = document.querySelector(selector);
+            if (el && value) el.textContent = value;
+        };
+
+        setCalcText('#calcBackBtn span', text('common.back', 'Назад'));
+        setCalcText('[data-calc-step="1"] .calc-step__title', text('calculator.step1', 'Какой сайт нужен?'));
+        setCalcText('[data-calc-step="1"] .calc-step__subtitle', text('calculator.step1_subtitle', 'Выберите тип проекта'));
+        setCalcText('[data-calc-step="2"] .calc-step__title', text('calculator.step2', 'Сколько страниц?'));
+        setCalcText('[data-calc-step="2"] .calc-step__subtitle', text('calculator.step2_subtitle', 'Примерный объем сайта'));
+        setCalcText('[data-calc-step="3"] .calc-step__title', text('calculator.step3', 'Дизайн-макет'));
+        setCalcText('[data-calc-step="3"] .calc-step__subtitle', text('calculator.step3_subtitle', 'Есть готовый или нужен с нуля?'));
+        setCalcText('[data-calc-step="4"] .calc-step__title', text('calculator.step4', 'Функционал'));
+        setCalcText('[data-calc-step="4"] .calc-step__subtitle', text('calculator.step4_subtitle', 'Что нужно на сайте? Можно несколько'));
+        setCalcText('[data-calc-step="5"] .calc-step__title', text('calculator.step5', 'Сроки'));
+        setCalcText('[data-calc-step="5"] .calc-step__subtitle', text('calculator.step5_subtitle', 'Насколько срочно?'));
+
+        const typeFallbacks = {
+            landing: ['Лендинг', 'Одностраничный сайт'],
+            card: ['Сайт-визитка', '2-5 страниц'],
+            corporate: ['Корпоративный сайт', 'Полноценный сайт компании'],
+            shop: ['Интернет-магазин', 'Каталог, корзина, оплата'],
+        };
+        Object.entries(typeFallbacks).forEach(([type, [titleFallback, hintFallback]]) => {
+            setCalcText(`[data-type="${type}"] .option__text strong`, this.getTypeLabel(type) || titleFallback);
+            setCalcText(`[data-type="${type}"] .option__text small`, text(this.TYPE_HINT_KEYS[type], hintFallback));
+            setCalcText(
+                `[data-type="${type}"] .option__price`,
+                `${text('calculator.from_prefix', 'от')} ${formatCompactRub(this.getTypeBasePrice(type))}`,
+            );
+        });
+
+        const pageFallbacks = {
+            '1_3': '1-3 страницы',
+            '4_7': '4-7 страниц',
+            '8_15': '8-15 страниц',
+            '15plus': '15+ страниц',
+        };
+        Object.entries(pageFallbacks).forEach(([value, fallback]) => {
+            setCalcText(`[data-pages="${value}"] .option__text strong`, this.getPagesLabel(value) || fallback);
+        });
+
+        const designFallbacks = {
+            ready: 'Есть готовый макет',
+            examples: 'Есть примеры / референсы',
+            needed: 'Нужен дизайн с нуля',
+        };
+        Object.entries(designFallbacks).forEach(([value, fallback]) => {
+            setCalcText(`[data-design="${value}"] .option__text strong`, this.getDesignLabel(value) || fallback);
+        });
+
+        Object.entries(this.FEATURE_TEXT_KEYS).forEach(([value, key]) => {
+            setCalcText(`[data-feature="${value}"]`, text(key, value));
+        });
+
+        setCalcText('.calc-step__next[data-next]', text('common.next_label', 'Далее'));
+
+        setCalcText('[data-timeline="standard"] .option__text strong', this.getTimelineLabel('standard') || 'Стандартные сроки');
+        setCalcText('[data-timeline="urgent"] .option__text strong', this.getTimelineLabel('urgent') || 'Срочно (1-2 недели)');
+        const urgentMultiplier = DATA.calculator?.urgencyMultiplier?.urgent || 1.5;
+        setCalcText(
+            '[data-timeline="urgent"] .option__text small',
+            interpolateText(text('calculator.timeline_urgent_note', 'x{x} к стоимости'), { x: urgentMultiplier }),
+        );
+
+        setCalcText('.calc-result__title', text('calculator.webapp_title', 'Предварительный расчет'));
+        setCalcText('.calc-result__note', text('calculator.webapp_result_note', 'Это ориентировочная оценка. Точную цену назову после короткого разговора о деталях.'));
+        setCalcText('#calcSubmitBtn', labelText('calculator.to_quiz', 'Обсудить проект'));
+        setCalcText('#calcRestartBtn', text('calculator.restart', 'Пересчитать'));
     },
 
     init() {
@@ -830,15 +1000,15 @@ const CalculatorPage = {
 
         const st = AppState.calculator;
         const features = st.features.length
-            ? st.features.map(f => this.FEATURE_LABELS[f]).join(', ')
-            : 'не выбран';
+            ? st.features.map(f => this.getFeatureLabel(f)).join(', ')
+            : text('calculator.empty_features', 'Не выбран');
 
         document.getElementById('calcResultSummary').innerHTML =
-            `<span>Тип:</span> ${this.TYPE_LABELS[st.type] || '-'}<br>` +
-            `<span>Страниц:</span> ${this.PAGES_LABELS[st.pages] || '-'}<br>` +
-            `<span>Дизайн:</span> ${this.DESIGN_LABELS[st.design] || '-'}<br>` +
-            `<span>Функционал:</span> ${features}<br>` +
-            `<span>Сроки:</span> ${this.TIMELINE_LABELS[st.timeline] || '-'}`;
+            `<span>${escapeHtml(text('calculator.webapp_type', 'Тип сайта:'))}</span> ${escapeHtml(this.getTypeLabel(st.type) || '-')}<br>` +
+            `<span>${escapeHtml(text('calculator.webapp_pages', 'Страниц:'))}</span> ${escapeHtml(this.getPagesLabel(st.pages) || '-')}<br>` +
+            `<span>${escapeHtml(text('calculator.webapp_design', 'Дизайн:'))}</span> ${escapeHtml(this.getDesignLabel(st.design) || '-')}<br>` +
+            `<span>${escapeHtml(text('calculator.webapp_features', 'Функции:'))}</span> ${escapeHtml(features)}<br>` +
+            `<span>${escapeHtml(text('calculator.webapp_timeline', 'Сроки:'))}</span> ${escapeHtml(this.getTimelineLabel(st.timeline) || '-')}`;
     },
 
     reset() {
@@ -984,10 +1154,10 @@ const CasesPage = {
         list.innerHTML = DATA.cases.map(c => `
             <div class="case-card animate-in">
                 <h3 class="case-card__title">${escapeHtml(c.title || '')}</h3>
-                ${c.task ? `<div class="case-card__section"><strong>Задача:</strong><p>${nl2br(escapeHtml(c.task))}</p></div>` : ''}
-                ${c.solution ? `<div class="case-card__section"><strong>Решение:</strong><p>${nl2br(escapeHtml(c.solution))}</p></div>` : ''}
-                ${c.result ? `<div class="case-card__section"><strong>Результат:</strong><p>${nl2br(escapeHtml(c.result))}</p></div>` : ''}
-                ${c.url ? `<a class="btn btn--secondary case-card__link" href="${escapeHtml(c.url)}" target="_blank">Открыть сайт</a>` : ''}
+                ${c.task ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.task', 'Задача'))}:</strong><p>${nl2br(escapeHtml(c.task))}</p></div>` : ''}
+                ${c.solution ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.solution', 'Решение'))}:</strong><p>${nl2br(escapeHtml(c.solution))}</p></div>` : ''}
+                ${c.result ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.result', 'Результат'))}:</strong><p>${nl2br(escapeHtml(c.result))}</p></div>` : ''}
+                ${c.url ? `<a class="btn btn--secondary case-card__link" href="${escapeHtml(c.url)}" target="_blank">${escapeHtml(labelText('reviews.open_site', 'Открыть сайт'))}</a>` : ''}
             </div>
         `).join('');
 
@@ -1133,7 +1303,7 @@ const QuizPage = {
 
         let backBtn = '';
         if (AppState.quiz.currentStep > 0) {
-            backBtn = `<button class="quiz-back" data-quiz-back><i data-lucide="arrow-left"></i> Назад</button>`;
+            backBtn = `<button class="quiz-back" data-quiz-back><i data-lucide="arrow-left"></i> ${escapeHtml(text('common.back', 'Назад'))}</button>`;
         }
 
         let content = '';
@@ -1300,7 +1470,7 @@ const QuizPage = {
         return `
             <h2 class="quiz-step__title">${escapeHtml(title)}</h2>
             <div class="quiz-chips">${items}</div>
-            <button class="btn btn--primary quiz-next" data-quiz-next>${escapeHtml(labelText('common.next', 'Далее'))}</button>
+            <button class="btn btn--primary quiz-next" data-quiz-next>${escapeHtml(text('common.next_label', 'Далее'))}</button>
         `;
     },
 
@@ -1334,7 +1504,7 @@ const QuizPage = {
             <div class="quiz-text-field">
                 <input class="input" type="text" data-quiz-text placeholder="${escapeHtml(placeholder)}">
             </div>
-            <button class="btn btn--primary quiz-next" data-quiz-send>${escapeHtml(labelText('common.next', 'Далее'))}</button>
+            <button class="btn btn--primary quiz-next" data-quiz-send>${escapeHtml(text('common.next_label', 'Далее'))}</button>
             ${skippable ? `<button class="btn btn--secondary quiz-skip" data-quiz-skip>${escapeHtml(labelText('quiz.skip', 'Пропустить'))}</button>` : ''}
         `;
     },
@@ -1364,7 +1534,7 @@ const QuizPage = {
                 <div class="quiz-done__icon"><i data-lucide="check-circle"></i></div>
                 <h2 class="quiz-done__title">${escapeHtml(text('quiz.thank_you', 'Заявка отправлена'))}</h2>
                 <p class="quiz-done__text">${escapeHtml(text('quick_question.webapp_sent', 'Свяжусь с вами в ближайшее время'))}</p>
-                <button class="btn btn--secondary quiz-done__home" data-quiz-home>${escapeHtml(labelText('menu.main_menu', 'На главную'))}</button>
+                <button class="btn btn--secondary quiz-done__home" data-quiz-home>${escapeHtml(text('common.home', 'На главную'))}</button>
             </div>
         `;
 
@@ -1415,7 +1585,9 @@ const AuditPage = {
             const ok = await submitToApi('audit', { url });
             input.value = '';
             if (note) {
-                note.textContent = ok ? 'Результат отправлен в чат с ботом' : 'Ошибка, попробуйте позже';
+                note.textContent = ok
+                    ? text('audit.webapp_success_note', 'Результат отправлен в чат с ботом')
+                    : text('audit.webapp_error_note', 'Ошибка, попробуйте позже');
                 if (ok) note.classList.add('audit__note--success');
             }
         });
@@ -1460,7 +1632,7 @@ const PromosPage = {
                 ${promo.code ? `
                     <div class="promo-card__code">
                         <span>${escapeHtml(promo.code)}</span>
-                        <button class="promo-card__copy" data-copy="${escapeHtml(promo.code)}" aria-label="Скопировать">
+                        <button class="promo-card__copy" data-copy="${escapeHtml(promo.code)}" aria-label="${escapeHtml(text('promo.copy', 'Скопировать'))}">
                             <i data-lucide="copy"></i>
                         </button>
                     </div>
@@ -1493,7 +1665,7 @@ const PromosPage = {
                 const diff = end - now;
 
                 if (diff <= 0) {
-                    timerEl.textContent = 'Акция завершена';
+                    timerEl.textContent = text('promo.finished', 'Акция завершена');
                     return;
                 }
 
@@ -1506,7 +1678,7 @@ const PromosPage = {
                 parts.push(`${hours}ч`);
                 parts.push(`${minutes}мин`);
 
-                timerEl.textContent = 'Осталось: ' + parts.join(' ');
+                timerEl.textContent = `${text('promo.time_left', 'Осталось')}: ${parts.join(' ')}`;
             };
 
             update();

@@ -1200,7 +1200,7 @@ const DATA_LIVE = {
     },
     {
       "id": "shops",
-      "name_ru": "🛒 Интернет-магазины",
+      "name_ru": "🛒 Интернет-магазины  Online Stores",
       "name_en": "🛒 Online Stores",
       "description_ru": "Каталог-магазин, WooCommerce, OpenCart или кастомное решение на Laravel. Корзина, онлайн-оплата, доставка, интеграция с CRM.",
       "description_en": "Catalog stores, WooCommerce, OpenCart or fully custom Laravel solutions. Cart, online payments, shipping, CRM integration.",

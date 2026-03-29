@@ -911,7 +911,7 @@ const DATA_LIVE = {
   "services": [
     {
       "id": "sites",
-      "name_ru": "🌐 Сайты под ключЫ",
+      "name_ru": "🌐 Сайты под ключ",
       "name_en": "🌐 Turnkey Websites",
       "description_ru": "Вёрстка, WordPress, кастомная разработка на PHP/Laravel — сайт под вашу задачу с нуля и под ключ. Адаптив, SEO, аналитика, хостинг.",
       "description_en": "HTML/CSS layout, WordPress, or custom PHP/Laravel — websites built from scratch for your goals. Responsive, SEO-ready, analytics and hosting included.",

@@ -1,6 +1,8 @@
 /* === Telegram WebApp Init === */
 
 const tg = window.Telegram?.WebApp;
+const PROD_HOSTS = new Set(['bot.yanksweb.ru', '94.198.217.56']);
+const IS_PROD_MINIAPP = PROD_HOSTS.has(window.location.hostname);
 if (tg) {
     tg.ready();
     tg.expand();
@@ -24,6 +26,22 @@ if (tg) {
 
 function haptic() {
     tg?.HapticFeedback?.impactOccurred('light');
+}
+
+function setBootStatus(message) {
+    const label = document.getElementById('appLoaderText');
+    if (label && message) label.textContent = message;
+}
+
+function revealApp() {
+    document.body.classList.remove('app-loading');
+    document.body.classList.add('app-ready');
+    document.getElementById('app')?.setAttribute('aria-busy', 'false');
+    document.getElementById('app-loader')?.classList.add('app-loader--hidden');
+}
+
+function nextFrame() {
+    return new Promise(resolve => requestAnimationFrame(() => resolve()));
 }
 
 function getTgUser() {
@@ -643,8 +661,10 @@ function toggleFavorite(id) {
 }
 
 const PortfolioPage = {
-    init() {
-        this.render();
+    _filtersBound: false,
+    _eventsBound: false,
+
+    bootstrap() {
         this.initFilters();
         this.initEvents();
         this.updateFavoritesCount();
@@ -726,6 +746,8 @@ const PortfolioPage = {
     },
 
     initEvents() {
+        if (this._eventsBound) return;
+        this._eventsBound = true;
         document.getElementById('portfolio-feed').addEventListener('click', e => {
             const favBtn = e.target.closest('[data-fav-id]');
             if (!favBtn) return;
@@ -759,6 +781,8 @@ const PortfolioPage = {
     },
 
     initFilters() {
+        if (this._filtersBound) return;
+        this._filtersBound = true;
         document.getElementById('portfolioFilters').addEventListener('click', e => {
             const btn = e.target.closest('.filter-chips__btn');
             if (!btn) return;
@@ -1797,30 +1821,66 @@ async function loadLiveData() {
     }
 }
 
+function shouldWarmRemoteContent() {
+    const keys = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];
+    const missingEmbeddedContent = keys.some((key) => !Array.isArray(DATA[key]));
+    return !IS_PROD_MINIAPP || missingEmbeddedContent;
+}
+
+function refreshCurrentPageData() {
+    if (AppState.currentPage === 'portfolio') {
+        PortfolioPage.render(AppState.portfolio.filter);
+        return;
+    }
+    if (AppState.currentPage === 'reviews') ReviewsPage.render();
+    if (AppState.currentPage === 'cases') CasesPage.render();
+    if (AppState.currentPage === 'faq') FaqPage.render();
+    if (AppState.currentPage === 'promos') PromosPage.render();
+}
+
 /* === Init === */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    applyStaticTexts();
-    initTabBar();
-    initMoreMenu();
-    initOverlay();
-    HomePage.init();
-    CalculatorPage.initEvents();
-    AuditPage.init();
-    ContactPage.init();
+    try {
+        setBootStatus('Подготавливаю интерфейс...');
+        applyStaticTexts();
+        initTabBar();
+        initMoreMenu();
+        initOverlay();
+        HomePage.init();
+        CalculatorPage.initEvents();
+        AuditPage.init();
+        ContactPage.init();
+        PortfolioPage.bootstrap();
 
-    await loadLiveData();
+        const validIds = (Array.isArray(DATA.portfolio) ? DATA.portfolio : []).map(p => p.id);
+        AppState.favorites = AppState.favorites.filter(id => validIds.includes(id));
+        localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
 
-    const validIds = DATA.portfolio.map(p => p.id);
-    AppState.favorites = AppState.favorites.filter(id => validIds.includes(id));
-    localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+        setBootStatus('Почти готово...');
+        Router.navigate('home');
+        await nextFrame();
+        await nextFrame();
+        revealApp();
 
-    PortfolioPage.init();
-    ReviewsPage.render();
-    CasesPage.render();
-    FaqPage.render();
-    PromosPage.render();
-    ServicesPage.renderCategories();
+        if (shouldWarmRemoteContent()) {
+            const schedule = window.requestIdleCallback
+                ? (cb) => window.requestIdleCallback(cb, { timeout: 1500 })
+                : (cb) => setTimeout(cb, 120);
 
-    Router.navigate('home');
+            schedule(async () => {
+                try {
+                    await loadLiveData();
+                    refreshCurrentPageData();
+                    applyStaticTexts();
+                    PortfolioPage.updateFavoritesCount();
+                } catch (e) {
+                    console.log('Background content refresh skipped');
+                }
+            });
+        }
+    } catch (e) {
+        console.error('Mini App boot failed', e);
+        revealApp();
+    }
 });

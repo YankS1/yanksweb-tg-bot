@@ -326,20 +326,7 @@ const DATA_LIVE = {
       "created_at": "2026-03-28 23:46:10"
     }
   ],
-  "reviews": [
-    {
-      "id": 8,
-      "client_name": "Марта",
-      "company": null,
-      "text_ru": "Все очень понравилось, задачу выполнил на 5! Сделал красивый сайт + логотип .",
-      "text_en": "Loved everything, nailed it. Built a beautiful site + logo.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/4b2300d09ac64919a18abef7b91623a0_reviews-6.jpg",
-      "sort_order": 0,
-      "created_at": "2026-03-30 17:28:13",
-      "url": "https://рускомпонент.рф/",
-      "client_name_en": null
-    }
-  ],
+  "reviews": [],
   "cases": [],
   "faq": [],
   "promos": [],

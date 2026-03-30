@@ -510,14 +510,14 @@ const HomePage = {
             haptic();
             const input = document.getElementById('quickQuestionInput');
             const sendBtn = document.getElementById('quickQuestionSend');
-            const text = input.value.trim();
-            if (!text) return;
+            const msg = input.value.trim();
+            if (!msg) return;
             if (sendBtn.disabled) return;
 
             sendBtn.disabled = true;
             sendBtn.setAttribute('aria-busy', 'true');
 
-            const result = await submitToApi('quick-question', { text });
+            const result = await submitToApi('quick-question', { text: msg });
 
             sendBtn.disabled = false;
             sendBtn.removeAttribute('aria-busy');
@@ -1362,6 +1362,8 @@ const CasesPage = {
 /* === FAQ Page === */
 
 const FaqPage = {
+    _eventsBound: false,
+
     render() {
         const list = document.getElementById('faq-list');
         const empty = document.getElementById('faqEmpty');
@@ -1386,13 +1388,16 @@ const FaqPage = {
             </div>
         `).join('')}</div>`;
 
-        list.addEventListener('click', e => {
-            const header = e.target.closest('.accordion__header');
-            if (!header) return;
-            haptic();
-            const item = header.closest('.accordion__item');
-            item.classList.toggle('accordion__item--active');
-        });
+        if (!this._eventsBound) {
+            list.addEventListener('click', e => {
+                const header = e.target.closest('.accordion__header');
+                if (!header) return;
+                haptic();
+                const item = header.closest('.accordion__item');
+                item.classList.toggle('accordion__item--active');
+            });
+            this._eventsBound = true;
+        }
 
         lucide.createIcons();
         animateIn(list);

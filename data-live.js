@@ -326,21 +326,7 @@ const DATA_LIVE = {
       "created_at": "2026-03-28 23:46:10"
     }
   ],
-  "reviews": [
-    {
-      "id": 9,
-      "client_name": "Виктория",
-      "company": null,
-      "text_ru": "Очень хорошая работа выполнена . Приятно было работать с профессионалом. Мне всё понравилось .🔥",
-      "text_en": "A very good job has been done. It was a pleasure working with a professional. I liked everything.🔥",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/cc53d46b84f5476c8ead6ccf2d9ce47b_reviews-mini-app-1.jpg",
-      "sort_order": 0,
-      "created_at": "2026-03-30 17:50:12",
-      "url": "https://школасеменовой.рф/",
-      "client_name_en": "Victoria",
-      "show_in_app": 1
-    }
-  ],
+  "reviews": [],
   "cases": [],
   "faq": [],
   "promos": [],

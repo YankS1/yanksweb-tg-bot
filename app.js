@@ -265,13 +265,13 @@ function formatCompactRub(amount) {
 
 function portfolioCategoryLabel(category) {
     const mapping = {
-        all: ['portfolio.cat_all', 'Все'],
-        sites: ['portfolio.cat_sites', 'Сайты'],
-        shops: ['portfolio.cat_shops', 'Магазины'],
-        design: ['portfolio.cat_design', 'Дизайн'],
+        all: ['miniapp.filter.all', 'Все'],
+        sites: ['miniapp.filter.sites', 'Сайты'],
+        shops: ['miniapp.filter.shops', 'Магазины'],
+        design: ['miniapp.filter.design', 'Дизайн'],
     };
     const [key, fallback] = mapping[category] || [];
-    return key ? labelText(key, fallback) : category;
+    return key ? text(key, fallback) : category;
 }
 
 function applyStaticTexts() {
@@ -301,10 +301,10 @@ function applyStaticTexts() {
     setText('[data-page="contact"] .page__title', labelText('contact.title', 'Написать напрямую'));
     setText('[data-page="promos"] .page__title', text('promo.title', 'Акции'));
 
-    setText('[data-navigate="services"] .quick-actions__label', labelText('menu.services', 'Услуги'));
-    setText('[data-navigate="calculator"] .quick-actions__label', labelText('menu.calculator', 'Расчет'));
-    setText('[data-navigate="quiz"] .quick-actions__label', labelText('menu.request', 'Обсудить проект'));
-    setText('[data-navigate="audit"] .quick-actions__label', labelText('audit.title', 'Аудит сайта'));
+    setText('[data-navigate="services"] .quick-actions__label', text('miniapp.qa.services', 'Услуги'));
+    setText('[data-navigate="calculator"] .quick-actions__label', text('miniapp.qa.calculator', 'Расчет'));
+    setText('[data-navigate="quiz"] .quick-actions__label', text('miniapp.qa.quiz', 'Обсудить проект'));
+    setText('[data-navigate="audit"] .quick-actions__label', text('miniapp.qa.audit', 'Аудит сайта'));
 
     setPlaceholder('#quickQuestionInput', text('quick_question.prompt', 'Напишите ваш вопрос...'));
     setText('#bookingBanner .vip-banner__title', text('waitlist.webapp_banner_title', 'Проект не сейчас, а через неделю-месяц-два?'));
@@ -321,10 +321,10 @@ function applyStaticTexts() {
     if (bookingLabels[1]) bookingLabels[1].textContent = text('waitlist.webapp_name_label', 'Ваше имя');
     if (bookingLabels[2]) bookingLabels[2].textContent = text('waitlist.webapp_task_label', 'Кратко о задаче');
 
-    setText('#portfolioFilters [data-filter="all"]', labelText('portfolio.cat_all', 'Все'));
-    setText('#portfolioFilters [data-filter="sites"]', labelText('portfolio.cat_sites', 'Сайты'));
-    setText('#portfolioFilters [data-filter="shops"]', labelText('portfolio.cat_shops', 'Магазины'));
-    setText('#portfolioFilters [data-filter="design"]', labelText('portfolio.cat_design', 'Дизайн'));
+    setText('#portfolioFilters [data-filter="all"]', text('miniapp.filter.all', 'Все'));
+    setText('#portfolioFilters [data-filter="sites"]', text('miniapp.filter.sites', 'Сайты'));
+    setText('#portfolioFilters [data-filter="shops"]', text('miniapp.filter.shops', 'Магазины'));
+    setText('#portfolioFilters [data-filter="design"]', text('miniapp.filter.design', 'Дизайн'));
     setText('#portfolioEmpty p', text('portfolio.empty', 'Работы скоро появятся'));
     setText('#reviewsEmpty p', text('reviews.empty', 'Отзывы скоро появятся'));
     setText('#casesEmpty p', text('reviews.cases_empty', 'Кейсы скоро появятся'));
@@ -339,17 +339,17 @@ function applyStaticTexts() {
     setText('#contactLink', labelText('contact.write', 'Написать в Telegram'));
     setText('.contact-card__desc', text('contact.text', DATA.contact.description || ''));
 
-    setText('#tab-bar [data-page="home"] span', text('menu.home', 'Главная'));
-    setText('#tab-bar [data-page="services"] span', labelText('menu.services', 'Услуги'));
-    setText('#tab-bar [data-page="portfolio"] span', labelText('menu.portfolio', 'Работы'));
-    setText('#tab-bar [data-page="calculator"] span', labelText('menu.calculator', 'Расчет'));
+    setText('#tab-bar [data-page="home"] span', text('miniapp.tab.home', 'Главная'));
+    setText('#tab-bar [data-page="services"] span', text('miniapp.tab.services', 'Услуги'));
+    setText('#tab-bar [data-page="portfolio"] span', text('miniapp.tab.portfolio', 'Работы'));
+    setText('#tab-bar [data-page="calculator"] span', text('miniapp.tab.calculator', 'Расчет'));
 
-    setText('#more-menu [data-navigate="reviews"] span:last-child', labelText('menu.reviews', 'Отзывы'));
-    setText('#more-menu [data-navigate="cases"] span:last-child', labelText('reviews.cases_title', 'Кейсы'));
-    setText('#more-menu [data-navigate="faq"] span:last-child', labelText('menu.faq', 'FAQ'));
-    setText('#more-menu [data-navigate="audit"] span:last-child', labelText('audit.title', 'Аудит сайта'));
-    setText('#more-menu [data-navigate="contact"] span:last-child', labelText('menu.contact', 'Контакт'));
-    setText('#more-menu [data-navigate="promos"] span:last-child', labelText('menu.promos', 'Акции'));
+    setText('#more-menu [data-navigate="reviews"] span:last-child', text('miniapp.more.reviews', 'Отзывы'));
+    setText('#more-menu [data-navigate="cases"] span:last-child', text('miniapp.more.cases', 'Кейсы'));
+    setText('#more-menu [data-navigate="faq"] span:last-child', text('miniapp.more.faq', 'FAQ'));
+    setText('#more-menu [data-navigate="audit"] span:last-child', text('miniapp.more.audit', 'Аудит сайта'));
+    setText('#more-menu [data-navigate="contact"] span:last-child', text('miniapp.more.contact', 'Контакт'));
+    setText('#more-menu [data-navigate="promos"] span:last-child', text('miniapp.more.promos', 'Акции'));
 
     if (typeof CalculatorPage !== 'undefined' && CalculatorPage?.syncTexts) {
         CalculatorPage.syncTexts();

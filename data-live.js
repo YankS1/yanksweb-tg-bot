@@ -392,17 +392,6 @@ const DATA_LIVE = {
       "sort_order": 0,
       "created_at": "2026-03-30 17:06:37",
       "url": null
-    },
-    {
-      "id": 7,
-      "client_name": "вц",
-      "company": null,
-      "text_ru": "вц",
-      "text_en": "вц",
-      "media_file_id": null,
-      "sort_order": 0,
-      "created_at": "2026-03-30 17:26:21",
-      "url": "https://школасеменовой.рф/"
     }
   ],
   "cases": [],

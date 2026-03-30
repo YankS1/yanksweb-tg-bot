@@ -328,18 +328,6 @@ const DATA_LIVE = {
   ],
   "reviews": [
     {
-      "id": 3,
-      "client_name": "Алексей",
-      "company": null,
-      "text_ru": "Все было сделано на высшем уровне и гораздо быстрее чем изначально обсуждали!!!\r\nБез лишних вопросов, навязчивых услуг и прочего. Человек просто взял и сделал.",
-      "text_en": "Everything was done top notch and way faster than we originally discussed. No unnecessary questions, no upselling, nothing extra. He just got it done.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/62108bdf001c4187a39c81e3179066de_reviews-5.jpg",
-      "sort_order": 0,
-      "created_at": "2026-03-30 16:59:44",
-      "url": null,
-      "client_name_en": null
-    },
-    {
       "id": 4,
       "client_name": "Максим",
       "company": null,

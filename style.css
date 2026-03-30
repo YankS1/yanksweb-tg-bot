@@ -90,19 +90,16 @@ img {
     min-height: 100dvh;
     position: relative;
     opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.22s ease, transform 0.22s ease;
+    transition: opacity 0.22s ease;
 }
 
 body.app-loading #app {
     opacity: 0;
-    transform: translateY(6px);
     pointer-events: none;
 }
 
 body.app-ready #app {
     opacity: 1;
-    transform: translateY(0);
     pointer-events: auto;
 }
 

@@ -123,6 +123,68 @@ body.app-ready #app {
     pointer-events: none;
 }
 
+#app-toast-root {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(var(--tab-height) + var(--safe-bottom) + 14px);
+    z-index: 160;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.app-toast {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    pointer-events: auto;
+}
+
+.app-toast--visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.app-toast__body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: var(--shadow-elevated);
+}
+
+.app-toast--info .app-toast__body,
+.app-toast--success .app-toast__body {
+    background: color-mix(in srgb, var(--bg) 82%, var(--accent));
+}
+
+.app-toast--error .app-toast__body {
+    background: color-mix(in srgb, var(--bg) 84%, var(--destructive));
+}
+
+.app-toast__text {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.app-toast__action {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    min-height: 40px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--btn-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
 .app-loader__box {
     width: min(100%, 280px);
     text-align: center;
@@ -431,6 +493,11 @@ body.app-ready #app {
 
 .quick-question__send:active {
     transform: scale(0.93);
+}
+
+.quick-question__send:disabled {
+    opacity: 0.62;
+    transform: none;
 }
 
 /* === VIP BANNER === */
@@ -1767,8 +1834,28 @@ body.app-ready #app {
     line-height: 1.5;
 }
 
+.quiz-done__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(100%, 280px);
+}
+
 .quiz-done__home {
     max-width: 240px;
+}
+
+.quiz-done--error .quiz-done__icon {
+    color: var(--destructive);
+}
+
+.quiz-done__icon--spin svg {
+    animation: iconSpin 0.9s linear infinite;
+}
+
+@keyframes iconSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* === AUDIT === */

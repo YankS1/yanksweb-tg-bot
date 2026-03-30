@@ -73,10 +73,88 @@ async function submitToApi(endpoint, payload) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...userInfo, ...payload, initData: tg?.initData || '' }),
         });
-        return res.ok;
+        const body = await res.json().catch(() => null);
+        return {
+            ok: Boolean(res.ok && (!body || body.success !== false)),
+            status: res.status,
+            data: body?.data || {},
+            error: body?.error || '',
+        };
     } catch {
-        return false;
+        return {
+            ok: false,
+            status: 0,
+            data: {},
+            error: '',
+        };
     }
+}
+
+function directContactUrl() {
+    const username = String(DATA?.contact?.username || '').replace(/^@/, '').trim();
+    return username ? `https://t.me/${username}` : '';
+}
+
+function openDirectContact() {
+    const url = directContactUrl();
+    if (!url) {
+        Router.navigate('contact');
+        return;
+    }
+    if (tg?.openTelegramLink) {
+        tg.openTelegramLink(url);
+        return;
+    }
+    if (tg?.openLink) {
+        tg.openLink(url);
+        return;
+    }
+    window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function showToast(message, options = {}) {
+    const root = document.getElementById('app-toast-root');
+    if (!root || !message) return;
+
+    const toast = document.createElement('div');
+    toast.className = `app-toast app-toast--${options.type || 'info'}`;
+    toast.innerHTML = `
+        <div class="app-toast__body">
+            <div class="app-toast__text">${escapeHtml(message)}</div>
+            ${options.actionLabel ? `<button class="app-toast__action" type="button">${escapeHtml(options.actionLabel)}</button>` : ''}
+        </div>
+    `;
+
+    const actionBtn = toast.querySelector('.app-toast__action');
+    if (actionBtn && typeof options.onAction === 'function') {
+        actionBtn.addEventListener('click', () => {
+            haptic();
+            options.onAction();
+            toast.classList.remove('app-toast--visible');
+            window.setTimeout(() => toast.remove(), 220);
+        });
+    }
+
+    root.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('app-toast--visible'));
+
+    const duration = options.duration ?? 3600;
+    window.setTimeout(() => {
+        toast.classList.remove('app-toast--visible');
+        window.setTimeout(() => toast.remove(), 220);
+    }, duration);
+}
+
+function showRequestError(message) {
+    showToast(
+        message || text('common.error', 'Что-то пошло не так'),
+        {
+            type: 'error',
+            duration: 6500,
+            actionLabel: text('contact.write', 'Написать мне'),
+            onAction: openDirectContact,
+        }
+    );
 }
 
 function escapeHtml(str) {
@@ -404,13 +482,32 @@ const HomePage = {
             });
         });
 
-        document.getElementById('quickQuestionSend').addEventListener('click', () => {
+        document.getElementById('quickQuestionSend').addEventListener('click', async () => {
             haptic();
             const input = document.getElementById('quickQuestionInput');
+            const sendBtn = document.getElementById('quickQuestionSend');
             const text = input.value.trim();
             if (!text) return;
-            submitToApi('quick-question', { text });
-            input.value = '';
+            if (sendBtn.disabled) return;
+
+            sendBtn.disabled = true;
+            sendBtn.setAttribute('aria-busy', 'true');
+
+            const result = await submitToApi('quick-question', { text });
+
+            sendBtn.disabled = false;
+            sendBtn.removeAttribute('aria-busy');
+
+            if (result.ok) {
+                input.value = '';
+                showToast(text('quick_question.webapp_sent', 'Получил ваш вопрос! Отвечу в ближайшее время.'), {
+                    type: 'success',
+                    duration: 3200,
+                });
+                return;
+            }
+
+            showRequestError('Не удалось отправить вопрос. Напишите мне напрямую, чтобы не потерять обращение.');
         });
 
         document.getElementById('quickQuestionInput').addEventListener('keydown', e => {
@@ -462,11 +559,19 @@ const HomePage = {
             submitBtn.disabled = true;
             submitBtn.textContent = text('waitlist.webapp_sending', 'Отправляю...');
             const startDate = dateInput.value;
-            await submitToApi('waitlist', {
+            const result = await submitToApi('waitlist', {
                 start_date: startDate,
                 client_name: nameInput.value.trim(),
                 task: taskInput.value.trim(),
             });
+
+            if (!result.ok) {
+                submitBtn.textContent = text('waitlist.webapp_submit', 'Отправить бронь');
+                checkFormReady();
+                showRequestError('Не удалось отправить бронь. Напишите мне напрямую, и я сам зафиксирую дату.');
+                return;
+            }
+
             form.innerHTML = `
                 <div class="booking-form__done">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
@@ -1562,17 +1667,70 @@ const QuizPage = {
         }
     },
 
-    submit() {
-        const container = document.getElementById('quiz-content');
+    renderSubmitState(container, state) {
+        if (state === 'sending') {
+            container.innerHTML = `
+                <div class="quiz-done quiz-done--pending">
+                    <div class="quiz-done__icon quiz-done__icon--spin"><i data-lucide="loader-circle"></i></div>
+                    <h2 class="quiz-done__title">${escapeHtml('Отправляю заявку...')}</h2>
+                    <p class="quiz-done__text">${escapeHtml('Подождите пару секунд, проверяю и сохраняю данные.')}</p>
+                </div>
+            `;
+            lucide.createIcons();
+            return;
+        }
+
+        if (state === 'success') {
+            container.innerHTML = `
+                <div class="quiz-done">
+                    <div class="quiz-done__icon"><i data-lucide="check-circle"></i></div>
+                    <h2 class="quiz-done__title">${escapeHtml(text('quiz.thank_you', 'Заявка отправлена'))}</h2>
+                    <p class="quiz-done__text">${escapeHtml(text('quick_question.webapp_sent', 'Свяжусь с вами в ближайшее время'))}</p>
+                    <div class="quiz-done__actions">
+                        <button class="btn btn--secondary quiz-done__home" data-quiz-home>${escapeHtml(text('common.home', 'На главную'))}</button>
+                    </div>
+                </div>
+            `;
+
+            container.querySelector('[data-quiz-home]')?.addEventListener('click', () => {
+                haptic();
+                Router.navigate('home');
+            });
+            lucide.createIcons();
+            return;
+        }
+
         container.innerHTML = `
-            <div class="quiz-done">
-                <div class="quiz-done__icon"><i data-lucide="check-circle"></i></div>
-                <h2 class="quiz-done__title">${escapeHtml(text('quiz.thank_you', 'Заявка отправлена'))}</h2>
-                <p class="quiz-done__text">${escapeHtml(text('quick_question.webapp_sent', 'Свяжусь с вами в ближайшее время'))}</p>
-                <button class="btn btn--secondary quiz-done__home" data-quiz-home>${escapeHtml(text('common.home', 'На главную'))}</button>
+            <div class="quiz-done quiz-done--error">
+                <div class="quiz-done__icon"><i data-lucide="triangle-alert"></i></div>
+                <h2 class="quiz-done__title">${escapeHtml('Не удалось отправить заявку')}</h2>
+                <p class="quiz-done__text">${escapeHtml('Попробуйте ещё раз или напишите мне напрямую, чтобы я не потерял ваше обращение.')}</p>
+                <div class="quiz-done__actions">
+                    <button class="btn btn--primary" data-quiz-contact>${escapeHtml(text('contact.write', 'Написать мне'))}</button>
+                    <button class="btn btn--secondary" data-quiz-retry>Повторить</button>
+                    <button class="btn btn--ghost quiz-done__home" data-quiz-home>${escapeHtml(text('common.home', 'На главную'))}</button>
+                </div>
             </div>
         `;
 
+        container.querySelector('[data-quiz-contact]')?.addEventListener('click', () => {
+            haptic();
+            openDirectContact();
+        });
+        container.querySelector('[data-quiz-retry]')?.addEventListener('click', () => {
+            haptic();
+            this.submit();
+        });
+        container.querySelector('[data-quiz-home]')?.addEventListener('click', () => {
+            haptic();
+            Router.navigate('home');
+        });
+        lucide.createIcons();
+    },
+
+    async submit() {
+        const container = document.getElementById('quiz-content');
+        this.renderSubmitState(container, 'sending');
         const payload = {
             quiz_type: AppState.quiz.type,
             ...AppState.quiz.answers,
@@ -1583,16 +1741,17 @@ const QuizPage = {
             payload.favorites = favItems.map(p => p.title).join(', ');
         }
 
-        submitToApi('quiz-submit', payload);
+        const result = await submitToApi('quiz-submit', payload);
 
         AppState.quiz.prefill = null;
 
-        container.querySelector('[data-quiz-home]')?.addEventListener('click', () => {
-            haptic();
-            Router.navigate('home');
-        });
+        if (result.ok) {
+            this.renderSubmitState(container, 'success');
+            return;
+        }
 
-        lucide.createIcons();
+        this.renderSubmitState(container, 'error');
+        showRequestError('Не удалось отправить заявку. Напишите мне напрямую, чтобы не потерять проект.');
     },
 };
 
@@ -1617,13 +1776,16 @@ const AuditPage = {
                 note.classList.remove('audit__note--success');
             }
 
-            const ok = await submitToApi('audit', { url });
+            const result = await submitToApi('audit', { url });
             input.value = '';
             if (note) {
-                note.textContent = ok
+                note.textContent = result.ok
                     ? text('audit.webapp_success_note', 'Результат отправлен в чат с ботом')
                     : text('audit.webapp_error_note', 'Ошибка, попробуйте позже');
-                if (ok) note.classList.add('audit__note--success');
+                if (result.ok) note.classList.add('audit__note--success');
+            }
+            if (!result.ok) {
+                showRequestError('Не удалось запустить аудит. Напишите мне напрямую, и я помогу вручную.');
             }
         });
     },

@@ -1350,6 +1350,20 @@ const ReviewsPage = {
             </div>
         `).join('');
 
+        const allBtn = document.createElement('button');
+        allBtn.className = 'btn btn--secondary';
+        allBtn.style.marginTop = '16px';
+        allBtn.innerHTML = '<i data-lucide="star"></i> Все отзывы';
+        allBtn.addEventListener('click', () => {
+            haptic();
+            const url = 'https://t.me/yanksweb_reviews';
+            if (tg?.openTelegramLink) { tg.openTelegramLink(url); }
+            else if (tg?.openLink) { tg.openLink(url); }
+            else { window.open(url, '_blank', 'noopener,noreferrer'); }
+        });
+        list.appendChild(allBtn);
+
+        lucide.createIcons();
         animateIn(list);
     },
 };

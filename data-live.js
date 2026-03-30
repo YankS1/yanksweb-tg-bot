@@ -336,6 +336,16 @@ const DATA_LIVE = {
       "media_file_id": "https://bot.yanksweb.ru/uploads/c149964d4f3240adbe27ad88465f805b_reviews-mini-app-1.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 16:48:17"
+    },
+    {
+      "id": 2,
+      "client_name": "Марта",
+      "company": null,
+      "text_ru": "Все очень понравилось, задачу выполнил на 5! Сделал красивый сайт + логотип .",
+      "text_en": "Loved everything, nailed it. Built a beautiful site + logo.",
+      "media_file_id": null,
+      "sort_order": 0,
+      "created_at": "2026-03-30 16:58:03"
     }
   ],
   "cases": [],

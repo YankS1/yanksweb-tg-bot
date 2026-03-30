@@ -343,7 +343,7 @@ const DATA_LIVE = {
       "company": null,
       "text_ru": "Все очень понравилось, задачу выполнил на 5! Сделал красивый сайт + логотип .",
       "text_en": "Loved everything, nailed it. Built a beautiful site + logo.",
-      "media_file_id": null,
+      "media_file_id": "https://bot.yanksweb.ru/uploads/f0521299915d475d8ac78878b21458e0_reviews-6.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 16:58:03"
     }

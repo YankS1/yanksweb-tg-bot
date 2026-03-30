@@ -326,7 +326,18 @@ const DATA_LIVE = {
       "created_at": "2026-03-28 23:46:10"
     }
   ],
-  "reviews": [],
+  "reviews": [
+    {
+      "id": 1,
+      "client_name": "Виктория",
+      "company": null,
+      "text_ru": "Очень хорошая работа выполнена . Приятно было работать с профессионалом. Мне всё понравилось .🔥",
+      "text_en": "Solid work, really happy with how everything turned out. Such a pleasure working with a real pro. 🔥",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/c149964d4f3240adbe27ad88465f805b_reviews-mini-app-1.jpg",
+      "sort_order": 0,
+      "created_at": "2026-03-30 16:48:17"
+    }
+  ],
   "cases": [],
   "faq": [],
   "promos": [],

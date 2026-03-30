@@ -235,6 +235,30 @@ function interpolateText(template, values = {}) {
     return result;
 }
 
+function quizSuccessCopy() {
+    const handle = String(DATA?.contact?.username || '').replace(/^@/, '').trim();
+    const rawTemplate = getLiveTexts()['quiz.thank_you'] || '';
+    const raw = interpolateText(rawTemplate, { contact: handle });
+    const plain = plainText(raw);
+    const lines = plain.split('\n').map(line => line.trim()).filter(Boolean);
+    const title = stripLeadingDecorators(lines.shift() || 'Получил вашу заявку!');
+    let body = lines.join(' ');
+    const directHandle = handle ? `@${handle}` : '';
+    if (directHandle) {
+        body = body.replace(directHandle, '').replace(/\s{2,}/g, ' ').trim();
+        body = body.replace(/Пишите:\s*$/i, '').trim();
+        body = body.replace(/Write me:\s*$/i, '').trim();
+    }
+    if (!body) {
+        body = text('quick_question.webapp_sent', 'Свяжусь с вами в ближайшее время');
+    }
+    return {
+        title,
+        body,
+        handle: directHandle,
+    };
+}
+
 function formatCompactRub(amount) {
     return `${Math.round(amount || 0).toLocaleString('ru-RU')} ₽`;
 }
@@ -536,8 +560,8 @@ const HomePage = {
         });
 
         const tgUser = tg?.initDataUnsafe?.user;
-        if (tgUser?.first_name) {
-            nameInput.value = tgUser.first_name;
+        if (tgUser?.first_name || tgUser?.username) {
+            nameInput.value = tgUser.first_name || tgUser.username || '';
         }
 
         const dateHint = document.getElementById('bookingDateHint');
@@ -553,6 +577,7 @@ const HomePage = {
         nameInput.addEventListener('input', checkFormReady);
         dateInput.addEventListener('input', checkFormReady);
         dateInput.addEventListener('change', checkFormReady);
+        checkFormReady();
 
         submitBtn.addEventListener('click', async () => {
             haptic();
@@ -1151,6 +1176,35 @@ const CalculatorPage = {
             `<span>${escapeHtml(text('calculator.webapp_timeline', 'Сроки:'))}</span> ${escapeHtml(this.getTimelineLabel(st.timeline) || '-')}`;
     },
 
+    toQuiz() {
+        const { max } = this.calculatePrice();
+        const budget = max <= 15000 ? '15'
+            : max <= 30000 ? '30'
+            : max <= 50000 ? '50'
+            : max <= 100000 ? '100'
+            : '200';
+
+        const featureMap = {
+            forms: 'forms',
+            crm: 'integrations',
+            catalog: 'catalog',
+            payment: 'payment',
+            i18n: 'multilang',
+            seo: 'seo',
+        };
+
+        AppState.quiz.prefill = {
+            site_type: AppState.calculator.type,
+            budget,
+            features: AppState.calculator.features
+                .map(feature => featureMap[feature])
+                .filter(Boolean),
+        };
+
+        Router.navigate('quiz');
+        QuizPage.startQuiz('quick');
+    },
+
     reset() {
         AppState.calculator = {
             type: null,
@@ -1244,7 +1298,7 @@ const CalculatorPage = {
 
         document.getElementById('calcSubmitBtn').addEventListener('click', () => {
             haptic();
-            this.showResult();
+            this.toQuiz();
         });
     },
 };
@@ -1681,17 +1735,23 @@ const QuizPage = {
         }
 
         if (state === 'success') {
+            const success = quizSuccessCopy();
             container.innerHTML = `
                 <div class="quiz-done">
                     <div class="quiz-done__icon"><i data-lucide="check-circle"></i></div>
-                    <h2 class="quiz-done__title">${escapeHtml(text('quiz.thank_you', 'Заявка отправлена'))}</h2>
-                    <p class="quiz-done__text">${escapeHtml(text('quick_question.webapp_sent', 'Свяжусь с вами в ближайшее время'))}</p>
+                    <h2 class="quiz-done__title">${escapeHtml(success.title)}</h2>
+                    <p class="quiz-done__text">${escapeHtml(success.body)}</p>
+                    ${success.handle ? `<button class="quiz-done__contact" type="button" data-quiz-contact-link>${escapeHtml(success.handle)}</button>` : ''}
                     <div class="quiz-done__actions">
                         <button class="btn btn--secondary quiz-done__home" data-quiz-home>${escapeHtml(text('common.home', 'На главную'))}</button>
                     </div>
                 </div>
             `;
 
+            container.querySelector('[data-quiz-contact-link]')?.addEventListener('click', () => {
+                haptic();
+                openDirectContact();
+            });
             container.querySelector('[data-quiz-home]')?.addEventListener('click', () => {
                 haptic();
                 Router.navigate('home');

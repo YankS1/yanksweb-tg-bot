@@ -356,6 +356,16 @@ const DATA_LIVE = {
       "media_file_id": "https://bot.yanksweb.ru/uploads/62108bdf001c4187a39c81e3179066de_reviews-5.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 16:59:44"
+    },
+    {
+      "id": 4,
+      "client_name": "Максим",
+      "company": null,
+      "text_ru": "Рекомендую Даниила! Выполнил все что требовалось и даже больше! Сразу договорились. Понял задачу с полуслова. Всегда был на связи. Проявлял инициативу. Вообщем лучший специалист! Не ошибетесь.",
+      "text_en": "Highly recommend Daniil! Did everything I needed and even more. We agreed on everything right away, he understood the task immediately. Always in touch, always took initiative. Best specialist out there. You won't go wrong!",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/cc4cf0e52dd94397a746887f6ad1d918_reviews-2.jpg",
+      "sort_order": 0,
+      "created_at": "2026-03-30 17:01:30"
     }
   ],
   "cases": [],

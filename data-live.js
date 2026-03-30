@@ -328,18 +328,6 @@ const DATA_LIVE = {
   ],
   "reviews": [
     {
-      "id": 5,
-      "client_name": "Евгений",
-      "company": null,
-      "text_ru": "Рекомендую Даниила на 11/10! Очень быстро нашли коннект по структуре, стилю и в целом оформлению.\r\nСайт выглядит максимально профессионально, все изображения товаров подогнаны под единый стиль оформления, анимации шрифты итд - все Даниил сделал исходя из видения и попал в точку. Я прислал несколько сайтов референсов, опять же поняли друг друга с полуслова.\r\n\r\nВсе основные работы по сайту завершил в срок - максимально быстро все согласовывали в процессе, постоянно на контакте в хорошем смысле слова. Все по делу - там где нужно согласовать (где нужно мое мнение по моему продукту - согласовываем, все что может сам решить как эксперт в своей области - решает)",
-      "text_en": "I'd recommend Daniil 11/10! We immediately found common ground on structure, style and overall design. The site looks super professional - all product images are aligned to a consistent style, animations, fonts, etc - Daniil took the vision and hit the mark perfectly. I sent a few reference sites and again, we understood each other right away.\r\n\r\nAll the main work was completed on time - approvals went super fast throughout the process, he was always in touch in the best way possible. Everything was on point - where he needed my opinion on my product we'd align, and everything he could decide himself as an expert in his field - he just decided.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/21339bf7f50f4cdfb928b0d3e7c8d5ea_reviews-3.jpg",
-      "sort_order": 0,
-      "created_at": "2026-03-30 17:04:58",
-      "url": null,
-      "client_name_en": null
-    },
-    {
       "id": 8,
       "client_name": "Марта",
       "company": null,

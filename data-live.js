@@ -376,6 +376,16 @@ const DATA_LIVE = {
       "media_file_id": "https://bot.yanksweb.ru/uploads/21339bf7f50f4cdfb928b0d3e7c8d5ea_reviews-3.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 17:04:58"
+    },
+    {
+      "id": 6,
+      "client_name": "Александр",
+      "company": null,
+      "text_ru": "Очень профессиональная работа! Все было выполнено под ключ, Даниил сам провел анализ конкурентов, составил логику и смыслы сайта, причем сделал это все очень оперативно. Итоговый сайт превзошел все ожидания. В итоге я очень рад и благодарен, рекомендую!",
+      "text_en": "Super professional work! Everything was done turnkey - Daniil ran the competitor analysis himself, put together the site logic and messaging, and did it all crazy fast. The final site blew past all my expectations. Couldn't be happier, definitely recommend!",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/383c793a2a264bde8989a4e3902683d5_reviews-4.jpg",
+      "sort_order": 0,
+      "created_at": "2026-03-30 17:06:37"
     }
   ],
   "cases": [],

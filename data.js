@@ -465,7 +465,7 @@ const DATA = {
 
   contact: {
     name: "Даниил",
-    username: "yanksweb",
+    username: "yanks_21",
     tagline: "Разрабатываю сайты под ключ - от дизайна до запуска",
     description: "Без агентств, без посредников: все делаю сам."
   },

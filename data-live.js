@@ -335,7 +335,8 @@ const DATA_LIVE = {
       "text_en": "Solid work, really happy with how everything turned out. Such a pleasure working with a real pro. 🔥",
       "media_file_id": "https://bot.yanksweb.ru/uploads/c149964d4f3240adbe27ad88465f805b_reviews-mini-app-1.jpg",
       "sort_order": 0,
-      "created_at": "2026-03-30 16:48:17"
+      "created_at": "2026-03-30 16:48:17",
+      "url": "https://школасеменовой.рф/"
     },
     {
       "id": 2,
@@ -345,7 +346,8 @@ const DATA_LIVE = {
       "text_en": "Loved everything, nailed it. Built a beautiful site + logo.",
       "media_file_id": "https://bot.yanksweb.ru/uploads/f0521299915d475d8ac78878b21458e0_reviews-6.jpg",
       "sort_order": 0,
-      "created_at": "2026-03-30 16:58:03"
+      "created_at": "2026-03-30 16:58:03",
+      "url": null
     },
     {
       "id": 3,
@@ -355,7 +357,8 @@ const DATA_LIVE = {
       "text_en": "Everything was done top notch and way faster than we originally discussed. No unnecessary questions, no upselling, nothing extra. He just got it done.",
       "media_file_id": "https://bot.yanksweb.ru/uploads/62108bdf001c4187a39c81e3179066de_reviews-5.jpg",
       "sort_order": 0,
-      "created_at": "2026-03-30 16:59:44"
+      "created_at": "2026-03-30 16:59:44",
+      "url": null
     },
     {
       "id": 4,
@@ -365,7 +368,8 @@ const DATA_LIVE = {
       "text_en": "Highly recommend Daniil! Did everything I needed and even more. We agreed on everything right away, he understood the task immediately. Always in touch, always took initiative. Best specialist out there. You won't go wrong!",
       "media_file_id": "https://bot.yanksweb.ru/uploads/cc4cf0e52dd94397a746887f6ad1d918_reviews-2.jpg",
       "sort_order": 0,
-      "created_at": "2026-03-30 17:01:30"
+      "created_at": "2026-03-30 17:01:30",
+      "url": null
     },
     {
       "id": 5,
@@ -375,7 +379,8 @@ const DATA_LIVE = {
       "text_en": "I'd recommend Daniil 11/10! We immediately found common ground on structure, style and overall design. The site looks super professional - all product images are aligned to a consistent style, animations, fonts, etc - Daniil took the vision and hit the mark perfectly. I sent a few reference sites and again, we understood each other right away.\r\n\r\nAll the main work was completed on time - approvals went super fast throughout the process, he was always in touch in the best way possible. Everything was on point - where he needed my opinion on my product we'd align, and everything he could decide himself as an expert in his field - he just decided.",
       "media_file_id": "https://bot.yanksweb.ru/uploads/21339bf7f50f4cdfb928b0d3e7c8d5ea_reviews-3.jpg",
       "sort_order": 0,
-      "created_at": "2026-03-30 17:04:58"
+      "created_at": "2026-03-30 17:04:58",
+      "url": null
     },
     {
       "id": 6,
@@ -385,7 +390,8 @@ const DATA_LIVE = {
       "text_en": "Super professional work! Everything was done turnkey - Daniil ran the competitor analysis himself, put together the site logic and messaging, and did it all crazy fast. The final site blew past all my expectations. Couldn't be happier, definitely recommend!",
       "media_file_id": "https://bot.yanksweb.ru/uploads/383c793a2a264bde8989a4e3902683d5_reviews-4.jpg",
       "sort_order": 0,
-      "created_at": "2026-03-30 17:06:37"
+      "created_at": "2026-03-30 17:06:37",
+      "url": null
     }
   ],
   "cases": [],
@@ -1742,7 +1748,6 @@ const DATA_LIVE_ICON_MAP = {
     company: pick(item.company),
     text: pick(item.text_ru, item.text_en, item.text),
     image: pick(item.media_file_id, item.media_url, item.image),
-    url: pick(item.url),
   });
 
   const mapCase = (item) => ({

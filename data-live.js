@@ -326,23 +326,7 @@ const DATA_LIVE = {
       "created_at": "2026-03-28 23:46:10"
     }
   ],
-  "reviews": [
-    {
-      "id": 10,
-      "client_name": "opencartmaster",
-      "company": null,
-      "text_ru": "Верстка выполнена быстро и качественно, с учетом всех пожеланий! Даже с учетом того что макета в фигме не было, а были просто наброски дизайна. Рекомендую к сотрудничеству!",
-      "text_en": "The layout was done quickly and efficiently, taking into account all the wishes! Even taking into account the fact that there was no layout in the figure, but there were just sketches of the design. I recommend you to cooperate!",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/d2d5f697970e407f8200ba400a0a7457_reviews-1.jpg",
-      "sort_order": 0,
-      "created_at": "2026-03-30 18:37:12",
-      "url": "null",
-      "client_name_en": "opencartmaster",
-      "show_in_app": 1,
-      "project_type": "Адаптивная верстка сайта",
-      "project_type_en": "Adaptive website layout"
-    }
-  ],
+  "reviews": [],
   "cases": [],
   "faq": [],
   "promos": [],

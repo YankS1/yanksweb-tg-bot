@@ -270,6 +270,11 @@ function portfolioCategoryLabel(category) {
         shops: ['miniapp.filter.shops', 'Магазины'],
         design: ['miniapp.filter.design', 'Дизайн'],
     };
+    if (category && category.includes(',')) {
+        const first = category.split(',')[0].trim();
+        const [key, fallback] = mapping[first] || [];
+        return key ? text(key, fallback) : first;
+    }
     const [key, fallback] = mapping[category] || [];
     return key ? text(key, fallback) : category;
 }
@@ -468,12 +473,14 @@ function updateTabBar(pageId) {
 
 function toggleMoreMenu() {
     const menu = document.getElementById('more-menu');
-    menu.classList.toggle('more-menu--open');
+    const isOpen = menu.classList.toggle('more-menu--open');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
 }
 
 function closeMoreMenu() {
     const menu = document.getElementById('more-menu');
     menu.classList.remove('more-menu--open');
+    document.body.style.overflow = '';
 }
 
 /* === Detail Overlay === */
@@ -483,12 +490,14 @@ function openOverlay(html) {
     const content = document.getElementById('detail-content');
     content.innerHTML = html;
     overlay.classList.add('overlay--open');
+    document.body.style.overflow = 'hidden';
     lucide.createIcons();
 }
 
 function closeOverlay() {
     const overlay = document.getElementById('detail-overlay');
     overlay.classList.remove('overlay--open');
+    document.body.style.overflow = '';
 }
 
 /* === Home Page === */
@@ -602,8 +611,13 @@ const HomePage = {
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
                     <h3>${escapeHtml(text('waitlist.webapp_sent_title', 'Бронь отправлена!'))}</h3>
                     <p>${escapeHtml(text('waitlist.webapp_confirmed', 'Свяжусь с вами в ближайшее время для уточнения деталей'))}</p>
+                    <button class="btn btn--ghost" id="bookingReset" style="margin-top:12px">Забронировать ещё</button>
                 </div>
             `;
+            document.getElementById('bookingReset')?.addEventListener('click', () => {
+                haptic();
+                location.reload();
+            });
         });
     },
 };
@@ -838,10 +852,10 @@ const PortfolioPage = {
                         ${item.description ? `<p class="portfolio-item__desc">${nl2br(escapeHtml(item.description))}</p>` : ''}
                         <div class="portfolio-item__actions">
                             ${item.url ? `
-                                <a class="portfolio-item__btn" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">
+                                <button class="portfolio-item__btn" data-open-url="${escapeHtml(item.url)}">
                                     <i data-lucide="external-link"></i>
                                     ${escapeHtml(labelText('portfolio.open_site', 'Открыть сайт'))}
-                                </a>
+                                </button>
                             ` : ''}
                             <button class="portfolio-item__btn portfolio-item__btn--fav ${isFav ? 'portfolio-item__btn--fav-active' : ''}" data-fav-id="${escapeHtml(String(item.id || ''))}">
                                 <i data-lucide="heart"></i>
@@ -890,6 +904,15 @@ const PortfolioPage = {
         if (this._eventsBound) return;
         this._eventsBound = true;
         document.getElementById('portfolio-feed').addEventListener('click', e => {
+            const urlBtn = e.target.closest('[data-open-url]');
+            if (urlBtn) {
+                haptic();
+                const url = urlBtn.dataset.openUrl;
+                if (tg?.openLink) { tg.openLink(url); }
+                else { window.open(url, '_blank', 'noopener,noreferrer'); }
+                return;
+            }
+
             const favBtn = e.target.closest('[data-fav-id]');
             if (!favBtn) return;
             haptic();
@@ -1351,9 +1374,18 @@ const CasesPage = {
                 ${c.task ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.task', 'Задача'))}:</strong><p>${nl2br(escapeHtml(c.task))}</p></div>` : ''}
                 ${c.solution ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.solution', 'Решение'))}:</strong><p>${nl2br(escapeHtml(c.solution))}</p></div>` : ''}
                 ${c.result ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.result', 'Результат'))}:</strong><p>${nl2br(escapeHtml(c.result))}</p></div>` : ''}
-                ${c.url ? `<a class="btn btn--secondary case-card__link" href="${escapeHtml(c.url)}" target="_blank">${escapeHtml(labelText('reviews.open_site', 'Открыть сайт'))}</a>` : ''}
+                ${c.url ? `<button class="btn btn--secondary case-card__link" data-open-url="${escapeHtml(c.url)}">${escapeHtml(labelText('reviews.open_site', 'Открыть сайт'))}</button>` : ''}
             </div>
         `).join('');
+
+        list.querySelectorAll('[data-open-url]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                const url = btn.dataset.openUrl;
+                if (tg?.openLink) { tg.openLink(url); }
+                else { window.open(url, '_blank', 'noopener,noreferrer'); }
+            });
+        });
 
         animateIn(list);
     },
@@ -1978,14 +2010,36 @@ function initMoreMenu() {
     menu.querySelector('.more-menu__backdrop').addEventListener('click', () => {
         closeMoreMenu();
     });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && menu.classList.contains('more-menu--open')) {
+            closeMoreMenu();
+        }
+    });
 }
 
 /* === Overlay Events === */
 
 function initOverlay() {
+    const overlay = document.getElementById('detail-overlay');
+
     document.getElementById('overlayClose').addEventListener('click', () => {
         haptic();
         closeOverlay();
+    });
+
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) {
+            haptic();
+            closeOverlay();
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && overlay.classList.contains('overlay--open')) {
+            haptic();
+            closeOverlay();
+        }
     });
 }
 

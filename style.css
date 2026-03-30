@@ -635,7 +635,7 @@ body.app-ready #app {
 }
 
 .booking-form__date-input {
-    color-scheme: dark;
+    color-scheme: light dark;
 }
 
 .booking-form__submit {

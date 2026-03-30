@@ -1347,8 +1347,18 @@ const ReviewsPage = {
                     ${r.company ? `<span class="review-card__company">${escapeHtml(r.company)}</span>` : ''}
                 </div>
                 <p class="review-card__text">${nl2br(escapeHtml(r.text || ''))}</p>
+                ${r.url ? `<button class="btn btn--ghost review-card__link" data-open-url="${escapeHtml(r.url)}"><i data-lucide="external-link"></i> Посмотреть сайт</button>` : ''}
             </div>
         `).join('');
+
+        list.querySelectorAll('[data-open-url]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                const url = btn.dataset.openUrl;
+                if (tg?.openLink) { tg.openLink(url); }
+                else { window.open(url, '_blank', 'noopener,noreferrer'); }
+            });
+        });
 
         const allBtn = document.createElement('button');
         allBtn.className = 'btn btn--secondary';
@@ -2092,6 +2102,7 @@ async function loadLiveData() {
                             company: i.company || '',
                             text: i.text_ru || '',
                             image: i.media_file_id || '',
+                            url: i.url || '',
                         }));
                     } else if (key === 'cases') {
                         DATA.cases = json.items.map(i => ({

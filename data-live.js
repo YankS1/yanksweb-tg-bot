@@ -1742,6 +1742,7 @@ const DATA_LIVE_ICON_MAP = {
     company: pick(item.company),
     text: pick(item.text_ru, item.text_en, item.text),
     image: pick(item.media_file_id, item.media_url, item.image),
+    url: pick(item.url),
   });
 
   const mapCase = (item) => ({

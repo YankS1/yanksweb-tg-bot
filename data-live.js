@@ -347,7 +347,7 @@ const DATA_LIVE = {
       "media_file_id": "https://bot.yanksweb.ru/uploads/f0521299915d475d8ac78878b21458e0_reviews-6.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 16:58:03",
-      "url": null
+      "url": "null"
     },
     {
       "id": 3,

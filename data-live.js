@@ -328,17 +328,6 @@ const DATA_LIVE = {
   ],
   "reviews": [
     {
-      "id": 2,
-      "client_name": "Марта",
-      "company": null,
-      "text_ru": "Все очень понравилось, задачу выполнил на 5! Сделал красивый сайт + логотип .",
-      "text_en": "Loved everything, nailed it. Built a beautiful site + logo.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/f0521299915d475d8ac78878b21458e0_reviews-6.jpg",
-      "sort_order": 0,
-      "created_at": "2026-03-30 16:58:03",
-      "url": "null"
-    },
-    {
       "id": 3,
       "client_name": "Алексей",
       "company": null,
@@ -347,7 +336,8 @@ const DATA_LIVE = {
       "media_file_id": "https://bot.yanksweb.ru/uploads/62108bdf001c4187a39c81e3179066de_reviews-5.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 16:59:44",
-      "url": null
+      "url": null,
+      "client_name_en": null
     },
     {
       "id": 4,
@@ -358,7 +348,8 @@ const DATA_LIVE = {
       "media_file_id": "https://bot.yanksweb.ru/uploads/cc4cf0e52dd94397a746887f6ad1d918_reviews-2.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 17:01:30",
-      "url": null
+      "url": null,
+      "client_name_en": null
     },
     {
       "id": 5,
@@ -369,7 +360,8 @@ const DATA_LIVE = {
       "media_file_id": "https://bot.yanksweb.ru/uploads/21339bf7f50f4cdfb928b0d3e7c8d5ea_reviews-3.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 17:04:58",
-      "url": null
+      "url": null,
+      "client_name_en": null
     },
     {
       "id": 8,
@@ -380,7 +372,8 @@ const DATA_LIVE = {
       "media_file_id": "https://bot.yanksweb.ru/uploads/4b2300d09ac64919a18abef7b91623a0_reviews-6.jpg",
       "sort_order": 0,
       "created_at": "2026-03-30 17:28:13",
-      "url": "https://рускомпонент.рф/"
+      "url": "https://рускомпонент.рф/",
+      "client_name_en": null
     }
   ],
   "cases": [],

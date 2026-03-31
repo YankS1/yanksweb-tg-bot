@@ -347,6 +347,26 @@ const DATA_LIVE = {
       "niche": "Детский спорт / Футбольная школа",
       "stack": "WordPress, HTML/CSS/JS, Figma",
       "timeline": "3 недели"
+    },
+    {
+      "id": 2,
+      "title_ru": "РосЭксперт - редизайн главной центра сертификации",
+      "title_en": "RosExperts - Main Page Redesign for Certification Center",
+      "task_ru": "Старая главная выглядела устаревшей и не отражала масштаб компании - 14 лет на рынке, 14 000 клиентов, 51 000 документов. Мелкие иконки услуг без визуала, базовая структура без акцентов. Посетитель не понимал, почему стоит выбрать именно РосЭксперт среди десятков конкурентов.",
+      "task_en": "Old homepage looked outdated and did not reflect the company scale. Small service icons, basic structure without visual accents.",
+      "solution_ru": "Полный редизайн главной с упором на доверие и экспертизу.\n\nНовый hero-блок с живым фото и чёткими УТП: скидка, работа без предоплаты, официальное оформление. Услуги разделены на два формата - популярные запросы с фото и полный каталог с фильтрами по направлениям и отраслям.\n\nДобавлен промо-блок со скидкой, блок Узнайте нас с ключевыми цифрами компании, обновлённая команда с должностями, карусель реальных отзывов с документами.\n\nНовости и статьи получили карточки с изображениями вместо текстовых ссылок. Карта лабораторий и подвал переработаны.",
+      "solution_en": "Full redesign of the main page focusing on trust and expertise. New hero block, service catalog with filters, promo section, team cards, review carousel.",
+      "result_ru": "Современная главная, которая сразу показывает масштаб и экспертизу компании. Клиент проверил с коллегами, внесли правки - всё отлично. Продолжаем сотрудничество на постоянной основе: регулярные доработки, новые страницы, реализация сложной логики.",
+      "result_en": "Modern homepage that immediately shows company scale and expertise. Client verified with colleagues, made adjustments - everything perfect. Ongoing collaboration.",
+      "before_media_id": null,
+      "after_media_id": null,
+      "url": "https://rosexperts.ru/",
+      "sort_order": 1,
+      "created_at": "2026-03-31 22:24:10",
+      "client_name": "Роман",
+      "niche": "Сертификация продукции / B2B",
+      "stack": "WordPress, HTML/CSS/JS, Figma",
+      "timeline": "2 недели"
     }
   ],
   "faq": [],

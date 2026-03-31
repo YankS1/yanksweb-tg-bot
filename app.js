@@ -1491,6 +1491,12 @@ const CasesPage = {
         if (!el) return;
         const handle = el.querySelector('.ba-slider__handle');
         const beforeWrap = el.querySelector('.ba-slider__before-wrap');
+        const beforeImg = el.querySelector('.ba-slider__before');
+
+        const syncWidth = () => { beforeImg.style.width = el.offsetWidth + 'px'; };
+        syncWidth();
+        window.addEventListener('resize', syncWidth);
+
         let dragging = false;
 
         const move = (clientX) => {

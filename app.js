@@ -1400,7 +1400,8 @@ const CasesPage = {
         if (this._activeIndex >= DATA.cases.length) this._activeIndex = 0;
 
         tabs.innerHTML = DATA.cases.map((c, i) => {
-            const label = escapeHtml(c.client_name || c.title || '');
+            const raw = c.title || c.client_name || '';
+            const label = escapeHtml(raw.split(' - ')[0].split(' — ')[0].trim());
             const active = i === this._activeIndex ? ' cases-tabs__btn--active' : '';
             return `<button class="cases-tabs__btn${active}" data-case-idx="${i}">${label}</button>`;
         }).join('');
@@ -1412,6 +1413,11 @@ const CasesPage = {
                 this.render();
             });
         });
+
+        const activeBtn = tabs.querySelector('.cases-tabs__btn--active');
+        if (activeBtn) {
+            activeBtn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+        }
 
         this._renderDetail();
     },
@@ -1430,18 +1436,18 @@ const CasesPage = {
             mediaHtml = `
                 <div class="ba-slider" data-ba-slider>
                     <img class="ba-slider__after" src="${escapeHtml(c.image_after)}" alt="After" draggable="false">
-                    <div class="ba-slider__before-wrap" style="width:50%">
+                    <div class="ba-slider__before-wrap" style="width:25%">
                         <img class="ba-slider__before" src="${escapeHtml(c.image_before)}" alt="Before" draggable="false">
                     </div>
-                    <div class="ba-slider__handle" style="left:50%">
+                    <div class="ba-slider__handle" style="left:25%">
                         <div class="ba-slider__handle-line"></div>
                         <div class="ba-slider__handle-circle">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4L3 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 4L17 10L13 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
                         <div class="ba-slider__handle-line"></div>
                     </div>
-                    <span class="ba-slider__label ba-slider__label--before">Before</span>
-                    <span class="ba-slider__label ba-slider__label--after">After</span>
+                    <span class="ba-slider__label ba-slider__label--before">${escapeHtml(text('cases.before', 'До'))}</span>
+                    <span class="ba-slider__label ba-slider__label--after">${escapeHtml(text('cases.after', 'После'))}</span>
                 </div>`;
         } else if (hasAfter) {
             mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_after)}" alt="" loading="lazy"></div>`;

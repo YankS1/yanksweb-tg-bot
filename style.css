@@ -1478,6 +1478,9 @@ body.app-ready #app {
     margin-bottom: 16px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    position: relative;
+    mask-image: linear-gradient(to right, #000 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 85%, transparent 100%);
 }
 
 .cases-tabs::-webkit-scrollbar {
@@ -1486,22 +1489,25 @@ body.app-ready #app {
 
 .cases-tabs__btn {
     flex-shrink: 0;
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: var(--radius-pill);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     background: var(--secondary-bg);
-    color: var(--hint);
+    color: var(--text);
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
     transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 .cases-tabs__btn--active {
     background: var(--accent);
     color: var(--btn-text);
     border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(36, 129, 204, 0.3);
 }
 
 /* === CASES CARD === */
@@ -1531,21 +1537,23 @@ body.app-ready #app {
 }
 
 .case-card__title {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 700;
     margin-bottom: 8px;
     line-height: 1.3;
+    color: var(--text);
 }
 
 .case-card__meta {
-    font-size: 12px;
-    color: var(--hint);
+    font-size: 13px;
+    color: var(--subtitle);
     margin-bottom: 16px;
     line-height: 1.4;
+    opacity: 0.85;
 }
 
 .case-card__section {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .case-card__section:last-of-type {
@@ -1555,17 +1563,18 @@ body.app-ready #app {
 .case-card__section strong {
     display: block;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.5px;
     color: var(--accent);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .case-card__section p {
     font-size: 14px;
-    color: var(--hint);
-    line-height: 1.6;
+    color: var(--text);
+    line-height: 1.7;
+    opacity: 0.9;
 }
 
 .case-card__link {
@@ -1577,6 +1586,7 @@ body.app-ready #app {
 .ba-slider {
     position: relative;
     width: 100%;
+    max-height: 70vh;
     overflow: hidden;
     cursor: ew-resize;
     user-select: none;

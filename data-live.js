@@ -327,7 +327,28 @@ const DATA_LIVE = {
     }
   ],
   "reviews": [],
-  "cases": [],
+  "cases": [
+    {
+      "id": 1,
+      "title_ru": "ФК Импульс Тула - сайт международной футбольной школы",
+      "title_en": "FC Impulse Tula - International Football School Website",
+      "task_ru": "Старый сайт на Tilda не конвертировал платный трафик. Школа в топе поиска по Туле, большой поток рекламы - нужен современный продающий сайт на WordPress.",
+      "task_en": "Old Tilda site was not converting paid traffic. Top search rankings in Tula with heavy ad spend - needed a modern WordPress site.",
+      "solution_ru": "Дизайнер подготовил макеты в Figma, я реализовал верстку и интеграцию с WordPress.\r\n\r\nСверстано ~15 страниц: продающая главная с CTA, блок достижений (91 город, 15 000+ учеников, игроки в сборной и РПЛ), презентация основателя и авторской методики, интерактивная карта франшизы по России.\r\n\r\nРазделы: тренерский состав, площадки, летние лагеря, образовательные программы, новости с категориями, галерея, отзывы, FAQ, интернет-магазин клубной атрибутики, вакансии, контакты.\r\n\r\nПолный адаптив под мобильные (основной рекламный трафик - мобильный).",
+      "solution_en": "Designer prepared Figma mockups, I built the layout and WordPress integration. ~15 pages: selling homepage, achievements, franchise map, coaching staff, training fields, summer camps, news, gallery, reviews, FAQ, merchandise store, contacts. Fully responsive for mobile.",
+      "result_ru": "Современный сайт в топе поиска по Туле. Принимает рекламный трафик и конвертирует в заявки на бесплатное занятие. Клиент управляет контентом через WordPress - новости, тренеры, товары, галерея.",
+      "result_en": "Modern website ranking top in Tula search. Converts ad traffic into free trial applications. Client manages all content via WordPress.",
+      "before_media_id": "https://bot.yanksweb.ru/uploads/88133ad20bee497192e2bf1601d2a825_fc-impuls-old.webp",
+      "after_media_id": "https://bot.yanksweb.ru/uploads/14a994e1ab0249d996156f8dca2dfaf2_fc-impuls-new.webp",
+      "url": "https://fc-impulstula.ru/",
+      "sort_order": 0,
+      "created_at": "2026-03-31 14:42:40",
+      "client_name": "Максим",
+      "niche": "Детский спорт / Футбольная школа",
+      "stack": "WordPress, HTML/CSS/JS, Figma",
+      "timeline": "3 недели"
+    }
+  ],
   "faq": [],
   "promos": [],
   "texts": {
@@ -662,7 +683,8 @@ const DATA_LIVE = {
       "waitlist.webapp_sending": "Отправляю...",
       "waitlist.webapp_sent_title": "Бронь отправлена!",
       "common.next_label": "Далее",
-      "common.home": "На главную"
+      "common.home": "На главную",
+      "reviews.case_details": "📋 Подробнее"
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel — YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end — design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -995,7 +1017,8 @@ const DATA_LIVE = {
       "waitlist.webapp_sending": "Sending...",
       "waitlist.webapp_sent_title": "Booking sent!",
       "common.next_label": "Next",
-      "common.home": "Home"
+      "common.home": "Home",
+      "reviews.case_details": "📋 More details"
     }
   },
   "services": [

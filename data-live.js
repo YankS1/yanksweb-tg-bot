@@ -334,7 +334,7 @@ const DATA_LIVE = {
       "title_en": "FC Impulse Tula - International Football School Website",
       "task_ru": "Старый сайт на Tilda не конвертировал платный трафик. Школа в топе поиска по Туле, большой поток рекламы - нужен современный продающий сайт на WordPress.",
       "task_en": "Old Tilda site was not converting paid traffic. Top search rankings in Tula with heavy ad spend - needed a modern WordPress site.",
-      "solution_ru": "Дизайнер подготовил макеты в Figma, я реализовал верстку и интеграцию с WordPress.\r\n\r\nСверстано ~15 страниц: продающая главная с CTA, блок достижений (91 город, 15 000+ учеников, игроки в сборной и РПЛ), презентация основателя и авторской методики, интерактивная карта франшизы по России.\r\n\r\nРазделы: тренерский состав, площадки, летние лагеря, образовательные программы, новости с категориями, галерея, отзывы, FAQ, интернет-магазин клубной атрибутики, вакансии, контакты.\r\n\r\nПолный адаптив под мобильные (основной рекламный трафик - мобильный).",
+      "solution_ru": "Дизайнер подготовил макеты в Figma, я реализовал верстку и интеграцию с WordPress.\n\nСверстано ~15 страниц: продающая главная с CTA, блок достижений (91 город, 15 000+ учеников, игроки в сборной и РПЛ), презентация основателя и авторской методики, интерактивная карта франшизы по России.\n\nРазделы: тренерский состав, площадки, летние лагеря, образовательные программы, новости с категориями, галерея, отзывы, FAQ, интернет-магазин клубной атрибутики, вакансии, контакты.\n\nПолный адаптив под мобильные (основной рекламный трафик - мобильный).",
       "solution_en": "Designer prepared Figma mockups, I built the layout and WordPress integration. ~15 pages: selling homepage, achievements, franchise map, coaching staff, training fields, summer camps, news, gallery, reviews, FAQ, merchandise store, contacts. Fully responsive for mobile.",
       "result_ru": "Современный сайт в топе поиска по Туле. Принимает рекламный трафик и конвертирует в заявки на бесплатное занятие. Клиент управляет контентом через WordPress - новости, тренеры, товары, галерея.",
       "result_en": "Modern website ranking top in Tula search. Converts ad traffic into free trial applications. Client manages all content via WordPress.",
@@ -1713,7 +1713,12 @@ const DATA_LIVE_ICON_MAP = {
     solution: pick(item.solution_ru, item.solution_en, item.solution),
     result: pick(item.result_ru, item.result_en, item.result),
     url: pick(item.url),
-    image: pick(item.before_media_id, item.before_media_url, item.image),
+    image_before: pick(item.before_media_id, item.before_media_url),
+    image_after: pick(item.after_media_id, item.after_media_url),
+    client_name: pick(item.client_name),
+    niche: pick(item.niche),
+    stack: pick(item.stack),
+    timeline: pick(item.timeline),
   });
 
   const mapFaq = (item) => ({

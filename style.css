@@ -1611,9 +1611,7 @@ body.app-ready #app {
 
 .ba-slider__before {
     display: block;
-    height: 100%;
-    object-fit: cover;
-    object-position: top left;
+    height: auto;
     pointer-events: none;
 }
 

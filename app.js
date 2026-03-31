@@ -1436,10 +1436,10 @@ const CasesPage = {
             mediaHtml = `
                 <div class="ba-slider" data-ba-slider>
                     <img class="ba-slider__after" src="${escapeHtml(c.image_after)}" alt="After" draggable="false">
-                    <div class="ba-slider__before-wrap" style="width:25%">
+                    <div class="ba-slider__before-wrap" style="width:50%">
                         <img class="ba-slider__before" src="${escapeHtml(c.image_before)}" alt="Before" draggable="false">
                     </div>
-                    <div class="ba-slider__handle" style="left:25%">
+                    <div class="ba-slider__handle" style="left:50%">
                         <div class="ba-slider__handle-line"></div>
                         <div class="ba-slider__handle-circle">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4L3 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 4L17 10L13 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>

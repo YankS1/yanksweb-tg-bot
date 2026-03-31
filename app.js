@@ -1492,10 +1492,34 @@ const CasesPage = {
         const handle = el.querySelector('.ba-slider__handle');
         const beforeWrap = el.querySelector('.ba-slider__before-wrap');
         const beforeImg = el.querySelector('.ba-slider__before');
+        const afterImg = el.querySelector('.ba-slider__after');
 
-        const syncWidth = () => { beforeImg.style.width = el.offsetWidth + 'px'; };
-        syncWidth();
-        window.addEventListener('resize', syncWidth);
+        const syncSize = () => {
+            const w = el.offsetWidth;
+            beforeImg.style.width = w + 'px';
+            afterImg.style.width = w + 'px';
+        };
+
+        const equalizeHeight = () => {
+            afterImg.style.maxHeight = 'none';
+            beforeImg.style.maxHeight = 'none';
+            syncSize();
+            const hA = afterImg.naturalHeight / afterImg.naturalWidth * el.offsetWidth;
+            const hB = beforeImg.naturalHeight / beforeImg.naturalWidth * el.offsetWidth;
+            const minH = Math.min(hA, hB);
+            if (hA !== hB && minH > 0) {
+                el.style.maxHeight = minH + 'px';
+            }
+        };
+
+        let loaded = 0;
+        const onLoad = () => { if (++loaded >= 2) equalizeHeight(); };
+        if (afterImg.complete) loaded++; else afterImg.addEventListener('load', onLoad);
+        if (beforeImg.complete) loaded++; else beforeImg.addEventListener('load', onLoad);
+        if (loaded >= 2) equalizeHeight();
+
+        syncSize();
+        window.addEventListener('resize', () => { syncSize(); equalizeHeight(); });
 
         let dragging = false;
 

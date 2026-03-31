@@ -1381,28 +1381,93 @@ const ReviewsPage = {
 /* === Cases Page === */
 
 const CasesPage = {
+    _activeIndex: 0,
+
     render() {
-        const list = document.getElementById('cases-list');
+        const tabs = document.getElementById('casesTabs');
+        const detail = document.getElementById('cases-detail');
         const empty = document.getElementById('casesEmpty');
 
         if (!DATA.cases.length) {
-            list.innerHTML = '';
+            tabs.innerHTML = '';
+            detail.innerHTML = '';
             empty.style.display = 'flex';
             return;
         }
 
         empty.style.display = 'none';
-        list.innerHTML = DATA.cases.map(c => `
-            <div class="case-card animate-in">
-                <h3 class="case-card__title">${escapeHtml(c.title || '')}</h3>
-                ${c.task ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.task', 'Задача'))}:</strong><p>${nl2br(escapeHtml(c.task))}</p></div>` : ''}
-                ${c.solution ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.solution', 'Решение'))}:</strong><p>${nl2br(escapeHtml(c.solution))}</p></div>` : ''}
-                ${c.result ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.result', 'Результат'))}:</strong><p>${nl2br(escapeHtml(c.result))}</p></div>` : ''}
-                ${c.url ? `<button class="btn btn--secondary case-card__link" data-open-url="${escapeHtml(c.url)}">${escapeHtml(labelText('reviews.open_site', 'Открыть сайт'))}</button>` : ''}
-            </div>
-        `).join('');
 
-        list.querySelectorAll('[data-open-url]').forEach(btn => {
+        if (this._activeIndex >= DATA.cases.length) this._activeIndex = 0;
+
+        tabs.innerHTML = DATA.cases.map((c, i) => {
+            const label = escapeHtml(c.client_name || c.title || '');
+            const active = i === this._activeIndex ? ' cases-tabs__btn--active' : '';
+            return `<button class="cases-tabs__btn${active}" data-case-idx="${i}">${label}</button>`;
+        }).join('');
+
+        tabs.querySelectorAll('.cases-tabs__btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                this._activeIndex = parseInt(btn.dataset.caseIdx, 10);
+                this.render();
+            });
+        });
+
+        this._renderDetail();
+    },
+
+    _renderDetail() {
+        const detail = document.getElementById('cases-detail');
+        const c = DATA.cases[this._activeIndex];
+        if (!c) return;
+
+        const hasBefore = !!c.image_before;
+        const hasAfter = !!c.image_after;
+        const hasBoth = hasBefore && hasAfter;
+
+        let mediaHtml = '';
+        if (hasBoth) {
+            mediaHtml = `
+                <div class="ba-slider" data-ba-slider>
+                    <img class="ba-slider__after" src="${escapeHtml(c.image_after)}" alt="After" draggable="false">
+                    <div class="ba-slider__before-wrap" style="width:50%">
+                        <img class="ba-slider__before" src="${escapeHtml(c.image_before)}" alt="Before" draggable="false">
+                    </div>
+                    <div class="ba-slider__handle" style="left:50%">
+                        <div class="ba-slider__handle-line"></div>
+                        <div class="ba-slider__handle-circle">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4L3 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 4L17 10L13 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="ba-slider__handle-line"></div>
+                    </div>
+                    <span class="ba-slider__label ba-slider__label--before">Before</span>
+                    <span class="ba-slider__label ba-slider__label--after">After</span>
+                </div>`;
+        } else if (hasAfter) {
+            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_after)}" alt="" loading="lazy"></div>`;
+        } else if (hasBefore) {
+            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_before)}" alt="" loading="lazy"></div>`;
+        }
+
+        const metaParts = [];
+        if (c.niche) metaParts.push(escapeHtml(c.niche));
+        if (c.stack) metaParts.push(escapeHtml(c.stack));
+        if (c.timeline) metaParts.push(escapeHtml(c.timeline));
+
+        detail.innerHTML = `
+            <div class="case-card animate-in">
+                ${mediaHtml}
+                <div class="case-card__body">
+                    <h3 class="case-card__title">${escapeHtml(c.title || '')}</h3>
+                    ${metaParts.length ? `<p class="case-card__meta">${metaParts.join(' - ')}</p>` : ''}
+                    ${c.task ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.task', 'Задача'))}:</strong><p>${nl2br(escapeHtml(c.task))}</p></div>` : ''}
+                    ${c.solution ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.solution', 'Решение'))}:</strong><p>${nl2br(escapeHtml(c.solution))}</p></div>` : ''}
+                    ${c.result ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.result', 'Результат'))}:</strong><p>${nl2br(escapeHtml(c.result))}</p></div>` : ''}
+                    ${c.url ? `<button class="btn btn--secondary case-card__link" data-open-url="${escapeHtml(c.url)}">${escapeHtml(labelText('reviews.open_site', 'Открыть сайт'))}</button>` : ''}
+                </div>
+            </div>`;
+
+        detail.querySelectorAll('[data-open-url]').forEach(btn => {
             btn.addEventListener('click', () => {
                 haptic();
                 const url = btn.dataset.openUrl;
@@ -1411,7 +1476,50 @@ const CasesPage = {
             });
         });
 
-        animateIn(list);
+        if (hasBoth) this._initSlider(detail.querySelector('[data-ba-slider]'));
+
+        animateIn(detail);
+    },
+
+    _initSlider(el) {
+        if (!el) return;
+        const handle = el.querySelector('.ba-slider__handle');
+        const beforeWrap = el.querySelector('.ba-slider__before-wrap');
+        let dragging = false;
+
+        const move = (clientX) => {
+            const rect = el.getBoundingClientRect();
+            let pct = ((clientX - rect.left) / rect.width) * 100;
+            pct = Math.max(0, Math.min(100, pct));
+            handle.style.left = pct + '%';
+            beforeWrap.style.width = pct + '%';
+        };
+
+        const onStart = (e) => {
+            e.preventDefault();
+            dragging = true;
+            el.classList.add('ba-slider--dragging');
+        };
+        const onMove = (e) => {
+            if (!dragging) return;
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            move(x);
+        };
+        const onEnd = () => {
+            dragging = false;
+            el.classList.remove('ba-slider--dragging');
+        };
+
+        handle.addEventListener('mousedown', onStart);
+        handle.addEventListener('touchstart', onStart, { passive: false });
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('touchmove', onMove, { passive: true });
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchend', onEnd);
+
+        el.addEventListener('click', (e) => {
+            if (!dragging) move(e.clientX);
+        });
     },
 };
 
@@ -2112,7 +2220,12 @@ async function loadLiveData() {
                             solution: i.solution_ru || '',
                             result: i.result_ru || '',
                             url: i.url || '',
-                            image: i.before_media_id || '',
+                            image_before: i.before_media_id || '',
+                            image_after: i.after_media_id || '',
+                            client_name: i.client_name || '',
+                            niche: i.niche || '',
+                            stack: i.stack || '',
+                            timeline: i.timeline || '',
                         }));
                     } else if (key === 'faq') {
                         DATA.faq = json.items.map(i => ({
@@ -2175,7 +2288,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
 
         setBootStatus('Почти готово...');
-        Router.navigate('home');
+
+        const hash = window.location.hash;
+        const caseMatch = hash.match(/^#case-(\d+)$/);
+        if (caseMatch && DATA.cases.length) {
+            const caseId = parseInt(caseMatch[1], 10);
+            const idx = DATA.cases.findIndex(c => c.id === caseId);
+            if (idx !== -1) CasesPage._activeIndex = idx;
+            Router.navigate('cases');
+        } else {
+            Router.navigate('home');
+        }
+
         await nextFrame();
         await nextFrame();
         await revealApp();

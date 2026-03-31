@@ -387,6 +387,26 @@ const DATA_LIVE = {
       "niche": "Архитектура / Дизайн интерьеров",
       "stack": "HTML/CSS/JS, Figma",
       "timeline": "3 дня"
+    },
+    {
+      "id": 4,
+      "title_ru": "SocAutoPoster - перенос с Elementor на чистый код",
+      "title_en": "SocAutoPoster - Migration from Elementor to Clean Code",
+      "task_ru": "Клиент обратился с задачей перенести сайт SaaS-сервиса для автопостинга в соцсети с Elementor на чистый код WordPress. Старый сайт набирал 40-60 баллов по Google PageSpeed - тяжёлый Elementor, лишние скрипты, медленная загрузка. Нужно было перенести весь контент и дизайн 1 в 1, но на чистом коде.",
+      "task_en": "Client needed to migrate a SaaS website from Elementor to clean WordPress code.",
+      "solution_ru": "Полный перенос сайта с Elementor на чистый HTML/CSS/JS + WordPress, с сохранением исходного дизайна и всего контента.\n\nЧто сделано:\n✅ Главная страница - описание сервиса, возможности, тарифы, отзывы\n✅ Партнёрская страница с условиями и бонусами\n✅ Перевод на 7 языков - мультиязычность с нуля на чистом коде\n✅ Подключение существующего личного кабинета со старого сайта\n✅ Текстовые страницы: инструкции, политика конфиденциальности, условия использования\n✅ Все страницы переписаны с нуля - никакого Elementor, только чистый код\n\nФишки:\n✨ Google PageSpeed взлетел с 40-60 до 95-100 баллов - разница в 2 раза\n✨ Убран весь мусорный код Elementor - десятки лишних CSS/JS файлов, inline-стили, вложенные div-обёртки\n✨ Мультиязычность на 7 языков без тяжёлых плагинов\n✨ Дизайн перенесён пиксель-в-пиксель - клиент не заметил визуальной разницы, только скорость",
+      "solution_en": "Full migration from Elementor to clean HTML/CSS/JS + WordPress, keeping the original design.",
+      "result_ru": "⚡ Сайт стал грузиться моментально - PageSpeed с 40-60 до 95-100. Весь лишний код Elementor удалён без потери визуала.\n\n💪 Клиент остался очень доволен - сайт работает быстрее, код чистый и поддерживаемый. Весь контент и функционал сохранён.",
+      "result_en": "PageSpeed jumped from 40-60 to 95-100. All Elementor bloat removed without visual changes.",
+      "before_media_id": null,
+      "after_media_id": null,
+      "url": "https://socautoposter.com/",
+      "sort_order": 3,
+      "created_at": "2026-03-31 23:37:58",
+      "client_name": null,
+      "niche": "SaaS / Автопостинг в соцсетях",
+      "stack": "WordPress, HTML/CSS/JS",
+      "timeline": "1 неделя"
     }
   ],
   "faq": [],

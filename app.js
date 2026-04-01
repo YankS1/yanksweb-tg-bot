@@ -1493,9 +1493,32 @@ const CasesPage = {
         const beforeWrap = el.querySelector('.ba-slider__before-wrap');
         const beforeImg = el.querySelector('.ba-slider__before');
 
-        const syncWidth = () => { beforeImg.style.width = el.offsetWidth + 'px'; };
-        syncWidth();
-        window.addEventListener('resize', syncWidth);
+        const afterImg = el.querySelector('.ba-slider__after');
+
+        const syncSize = () => {
+            const w = el.offsetWidth;
+            beforeImg.style.width = w + 'px';
+        };
+
+        const equalizeHeight = () => {
+            el.style.height = '';
+            syncSize();
+            const w = el.offsetWidth;
+            const hA = afterImg.naturalHeight / afterImg.naturalWidth * w;
+            const hB = beforeImg.naturalHeight / beforeImg.naturalWidth * w;
+            if (hA > 0 && hB > 0 && hA !== hB) {
+                el.style.height = Math.min(hA, hB) + 'px';
+            }
+        };
+
+        let loaded = 0;
+        const onImgLoad = () => { if (++loaded >= 2) equalizeHeight(); };
+        if (afterImg.complete) loaded++; else afterImg.addEventListener('load', onImgLoad);
+        if (beforeImg.complete) loaded++; else beforeImg.addEventListener('load', onImgLoad);
+        if (loaded >= 2) equalizeHeight();
+
+        syncSize();
+        window.addEventListener('resize', () => { syncSize(); equalizeHeight(); });
 
         let dragging = false;
 

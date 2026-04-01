@@ -1381,51 +1381,73 @@ const ReviewsPage = {
 /* === Cases Page === */
 
 const CasesPage = {
-    _activeIndex: 0,
+    _activeIndex: -1,
+    _view: 'list',
 
     render() {
-        const tabs = document.getElementById('casesTabs');
+        if (this._view === 'detail' && this._activeIndex >= 0) {
+            this._renderDetail();
+        } else {
+            this._renderList();
+        }
+    },
+
+    _renderList() {
+        const list = document.getElementById('cases-list');
         const detail = document.getElementById('cases-detail');
         const empty = document.getElementById('casesEmpty');
+        const title = document.getElementById('casesTitle');
+
+        detail.style.display = 'none';
+        list.style.display = '';
+        if (title) title.textContent = text('cases.title', 'Кейсы');
 
         if (!DATA.cases.length) {
-            tabs.innerHTML = '';
-            detail.innerHTML = '';
+            list.innerHTML = '';
             empty.style.display = 'flex';
             return;
         }
-
         empty.style.display = 'none';
 
-        if (this._activeIndex >= DATA.cases.length) this._activeIndex = 0;
-
-        tabs.innerHTML = DATA.cases.map((c, i) => {
-            const raw = c.title || c.client_name || '';
-            const label = escapeHtml(raw.split(' - ')[0].split(' — ')[0].trim());
-            const active = i === this._activeIndex ? ' cases-tabs__btn--active' : '';
-            return `<button class="cases-tabs__btn${active}" data-case-idx="${i}">${label}</button>`;
+        list.innerHTML = DATA.cases.map((c, i) => {
+            const name = escapeHtml((c.title || '').split(' - ')[0].split(' — ')[0].trim());
+            const subtitle = escapeHtml(c.niche || '');
+            const timeline = escapeHtml(c.timeline || '');
+            const thumb = c.image_after || c.image_before || '';
+            return `<button class="cases-item animate-in" data-case-idx="${i}">
+                ${thumb ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="" loading="lazy"></div>` : `<div class="cases-item__thumb cases-item__thumb--empty"><i data-lucide="code-2"></i></div>`}
+                <div class="cases-item__info">
+                    <span class="cases-item__name">${name}</span>
+                    ${subtitle ? `<span class="cases-item__niche">${subtitle}</span>` : ''}
+                </div>
+                ${timeline ? `<span class="cases-item__badge">${timeline}</span>` : ''}
+                <svg class="cases-item__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>`;
         }).join('');
 
-        tabs.querySelectorAll('.cases-tabs__btn').forEach(btn => {
+        list.querySelectorAll('.cases-item').forEach(btn => {
             btn.addEventListener('click', () => {
                 haptic();
                 this._activeIndex = parseInt(btn.dataset.caseIdx, 10);
+                this._view = 'detail';
                 this.render();
             });
         });
 
-        const activeBtn = tabs.querySelector('.cases-tabs__btn--active');
-        if (activeBtn) {
-            activeBtn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-        }
-
-        this._renderDetail();
+        lucide?.createIcons?.();
+        animateIn(list);
     },
 
     _renderDetail() {
+        const list = document.getElementById('cases-list');
         const detail = document.getElementById('cases-detail');
+        const title = document.getElementById('casesTitle');
         const c = DATA.cases[this._activeIndex];
         if (!c) return;
+
+        list.style.display = 'none';
+        detail.style.display = '';
+        if (title) title.textContent = (c.title || '').split(' - ')[0].split(' — ')[0].trim();
 
         const hasBefore = !!c.image_before;
         const hasAfter = !!c.image_after;
@@ -1460,7 +1482,18 @@ const CasesPage = {
         if (c.stack) metaParts.push(escapeHtml(c.stack));
         if (c.timeline) metaParts.push(escapeHtml(c.timeline));
 
+        const total = DATA.cases.length;
+        const idx = this._activeIndex;
+        const prevIdx = idx > 0 ? idx - 1 : null;
+        const nextIdx = idx < total - 1 ? idx + 1 : null;
+        const prevName = prevIdx !== null ? escapeHtml((DATA.cases[prevIdx].title || '').split(' - ')[0].trim()) : '';
+        const nextName = nextIdx !== null ? escapeHtml((DATA.cases[nextIdx].title || '').split(' - ')[0].trim()) : '';
+
         detail.innerHTML = `
+            <button class="case-back" id="caseBackBtn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Все кейсы
+            </button>
             <div class="case-card animate-in">
                 ${mediaHtml}
                 <div class="case-card__body">
@@ -1471,7 +1504,19 @@ const CasesPage = {
                     ${c.result ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.result', 'Результат'))}:</strong><p>${nl2br(escapeHtml(c.result))}</p></div>` : ''}
                     ${c.url ? `<button class="btn btn--secondary case-card__link" data-open-url="${escapeHtml(c.url)}">${escapeHtml(labelText('reviews.open_site', 'Открыть сайт'))}</button>` : ''}
                 </div>
+            </div>
+            <div class="case-nav">
+                ${prevIdx !== null ? `<button class="case-nav__btn case-nav__btn--prev" data-go="${prevIdx}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> ${prevName}</button>` : '<span></span>'}
+                <span class="case-nav__counter">${idx + 1} / ${total}</span>
+                ${nextIdx !== null ? `<button class="case-nav__btn case-nav__btn--next" data-go="${nextIdx}">${nextName} <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : '<span></span>'}
             </div>`;
+
+        document.getElementById('caseBackBtn').addEventListener('click', () => {
+            haptic();
+            this._view = 'list';
+            this.render();
+            document.querySelector('[data-page="cases"]')?.scrollTo(0, 0);
+        });
 
         detail.querySelectorAll('[data-open-url]').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1479,6 +1524,15 @@ const CasesPage = {
                 const url = btn.dataset.openUrl;
                 if (tg?.openLink) { tg.openLink(url); }
                 else { window.open(url, '_blank', 'noopener,noreferrer'); }
+            });
+        });
+
+        detail.querySelectorAll('[data-go]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                this._activeIndex = parseInt(btn.dataset.go, 10);
+                this.render();
+                document.querySelector('[data-page="cases"]')?.scrollTo(0, 0);
             });
         });
 
@@ -2329,7 +2383,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (caseMatch && DATA.cases.length) {
             const caseId = parseInt(caseMatch[1], 10);
             const idx = DATA.cases.findIndex(c => c.id === caseId);
-            if (idx !== -1) CasesPage._activeIndex = idx;
+            if (idx !== -1) {
+                CasesPage._activeIndex = idx;
+                CasesPage._view = 'detail';
+            }
             Router.navigate('cases');
         } else {
             Router.navigate('home');

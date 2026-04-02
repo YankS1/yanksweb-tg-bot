@@ -2358,7 +2358,7 @@ async function loadLiveData() {
                 }
             }
         } catch (e) {
-            console.log(`Failed to load ${key}, using static data`);
+            // console.log(`Failed to load ${key}, using static data`);
         }
     }
 }
@@ -2431,7 +2431,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     applyStaticTexts();
                     PortfolioPage.updateFavoritesCount();
                 } catch (e) {
-                    console.log('Background content refresh skipped');
+                    // console.log('Background content refresh skipped');
                 }
             });
         }

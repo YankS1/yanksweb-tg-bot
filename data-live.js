@@ -725,6 +725,18 @@ const DATA_LIVE = {
       "created_at": "2026-04-02 01:05:05"
     },
     {
+      "id": 3,
+      "title_ru": "Скидка 15% на первый проект",
+      "title_en": "15% off your first project",
+      "text_ru": "Для новых клиентов - скидка 15% на первый заказ. Лендинг, сайт-визитка, корпоративный сайт или интернет-магазин - любой проект со скидкой. Укажите промокод при заполнении заявки.",
+      "text_en": "For new clients - 15% off your first order. Landing page, business card site, corporate website or online store - any project with a discount. Mention the promo code in your request.",
+      "promo_code": "FIRST15",
+      "discount_percent": 15,
+      "deadline": "2026-05-31",
+      "is_active": 1,
+      "created_at": "2026-04-02 01:05:05"
+    },
+    {
       "id": 1,
       "title_ru": "Приведи друга - скидка 10% обоим",
       "title_en": "Refer a friend - 10% off for both",

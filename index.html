@@ -2,8 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YankSWeb</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YankSWeb - Разработка сайтов под ключ</title>
+    <meta name="description" content="Веб-студия YankSWeb - разработка сайтов, лендингов и интернет-магазинов под ключ. 5+ лет опыта, 50+ проектов.">
+    <meta property="og:title" content="YankSWeb - Разработка сайтов под ключ">
+    <meta property="og:description" content="Посмотрите портфолио, рассчитайте стоимость и оставьте заявку прямо в Telegram.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bot.yanksweb.ru/app/">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style>
         html, body {
@@ -161,20 +166,20 @@
                     <button class="btn btn--primary vip-banner__btn" id="bookingOpenBtn">Забронировать дату</button>
                 </div>
 
-                <div class="booking-form" id="bookingForm" style="display:none;">
+                <div class="booking-form" id="bookingForm">
                     <h3 class="booking-form__title">Бронирование даты</h3>
                     <p class="booking-form__subtitle">Выберите дату, когда хотите начать обсуждение и работу. Это не дедлайн - просто ориентир, чтобы я зарезервировал время</p>
 
-                    <label class="booking-form__label">Когда планируете начать?</label>
+                    <label class="booking-form__label" for="bookingDate">Когда планируете начать?</label>
                     <div class="booking-form__date-wrap">
                         <input class="booking-form__input booking-form__date-input" id="bookingDate" type="date">
                         <span class="booking-form__date-hint" id="bookingDateHint">Нажмите, чтобы выбрать дату</span>
                     </div>
 
-                    <label class="booking-form__label">Ваше имя</label>
+                    <label class="booking-form__label" for="bookingName">Ваше имя</label>
                     <input class="input booking-form__input" id="bookingName" type="text" placeholder="Как к вам обращаться">
 
-                    <label class="booking-form__label">Кратко о задаче</label>
+                    <label class="booking-form__label" for="bookingTask">Кратко о задаче</label>
                     <input class="input booking-form__input" id="bookingTask" type="text" placeholder="Например: интернет-магазин одежды">
 
                     <button class="btn btn--primary booking-form__submit" id="bookingSubmitBtn" disabled>Отправить бронь</button>
@@ -383,7 +388,7 @@
                     <h2 class="page__title" id="casesTitle">Кейсы</h2>
                 </header>
                 <div id="cases-list"></div>
-                <div id="cases-detail" style="display:none"></div>
+                <div id="cases-detail"></div>
                 <div class="empty-state" id="casesEmpty">
                     <div class="empty-state__icon"><i data-lucide="bar-chart-2"></i></div>
                     <p>Кейсы скоро появятся</p>

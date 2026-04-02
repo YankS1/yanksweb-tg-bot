@@ -2,6 +2,7 @@
 
 const tg = window.Telegram?.WebApp;
 const PROD_HOSTS = new Set(['bot.yanksweb.ru', '94.198.217.56']);
+const REVIEWS_CHANNEL_URL = 'https://t.me/yanksweb_reviews';
 const IS_PROD_MINIAPP = PROD_HOSTS.has(window.location.hostname);
 const BOOT_STARTED_AT = performance.now();
 const MIN_LOADER_VISIBLE_MS = 320;
@@ -1366,7 +1367,7 @@ const ReviewsPage = {
         allBtn.innerHTML = '<i data-lucide="star"></i> Все отзывы';
         allBtn.addEventListener('click', () => {
             haptic();
-            const url = 'https://t.me/yanksweb_reviews';
+            const url = REVIEWS_CHANNEL_URL;
             if (tg?.openTelegramLink) { tg.openTelegramLink(url); }
             else if (tg?.openLink) { tg.openLink(url); }
             else { window.open(url, '_blank', 'noopener,noreferrer'); }
@@ -1436,7 +1437,7 @@ const CasesPage = {
             const thumb = c.image_after || c.image_before || '';
             return `<button class="cases-item animate-in" data-case-idx="${i}">
                 ${thumb
-                    ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="" width="52" height="52" loading="lazy" decoding="async"></div>`
+                    ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`
                     : `<div class="cases-item__emoji">${emoji}</div>`
                 }
                 <div class="cases-item__info">
@@ -1469,7 +1470,7 @@ const CasesPage = {
         if (!c) return;
 
         list.style.display = 'none';
-        detail.style.display = '';
+        detail.style.display = 'block';
         if (title) title.textContent = (c.title || '').split(' - ')[0].split(' — ')[0].trim();
 
         const hasBefore = !!c.image_before;
@@ -1495,9 +1496,9 @@ const CasesPage = {
                     <span class="ba-slider__label ba-slider__label--after">${escapeHtml(text('cases.after', 'После'))}</span>
                 </div>`;
         } else if (hasAfter) {
-            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_after)}" alt="" loading="lazy"></div>`;
+            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_after)}" alt="${escapeHtml(c.title || '')}" loading="lazy"></div>`;
         } else if (hasBefore) {
-            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_before)}" alt="" loading="lazy"></div>`;
+            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_before)}" alt="${escapeHtml(c.title || '')}" loading="lazy"></div>`;
         }
 
         const metaParts = [];
@@ -2358,7 +2359,6 @@ async function loadLiveData() {
                 }
             }
         } catch (e) {
-            // console.log(`Failed to load ${key}, using static data`);
         }
     }
 }
@@ -2431,7 +2431,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     applyStaticTexts();
                     PortfolioPage.updateFavoritesCount();
                 } catch (e) {
-                    // console.log('Background content refresh skipped');
                 }
             });
         }

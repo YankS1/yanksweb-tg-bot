@@ -713,6 +713,18 @@ const DATA_LIVE = {
   ],
   "promos": [
     {
+      "id": 2,
+      "title_ru": "Бесплатный аудит вашего сайта",
+      "title_en": "Free website audit",
+      "text_ru": "Оставьте заявку на разработку - и получите подробный аудит вашего текущего сайта бесплатно. Анализ скорости, SEO, безопасности и рекомендации по улучшению.",
+      "text_en": "Submit a project request and get a detailed audit of your current website for free. Speed, SEO, security analysis and improvement recommendations.",
+      "promo_code": "FREEAUDIT",
+      "discount_percent": 0,
+      "deadline": "2026-06-30",
+      "is_active": 1,
+      "created_at": "2026-04-02 01:05:05"
+    },
+    {
       "id": 1,
       "title_ru": "Приведи друга - скидка 10% обоим",
       "title_en": "Refer a friend - 10% off for both",

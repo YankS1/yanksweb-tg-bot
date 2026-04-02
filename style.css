@@ -1201,6 +1201,11 @@ body.app-ready #app {
     fill: var(--destructive);
 }
 
+.portfolio-item__btn--cta {
+    color: var(--accent);
+    font-weight: 500;
+}
+
 .portfolio-item__tag {
     display: inline-block;
     margin-top: 8px;
@@ -1706,6 +1711,11 @@ body.app-ready #app {
     margin-top: 16px;
 }
 
+.case-card__cta {
+    margin-top: 16px;
+    width: 100%;
+}
+
 /* === BEFORE/AFTER SLIDER === */
 
 .ba-slider {
@@ -1888,6 +1898,18 @@ body.app-ready #app {
 
 .accordion__item--active .accordion__answer {
     padding-bottom: 16px;
+}
+
+.faq-cta {
+    margin-top: 12px;
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 16px;
+    display: none;
+}
+
+.accordion__item--active .faq-cta {
+    display: block;
 }
 
 /* === QUIZ === */

@@ -858,6 +858,10 @@ const PortfolioPage = {
                                     ${escapeHtml(labelText('portfolio.open_site', 'Открыть сайт'))}
                                 </button>
                             ` : ''}
+                            <button class="portfolio-item__btn portfolio-item__btn--cta" data-pf-quiz>
+                                <i data-lucide="message-square"></i>
+                                ${escapeHtml(labelText('services.order', 'Обсудить проект'))}
+                            </button>
                             <button class="portfolio-item__btn portfolio-item__btn--fav ${isFav ? 'portfolio-item__btn--fav-active' : ''}" data-fav-id="${escapeHtml(String(item.id || ''))}">
                                 <i data-lucide="heart"></i>
                                 ${escapeHtml(text(isFav ? 'portfolio.favorites_added' : 'portfolio.favorites_add', isFav ? 'В избранном' : 'В избранное'))}
@@ -905,6 +909,12 @@ const PortfolioPage = {
         if (this._eventsBound) return;
         this._eventsBound = true;
         document.getElementById('portfolio-feed').addEventListener('click', e => {
+            if (e.target.closest('[data-pf-quiz]')) {
+                haptic();
+                Router.navigate('quiz');
+                return;
+            }
+
             const urlBtn = e.target.closest('[data-open-url]');
             if (urlBtn) {
                 haptic();
@@ -1527,6 +1537,7 @@ const CasesPage = {
                     ${c.solution ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.solution', 'Решение'))}:</strong><p>${nl2br(escapeHtml(c.solution))}</p></div>` : ''}
                     ${c.result ? `<div class="case-card__section"><strong>${escapeHtml(text('reviews.result', 'Результат'))}:</strong><p>${nl2br(escapeHtml(c.result))}</p></div>` : ''}
                     ${c.url ? `<button class="btn btn--secondary case-card__link" data-open-url="${escapeHtml(c.url)}">${escapeHtml(labelText('reviews.open_site', 'Открыть сайт'))}</button>` : ''}
+                    <button class="btn btn--primary case-card__cta" data-case-quiz>${escapeHtml(labelText('services.order', 'Обсудить проект'))}</button>
                 </div>
             </div>
             <div class="case-nav">
@@ -1549,6 +1560,11 @@ const CasesPage = {
                 if (tg?.openLink) { tg.openLink(url); }
                 else { window.open(url, '_blank', 'noopener,noreferrer'); }
             });
+        });
+
+        detail.querySelector('[data-case-quiz]')?.addEventListener('click', () => {
+            haptic();
+            Router.navigate('quiz');
         });
 
         detail.querySelectorAll('[data-go]').forEach(btn => {
@@ -1661,12 +1677,18 @@ const FaqPage = {
                 </button>
                 <div class="accordion__body">
                     <div class="accordion__answer">${nl2br(escapeHtml(item.answer || ''))}</div>
+                    <button class="btn btn--primary faq-cta" data-faq-quiz>${escapeHtml(labelText('services.order', 'Обсудить проект'))}</button>
                 </div>
             </div>
         `).join('')}</div>`;
 
         if (!this._eventsBound) {
             list.addEventListener('click', e => {
+                if (e.target.closest('[data-faq-quiz]')) {
+                    haptic();
+                    Router.navigate('quiz');
+                    return;
+                }
                 const header = e.target.closest('.accordion__header');
                 if (!header) return;
                 haptic();

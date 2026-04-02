@@ -711,7 +711,20 @@ const DATA_LIVE = {
       "sort_order": 9
     }
   ],
-  "promos": [],
+  "promos": [
+    {
+      "id": 1,
+      "title_ru": "Приведи друга - скидка 10% обоим",
+      "title_en": "Refer a friend - 10% off for both",
+      "text_ru": "Порекомендуйте нас другу или коллеге. Когда он обратится с задачей и упомянет вас - оба получите скидку 10% на свой проект. Без ограничений по количеству рекомендаций.",
+      "text_en": "Recommend us to a friend or colleague. When they reach out with a project and mention you - both of you get 10% off. No limit on referrals.",
+      "promo_code": "FRIEND10",
+      "discount_percent": 10,
+      "deadline": "2026-12-31",
+      "is_active": 1,
+      "created_at": "2026-04-02 01:04:50"
+    }
+  ],
   "texts": {
     "ru": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Привет! Я — Даниил YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> Разрабатываю сайты под ключ — от дизайна до запуска. Без агентств, без посредников: всё делаю сам.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> Этот бот — для удобства. Посмотрите работы, прикиньте стоимость или расскажите о проекте. Все заявки читаю и отвечаю лично — обычно в тот же день.\n\nЧем могу помочь?",
@@ -1045,7 +1058,11 @@ const DATA_LIVE = {
       "waitlist.webapp_sent_title": "Бронь отправлена!",
       "common.next_label": "Далее",
       "common.home": "На главную",
-      "reviews.case_details": "📋 Подробнее"
+      "reviews.case_details": "📋 Подробнее",
+      "portfolio.discuss_project": "📝 Обсудить проект",
+      "faq.discuss_project": "📝 Обсудить проект",
+      "reviews.all_reviews": "⭐ Все отзывы",
+      "reviews.discuss_project": "📝 Обсудить проект"
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel — YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end — design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -1379,7 +1396,11 @@ const DATA_LIVE = {
       "waitlist.webapp_sent_title": "Booking sent!",
       "common.next_label": "Next",
       "common.home": "Home",
-      "reviews.case_details": "📋 More details"
+      "reviews.case_details": "📋 More details",
+      "portfolio.discuss_project": "📝 Discuss Project",
+      "faq.discuss_project": "📝 Discuss Project",
+      "reviews.all_reviews": "⭐ All Reviews",
+      "reviews.discuss_project": "📝 Discuss Project"
     }
   },
   "services": [

@@ -1409,13 +1409,32 @@ const CasesPage = {
         }
         empty.style.display = 'none';
 
+        const nicheEmoji = (niche, title) => {
+            const t = ((niche || '') + ' ' + (title || '')).toLowerCase();
+            if (t.includes('футбол') || t.includes('спорт') || t.includes('импульс')) return '\u26bd';
+            if (t.includes('сертифик') || t.includes('росэксперт')) return '\U0001f4cb';
+            if (t.includes('архитект') || t.includes('интерьер')) return '\U0001f3d7\ufe0f';
+            if (t.includes('автопост') || t.includes('saas') || t.includes('elementor')) return '\u26a1';
+            if (t.includes('вэд') || t.includes('справочник')) return '\U0001f9e9';
+            if (t.includes('визитк') || t.includes('каталог') || t.includes('компонент')) return '\U0001f4e6';
+            if (t.includes('пивовар') || t.includes('craft') || t.includes('rcraft')) return '\U0001f37a';
+            if (t.includes('react') || t.includes('next.js') || t.includes('psycho')) return '\U0001f4bb';
+            if (t.includes('пауэрбанк') || t.includes('k.go') || t.includes('шеринг')) return '\U0001f50b';
+            if (t.includes('seo') || t.includes('аудит') || t.includes('индекс')) return '\U0001f4ca';
+            if (t.includes('медицин') || t.includes('здоров') || t.includes('боли') || t.includes('хирург') || t.includes('барат')) return '\u2695\ufe0f';
+            if (t.includes('детейлинг') || t.includes('авто')) return '\U0001f697';
+            if (t.includes('обучен') || t.includes('школа') || t.includes('семенов')) return '\U0001f393';
+            if (t.includes('магазин') || t.includes('shop') || t.includes('spark') || t.includes('commerce')) return '\U0001f6d2';
+            return '\U0001f4bc';
+        };
+
         list.innerHTML = DATA.cases.map((c, i) => {
-            const name = escapeHtml((c.title || '').split(' - ')[0].split(' — ')[0].trim());
+            const name = escapeHtml((c.title || '').split(' - ')[0].split(' \u2014 ')[0].trim());
             const subtitle = escapeHtml(c.niche || '');
             const timeline = escapeHtml(c.timeline || '');
-            const thumb = c.image_after || c.image_before || '';
+            const emoji = nicheEmoji(c.niche, c.title);
             return `<button class="cases-item animate-in" data-case-idx="${i}">
-                ${thumb ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="" loading="lazy"></div>` : `<div class="cases-item__thumb cases-item__thumb--empty"><i data-lucide="code-2"></i></div>`}
+                <div class="cases-item__emoji">${emoji}</div>
                 <div class="cases-item__info">
                     <span class="cases-item__name">${name}</span>
                     ${subtitle ? `<span class="cases-item__niche">${subtitle}</span>` : ''}

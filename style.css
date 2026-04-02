@@ -1490,6 +1490,22 @@ body.app-ready #app {
     opacity: 0.8;
 }
 
+.cases-item__thumb {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.cases-item__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+}
+
 .cases-item__emoji {
     flex-shrink: 0;
     width: 44px;

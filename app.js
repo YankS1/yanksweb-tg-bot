@@ -1433,10 +1433,14 @@ const CasesPage = {
             const subtitle = escapeHtml(c.niche || '');
             const timeline = escapeHtml(c.timeline || '');
             const emoji = nicheEmoji(c.niche, c.title);
+            const thumb = c.image_after || c.image_before || '';
             return `<button class="cases-item animate-in" data-case-idx="${i}">
-                <div class="cases-item__emoji">${emoji}</div>
+                ${thumb
+                    ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="" width="52" height="52" loading="lazy" decoding="async"></div>`
+                    : `<div class="cases-item__emoji">${emoji}</div>`
+                }
                 <div class="cases-item__info">
-                    <span class="cases-item__name">${name}</span>
+                    <span class="cases-item__name">${emoji} ${name}</span>
                     ${subtitle ? `<span class="cases-item__niche">${subtitle}</span>` : ''}
                 </div>
                 ${timeline ? `<span class="cases-item__badge">${timeline}</span>` : ''}

@@ -15,20 +15,6 @@ const DATA_LIVE = {
       "is_published": 1
     },
     {
-      "id": 3,
-      "category": "sites",
-      "title_ru": "💰 Capico - платформа для криптотрейдинга",
-      "title_en": null,
-      "description_ru": "Capico - платформа для криптотрейдинга с ботами и смарт-сделками. Мультибиржевой терминал с конструктором интерфейса, мультичартом, портфелем и статистикой. Подключение к Binance, Bybit, OKX и другим биржам из одного окна. Подходит для трейдеров, которым важны автоматизация и контроль позиций в одном месте.",
-      "description_en": null,
-      "media_file_id": "https://bot.yanksweb.ru/uploads/605f33a2819e4a41bc32ba8ad9ea775a_capico.mp4",
-      "media_type": "video",
-      "url": "https://capico.app/ru/",
-      "sort_order": 0,
-      "created_at": "2026-03-28 20:58:18",
-      "is_published": 1
-    },
-    {
       "id": 4,
       "category": "sites",
       "title_ru": "🚗DetailInStyle - детейлинг-студия в Иваново",

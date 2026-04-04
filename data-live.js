@@ -1,19 +1,6 @@
 const DATA_LIVE = {
   "portfolio": [
     {
-      "id": 2,
-      "category": "sites",
-      "title_ru": "🚗 Black Edition Detailing Studio",
-      "title_en": null,
-      "description_ru": "Black Edition - детейлинг-студия с акцентом на премиальный уход за автомобилем. Тёмная стилистика, портфолио работ и карта с адресом. Подходит для автосервисов, детейлинг-центров и тюнинг-мастерских, которым важно показать уровень через визуал и подачу.",
-      "description_en": null,
-      "media_file_id": "https://bot.yanksweb.ru/uploads/983c7f0c4f394f7eb13d9fb25f512318_blackdetailing.mp4",
-      "media_type": "video",
-      "url": "https://iv-be.ru/",
-      "sort_order": 0,
-      "created_at": "2026-03-28 20:38:57"
-    },
-    {
       "id": 3,
       "category": "sites",
       "title_ru": "💰 Capico - платформа для криптотрейдинга",
@@ -24,7 +11,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://capico.app/ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 20:58:18"
+      "created_at": "2026-03-28 20:58:18",
+      "is_published": 1
     },
     {
       "id": 4,
@@ -37,7 +25,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://detailinstyle.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 21:01:34"
+      "created_at": "2026-03-28 21:01:34",
+      "is_published": 1
     },
     {
       "id": 5,
@@ -50,7 +39,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://fc-impulstula.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 21:02:45"
+      "created_at": "2026-03-28 21:02:45",
+      "is_published": 1
     },
     {
       "id": 6,
@@ -63,7 +53,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://www.it-mentor.dev/",
       "sort_order": 0,
-      "created_at": "2026-03-28 21:30:18"
+      "created_at": "2026-03-28 21:30:18",
+      "is_published": 1
     },
     {
       "id": 7,
@@ -76,7 +67,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://magicpark-sochi.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 21:58:04"
+      "created_at": "2026-03-28 21:58:04",
+      "is_published": 1
     },
     {
       "id": 8,
@@ -89,7 +81,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://new-point.bz/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:00:48"
+      "created_at": "2026-03-28 22:00:48",
+      "is_published": 1
     },
     {
       "id": 9,
@@ -102,7 +95,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://raadigital.ru/telegram-webapps",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:02:50"
+      "created_at": "2026-03-28 22:02:50",
+      "is_published": 1
     },
     {
       "id": 10,
@@ -115,7 +109,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://rosexperts.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:06:30"
+      "created_at": "2026-03-28 22:06:30",
+      "is_published": 1
     },
     {
       "id": 11,
@@ -128,7 +123,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://onlineskyrim.com/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:08:55"
+      "created_at": "2026-03-28 22:08:55",
+      "is_published": 1
     },
     {
       "id": 12,
@@ -141,7 +137,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://architect-yug.ru",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:12:52"
+      "created_at": "2026-03-28 22:12:52",
+      "is_published": 1
     },
     {
       "id": 13,
@@ -154,7 +151,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://lanslight.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:14:43"
+      "created_at": "2026-03-28 22:14:43",
+      "is_published": 1
     },
     {
       "id": 14,
@@ -167,7 +165,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://drevosmart.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:20:04"
+      "created_at": "2026-03-28 22:20:04",
+      "is_published": 1
     },
     {
       "id": 15,
@@ -180,7 +179,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://granit-memory.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:23:30"
+      "created_at": "2026-03-28 22:23:30",
+      "is_published": 1
     },
     {
       "id": 16,
@@ -193,7 +193,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://iddepartment.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:25:25"
+      "created_at": "2026-03-28 22:25:25",
+      "is_published": 1
     },
     {
       "id": 17,
@@ -206,7 +207,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://www.akademik.su/uslugi/kursovaja-rabota",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:29:31"
+      "created_at": "2026-03-28 22:29:31",
+      "is_published": 1
     },
     {
       "id": 18,
@@ -219,7 +221,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://rubcraft.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:35:00"
+      "created_at": "2026-03-28 22:35:00",
+      "is_published": 1
     },
     {
       "id": 19,
@@ -232,7 +235,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://рускомпонент.рф/",
       "sort_order": 0,
-      "created_at": "2026-03-28 22:59:55"
+      "created_at": "2026-03-28 22:59:55",
+      "is_published": 1
     },
     {
       "id": 20,
@@ -245,7 +249,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://bariatria.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 23:02:06"
+      "created_at": "2026-03-28 23:02:06",
+      "is_published": 1
     },
     {
       "id": 21,
@@ -258,7 +263,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://bazis-prom.com/",
       "sort_order": 0,
-      "created_at": "2026-03-28 23:04:07"
+      "created_at": "2026-03-28 23:04:07",
+      "is_published": 1
     },
     {
       "id": 22,
@@ -271,7 +277,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://kraski-sale.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 23:06:09"
+      "created_at": "2026-03-28 23:06:09",
+      "is_published": 1
     },
     {
       "id": 23,
@@ -284,7 +291,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://школасеменовой.рф/",
       "sort_order": 0,
-      "created_at": "2026-03-28 23:11:44"
+      "created_at": "2026-03-28 23:11:44",
+      "is_published": 1
     },
     {
       "id": 24,
@@ -297,7 +305,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://nddetailing.ru/",
       "sort_order": 0,
-      "created_at": "2026-03-28 23:14:58"
+      "created_at": "2026-03-28 23:14:58",
+      "is_published": 1
     },
     {
       "id": 25,
@@ -310,7 +319,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://www.sparkmotorsports.com/",
       "sort_order": 0,
-      "created_at": "2026-03-28 23:42:45"
+      "created_at": "2026-03-28 23:42:45",
+      "is_published": 1
     },
     {
       "id": 26,
@@ -323,7 +333,8 @@ const DATA_LIVE = {
       "media_type": "video",
       "url": "https://bolinet.online/",
       "sort_order": 0,
-      "created_at": "2026-03-28 23:46:10"
+      "created_at": "2026-03-28 23:46:10",
+      "is_published": 1
     }
   ],
   "reviews": [],
@@ -346,7 +357,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Детский спорт / Футбольная школа",
       "stack": "WordPress, HTML/CSS/JS, Figma",
-      "timeline": "3 недели"
+      "timeline": "3 недели",
+      "is_published": 1
     },
     {
       "id": 2,
@@ -366,7 +378,8 @@ const DATA_LIVE = {
       "client_name": "Роман",
       "niche": "Сертификация продукции / B2B",
       "stack": "WordPress, HTML/CSS/JS, Figma",
-      "timeline": "1 неделя"
+      "timeline": "1 неделя",
+      "is_published": 1
     },
     {
       "id": 3,
@@ -386,7 +399,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Архитектура / Дизайн интерьеров",
       "stack": "HTML/CSS/JS, Figma",
-      "timeline": "3 дня"
+      "timeline": "3 дня",
+      "is_published": 1
     },
     {
       "id": 4,
@@ -406,7 +420,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "SaaS / Автопостинг в соцсетях",
       "stack": "WordPress, HTML/CSS/JS",
-      "timeline": "1 неделя"
+      "timeline": "1 неделя",
+      "is_published": 1
     },
     {
       "id": 5,
@@ -426,7 +441,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Сертификация / Справочная система",
       "stack": "WordPress, PHP, JS",
-      "timeline": "1 неделя"
+      "timeline": "1 неделя",
+      "is_published": 1
     },
     {
       "id": 6,
@@ -446,7 +462,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Лакокрасочные материалы / B2B",
       "stack": "WordPress, HTML/CSS/JS, Figma",
-      "timeline": "4 дня"
+      "timeline": "4 дня",
+      "is_published": 1
     },
     {
       "id": 7,
@@ -466,7 +483,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Крафтовое пиво / HoReCa",
       "stack": "WordPress, HTML/CSS/JS, Figma",
-      "timeline": "1 неделя"
+      "timeline": "1 неделя",
+      "is_published": 1
     },
     {
       "id": 9,
@@ -486,7 +504,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Шеринг / Аренда пауэрбанков",
       "stack": "WordPress, HTML/CSS/JS",
-      "timeline": "3 дня"
+      "timeline": "3 дня",
+      "is_published": 1
     },
     {
       "id": 10,
@@ -506,7 +525,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Геомаркетинг / Аналитика",
       "stack": "WordPress, Rank Math SEO, Screaming Frog",
-      "timeline": "2 дня"
+      "timeline": "2 дня",
+      "is_published": 1
     },
     {
       "id": 11,
@@ -526,7 +546,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Медицина / Центр восстановления",
       "stack": "WordPress, HTML/CSS/JS, Figma, ACF",
-      "timeline": "4 дня"
+      "timeline": "4 дня",
+      "is_published": 1
     },
     {
       "id": 12,
@@ -546,7 +567,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "E-commerce / Электробайки",
       "stack": "Shopify, HTML/CSS/JS, Liquid",
-      "timeline": "1 день"
+      "timeline": "1 день",
+      "is_published": 1
     },
     {
       "id": 13,
@@ -566,7 +588,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Медицина / Обучение",
       "stack": "WordPress, HTML/CSS/JS, Figma",
-      "timeline": "2 дня (сайт) + согласование"
+      "timeline": "2 дня (сайт) + согласование",
+      "is_published": 1
     },
     {
       "id": 14,
@@ -586,7 +609,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Электроника / B2B",
       "stack": "WordPress, HTML/CSS/JS",
-      "timeline": "2 дня"
+      "timeline": "2 дня",
+      "is_published": 1
     },
     {
       "id": 15,
@@ -606,7 +630,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Автодетейлинг",
       "stack": "WordPress, HTML/CSS/JS",
-      "timeline": "1 ночь"
+      "timeline": "1 ночь",
+      "is_published": 1
     },
     {
       "id": 16,
@@ -626,7 +651,8 @@ const DATA_LIVE = {
       "client_name": null,
       "niche": "Медицина / Бариатрическая хирургия",
       "stack": "WordPress, The SEO Framework, Screaming Frog",
-      "timeline": "3 дня"
+      "timeline": "3 дня",
+      "is_published": 1
     }
   ],
   "faq": [
@@ -636,7 +662,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Зависит от задачи. Лендинг - от 15 000 руб., многостраничный сайт - от 30 000 руб., интернет-магазин - от 50 000 руб. Точную стоимость рассчитаю после обсуждения задачи - пройдите быстрый квиз или напишите напрямую.",
       "answer_en": null,
-      "sort_order": 0
+      "sort_order": 0,
+      "is_published": 1
     },
     {
       "id": 2,
@@ -644,7 +671,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Лендинг - 3-7 дней, многостраничный сайт - 1-3 недели, интернет-магазин - 2-4 недели. Срочные проекты обсуждаются отдельно - были случаи когда сайт делался за 1 день.",
       "answer_en": null,
-      "sort_order": 1
+      "sort_order": 1,
+      "is_published": 1
     },
     {
       "id": 3,
@@ -652,7 +680,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Да. Все сайты делаю на WordPress с удобной админкой. Сможете менять тексты, фото, цены, добавлять страницы, услуги, товары. К каждому проекту предоставляю инструкцию по редактированию.",
       "answer_en": null,
-      "sort_order": 2
+      "sort_order": 2,
+      "is_published": 1
     },
     {
       "id": 4,
@@ -660,7 +689,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Дизайн, верстка, интеграция с CMS, адаптив под мобильные, базовая SEO-оптимизация, настройка форм обратной связи, перенос на хостинг и привязка домена. Также предоставляю инструкцию по работе с сайтом.",
       "answer_en": null,
-      "sort_order": 3
+      "sort_order": 3,
+      "is_published": 1
     },
     {
       "id": 5,
@@ -668,7 +698,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Нет. Работаю только с реальным кодом и профессиональными CMS - WordPress, Shopify, MODx, Bitrix, Drupal. Это дает полный контроль над сайтом, высокую скорость и независимость от конструкторов.",
       "answer_en": null,
-      "sort_order": 4
+      "sort_order": 4,
+      "is_published": 1
     },
     {
       "id": 6,
@@ -676,7 +707,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Да, берусь за доработки на WordPress, MODx, Drupal, Shopify и других CMS. Также делаю перенос с конструкторов (Elementor, Tilda) на чистый код, SEO-аудиты, ускорение, исправление верстки.",
       "answer_en": null,
-      "sort_order": 5
+      "sort_order": 5,
+      "is_published": 1
     },
     {
       "id": 7,
@@ -684,7 +716,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Предоплата 50% после утверждения дизайна, остаток - после сдачи проекта. Для небольших задач возможна оплата по факту. Принимаю переводы на карту, СБП, USDT.",
       "answer_en": null,
-      "sort_order": 6
+      "sort_order": 6,
+      "is_published": 1
     },
     {
       "id": 8,
@@ -692,7 +725,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Работаю в обоих форматах. Могу сделать дизайн с нуля: провожу анализ конкурентов, продумываю структуру и визуал, готовлю макет в Figma на утверждение. Также работаю по готовым макетам от вашего дизайнера.",
       "answer_en": null,
-      "sort_order": 7
+      "sort_order": 7,
+      "is_published": 1
     },
     {
       "id": 9,
@@ -700,7 +734,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "До начала разработки утверждаем дизайн - вносим правки пока не будет полного согласования. На этапе разработки показываю промежуточный результат. Финальные правки по верстке и контенту - бесплатно.",
       "answer_en": null,
-      "sort_order": 8
+      "sort_order": 8,
+      "is_published": 1
     },
     {
       "id": 10,
@@ -708,7 +743,8 @@ const DATA_LIVE = {
       "question_en": null,
       "answer_ru": "Да, но с этим помогу. Подскажу выгодный хостинг, помогу зарегистрировать домен, перенесу сайт и привяжу все настройки. Если уже есть хостинг - работаем с ним.",
       "answer_en": null,
-      "sort_order": 9
+      "sort_order": 9,
+      "is_published": 1
     }
   ],
   "promos": [
@@ -722,7 +758,8 @@ const DATA_LIVE = {
       "discount_percent": 15,
       "deadline": "2027-12-31",
       "is_active": 0,
-      "created_at": "2026-04-02 16:07:28"
+      "created_at": "2026-04-02 16:07:28",
+      "is_published": 1
     },
     {
       "id": 2,
@@ -734,7 +771,8 @@ const DATA_LIVE = {
       "discount_percent": 0,
       "deadline": "2026-06-30",
       "is_active": 1,
-      "created_at": "2026-04-02 01:05:05"
+      "created_at": "2026-04-02 01:05:05",
+      "is_published": 1
     },
     {
       "id": 3,
@@ -746,7 +784,8 @@ const DATA_LIVE = {
       "discount_percent": 15,
       "deadline": "2026-05-31",
       "is_active": 1,
-      "created_at": "2026-04-02 01:05:05"
+      "created_at": "2026-04-02 01:05:05",
+      "is_published": 1
     },
     {
       "id": 1,
@@ -758,7 +797,8 @@ const DATA_LIVE = {
       "discount_percent": 10,
       "deadline": "2026-12-31",
       "is_active": 1,
-      "created_at": "2026-04-02 01:04:50"
+      "created_at": "2026-04-02 01:04:50",
+      "is_published": 1
     }
   ],
   "texts": {

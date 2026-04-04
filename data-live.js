@@ -1124,7 +1124,13 @@ const DATA_LIVE = {
       "quiz.budget_170": "120 000 - 170 000 ₽",
       "quiz.budget_250": "170 000 - 250 000 ₽",
       "quiz.budget_250plus": "250 000+ ₽",
-      "start.pd_consent": "Продолжая использование бота, вы соглашаетесь на обработку персональных данных в соответствии с 152-ФЗ."
+      "start.pd_consent": "Продолжая использование бота, вы соглашаетесь на обработку персональных данных в соответствии с 152-ФЗ.",
+      "quiz.resume_expired": "Квиз не найден. Начните заново.",
+      "quiz.resume_yes": "Продолжить квиз",
+      "quiz.resume_no": "Начать заново",
+      "quiz.resume_prompt": "У вас есть незавершённый квиз. Хотите продолжить?",
+      "audit.text_only": "Пожалуйста, отправьте текстовое сообщение",
+      "quick_question.text_only": "Пожалуйста, отправьте текстовое сообщение"
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel — YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end — design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -1488,7 +1494,13 @@ const DATA_LIVE = {
       "quiz.budget_170": "120,000 - 170,000 ₽",
       "quiz.budget_250": "170,000 - 250,000 ₽",
       "quiz.budget_250plus": "250,000+ ₽",
-      "start.pd_consent": "By continuing to use the bot, you agree to the processing of personal data."
+      "start.pd_consent": "By continuing to use the bot, you agree to the processing of personal data.",
+      "quiz.resume_expired": "Quiz not found. Please start over.",
+      "quiz.resume_yes": "Continue quiz",
+      "quiz.resume_no": "Start over",
+      "quiz.resume_prompt": "You have an unfinished quiz. Would you like to continue?",
+      "audit.text_only": "Please send a text message",
+      "quick_question.text_only": "Please send a text message"
     }
   },
   "services": [

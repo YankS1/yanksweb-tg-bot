@@ -1,20 +1,6 @@
 const DATA_LIVE = {
   "portfolio": [
     {
-      "id": 2,
-      "category": "sites",
-      "title_ru": "🚗 Black Edition Detailing Studio",
-      "title_en": null,
-      "description_ru": "Black Edition - детейлинг-студия с акцентом на премиальный уход за автомобилем. Тёмная стилистика, портфолио работ и карта с адресом. Подходит для автосервисов, детейлинг-центров и тюнинг-мастерских, которым важно показать уровень через визуал и подачу.",
-      "description_en": null,
-      "media_file_id": "https://bot.yanksweb.ru/uploads/983c7f0c4f394f7eb13d9fb25f512318_blackdetailing.mp4",
-      "media_type": "video",
-      "url": "https://iv-be.ru/",
-      "sort_order": 0,
-      "created_at": "2026-03-28 20:38:57",
-      "is_published": 1
-    },
-    {
       "id": 3,
       "category": "sites",
       "title_ru": "💰 Capico - платформа для криптотрейдинга",

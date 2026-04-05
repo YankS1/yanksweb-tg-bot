@@ -351,7 +351,24 @@ const DATA_LIVE = {
       "is_published": 1
     }
   ],
-  "reviews": [],
+  "reviews": [
+    {
+      "id": 51,
+      "client_name": "Александр",
+      "company": null,
+      "text_ru": "Очень профессиональная работа! Все было выполнено под ключ, Даниил сам провел анализ конкурентов, составил логику и смыслы сайта, причем сделал это все очень оперативно. Итоговый сайт превзошел все ожидания. В итоге я очень рад и благодарен, рекомендую!",
+      "text_en": "Very professional job! Everything was done on a turnkey basis, Daniil himself conducted an analysis of competitors, compiled the logic and meanings of the site, and did it all very quickly. The final website exceeded all expectations. As a result, I am very happy and grateful, I recommend it!",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/56ebb51a5f7c42b39e0f79d02cd17363_reviews-28.jpg",
+      "sort_order": 0,
+      "created_at": "2026-03-31 12:26:06",
+      "url": "https://bolinet.online/",
+      "client_name_en": "Alexander",
+      "show_in_app": 1,
+      "project_type": "Landing page",
+      "project_type_en": "Landing page",
+      "rating_plus": 1
+    }
+  ],
   "cases": [
     {
       "id": 1,

@@ -604,13 +604,13 @@ const DATA_LIVE = {
     {
       "id": 13,
       "title_ru": "Школа Семеновой - сайт эксперта в медицине",
-      "title_en": ".",
+      "title_en": "Semenova School - Medical Expert Personal Website",
       "task_ru": "Клиентка - эксперт с 11-летним опытом в медицине и управлении стоматологическими клиниками. Обучает ассистентов, старших медсестер, проводит аудиты клиник. Нужен сайт-визитка, который представит её как специалиста. Сложность: у клиентки не было ни референсов, ни понимания что она хочет видеть на сайте.",
-      "task_en": ".",
+      "task_en": "Personal website for an expert with 11 years in medicine and dental clinic management. Trains assistants and head nurses, conducts audits. No references or clear vision.",
       "solution_ru": "Взял проект полностью на себя - анализ конкурентов, структура, дизайн, верстка, деплой.\r\n\r\nЧто сделано:\r\n✅ Анализ конкурентов в нише обучения медперсонала\r\n✅ Дизайн с нуля без референсов - сам продумал структуру и визуал\r\n✅ Hero-блок: 11 лет опыта, два направления (обучение + аудит), CTA\r\n✅ Блок \"Кому подойдет\": ассистенты, старшие медсестры, главврачи, клиники для аудита\r\n✅ 5 направлений услуг с описаниями и тегами (очно, практика, документы, система)\r\n✅ Подробные раскрывающиеся описания каждой услуги\r\n✅ Блок \"Обо мне\" с фото и опытом\r\n✅ Форма записи на обучение / консультацию\r\n✅ Интеграция на WordPress с полным редактированием контента\r\n\r\nФишки:\r\n✨ Клиентка не знала что хочет - сам провел анализ, предложил структуру и визуал\r\n✨ Длительные переговоры и доработки дизайна - терпеливая работа с трудным клиентом\r\n✨ Сам сайт и дизайн готовы за 2 дня, остальное время - согласование с клиенткой\r\n✨ Клиентка в итоге осталась довольна и рекомендовала знакомым - пришел новый клиент по рекомендации",
-      "solution_en": ".",
+      "solution_en": "End-to-end: competitor analysis, design from scratch, hero block with experience and CTA, 'Who Is This For' block, 5 service areas with tags, expandable descriptions, about section, sign-up form. WordPress integration.",
       "result_ru": "⭐ Клиентка: \"Очень хорошая работа. Приятно работать с профессионалом. Мне все понравилось!\"\r\n\r\n🤝 Рекомендация сработала - по ней пришел новый клиент со скидкой.",
-      "result_en": ".",
+      "result_en": "Client: 'Excellent work. It's a pleasure working with a professional. I loved everything!' Referral worked - new client came through recommendation.",
       "before_media_id": null,
       "after_media_id": "https://bot.yanksweb.ru/uploads/4629c2bb563a4b23a20fd26f4e36820e_semenova.webp",
       "url": "https://школасеменовой.рф/",
@@ -625,13 +625,13 @@ const DATA_LIVE = {
     {
       "id": 14,
       "title_ru": "РусКомпонент - сайт поставщика электронных компонентов",
-      "title_en": ".",
+      "title_en": "RusKomponent - Electronic Components Supplier Website",
       "task_ru": "Клиентке нужен был простой сайт-визитка для представления бизнеса поставщикам. Компания занимается поставкой отечественных и импортных электронных компонентов: микросхемы, резисторы, конденсаторы, разъемы, элементы питания + контрактная сборка.",
-      "task_en": ".",
+      "task_en": "Business card website to present a company supplying domestic and imported electronic components to suppliers.",
       "solution_ru": "Проект под ключ: дизайн, логотип, верстка и интеграция на WordPress.\r\n\r\nЧто сделано:\r\n✅ Разработка логотипа компании с нуля\r\n✅ Дизайн сайта без референсов - на основе понимания ниши\r\n✅ Каталог продукции с категориями: микросхемы, резисторы, конденсаторы, разъемы и др.\r\n✅ Описание контрактной сборки электронных узлов\r\n✅ Контактная информация и реквизиты\r\n✅ Интеграция на WordPress с управлением контентом\r\n\r\nФишки:\r\n✨ Логотип + сайт за 2 дня - быстрый запуск для B2B-презентации\r\n✨ Клиентка сразу получила готовый инструмент для работы с поставщиками\r\n✨ Простой и лаконичный дизайн - ничего лишнего, только суть бизнеса",
-      "solution_en": ".",
+      "solution_en": "Turnkey: logo designed from scratch, website design, product catalog with categories (microchips, resistors, capacitors, connectors), contract assembly section, WordPress integration.",
       "result_ru": "⭐ Клиентка: \"Задачу выполнил на 5! Сделал красивый сайт + логотип.\"\r\n\r\n💼 Сайт запущен и работает как визитка для поставщиков.",
-      "result_en": ".",
+      "result_en": "Client: 'Task completed perfectly! Built a beautiful website + logo.' Site launched and serves as a business card for suppliers.",
       "before_media_id": null,
       "after_media_id": "https://bot.yanksweb.ru/uploads/32512f2810ae49a1a01e62887e89d854_ruskomp.webp",
       "url": "https://рускомпонент.рф/",
@@ -646,13 +646,13 @@ const DATA_LIVE = {
     {
       "id": 15,
       "title_ru": "DetailInStyle - доработка сайта детейлинг-студии",
-      "title_en": ".",
+      "title_en": "DetailInStyle - Detailing Studio Website Completion",
       "task_ru": "Клиент обратился с недоделанным сайтом детейлинг-студии в Иваново перед запуском. Старый дизайн был кривой, множество пунктов из ТЗ не реализованы. Нужно было срочно привести сайт в порядок - запуск горел.",
-      "task_en": ".",
+      "task_en": "Unfinished detailing studio website right before launch. Broken design, many brief items not implemented. Urgent completion needed.",
       "solution_ru": "Срочная доработка сайта перед запуском - за одну ночь.\r\n\r\nЧто сделано:\r\n✅ Исправление верстки и адаптива по списку из ТЗ\r\n✅ Доработка дизайна - приведение к презентабельному виду\r\n✅ Описание услуг: полировка, защитные покрытия, химчистка, тонировка, оклейка пленкой\r\n✅ Портфолио работ студии\r\n✅ Контактная информация и форма записи\r\n✅ Полный адаптив под мобильные\r\n\r\nФишки:\r\n✨ Вся работа выполнена за одну ночь - клиент запустился утром\r\n✨ Сайт из кривого черновика превратился в рабочий инструмент для привлечения клиентов\r\n✨ Срочность не повлияла на качество - все по ТЗ без пропущенных пунктов",
-      "solution_en": ".",
+      "solution_en": "Urgent completion in one night: layout and responsiveness fixes, design improvements, service descriptions (polishing, coatings, cleaning, tinting, PPF), portfolio, contact form, full mobile responsiveness.",
       "result_ru": "⚡ Клиент: \"Сделал очень хорошо и быстро, рекомендую. Буду ещё не раз обращаться.\"\r\n\r\n🚀 Сайт запущен на следующее утро после обращения. Студия работает и принимает клиентов.",
-      "result_en": ".",
+      "result_en": "Client: 'Great work, done very well and fast. I recommend.' Site launched the next morning. Studio operating and accepting clients.",
       "before_media_id": null,
       "after_media_id": "https://bot.yanksweb.ru/uploads/0f0d46e95ed54f5f964bb588d9b64bbb_detailinstyle.webp",
       "url": "https://detailinstyle.ru/",
@@ -667,13 +667,13 @@ const DATA_LIVE = {
     {
       "id": 16,
       "title_ru": "Bariatria - SEO-аудит сайта центра бариатрической хирургии",
-      "title_en": ".",
+      "title_en": "Bariatria - Technical SEO Audit for Bariatric Surgery Center",
       "task_ru": "Клиент обратился за техническим SEO-аудитом и исправлением ошибок на сайте bariatria.ru - экспертный центр бариатрической хирургии в Москве (14 000+ операций с 1999 года). Сайт закупал рекламу, но технические проблемы мешали корректной индексации и снижали эффективность.",
-      "task_en": ".",
+      "task_en": "Technical SEO audit for bariatria.ru - bariatric surgery center in Moscow (14,000+ operations since 1999). Technical issues hindering indexing and ad effectiveness.",
       "solution_ru": "Полный технический SEO-аудит с исправлением всех найденных проблем и подробным отчетом.\r\n\r\nЧто сделано:\r\n✅ Устранена цепочка редиректов http://www -> https (сокращена до одного 301)\r\n✅ Очищен sitemap.xml от технических шаблонов Elementor и ElementsKit\r\n✅ Настроен заголовок Last-Modified на основе реальной даты изменения контента\r\n✅ Исправлен robots.txt - удалено правило блокирующее URL с параметрами\r\n✅ Устранены 404 ошибки с настройкой 301 редиректов на актуальные страницы\r\n✅ Заполнены пропущенные Meta Description для индексируемых страниц\r\n✅ Исправлена HTML-разметка: добавлен H1, заполнены alt-атрибуты изображений\r\n✅ Устранены ошибки W3C валидации\r\n✅ Нормализованы технические дубли главной (index.php, index.html, ?)\r\n✅ Добавлена cookie-плашка с отдельной страницей правил\r\n\r\nФишки:\r\n✨ Постоянный клиент - обращались более 5 раз по разным медицинским сайтам\r\n✨ Каждое исправление задокументировано в отчете со скриншотами до/после\r\n✨ Сайт теперь корректно индексируется, реклама работает эффективнее\r\n✨ Дополнительно предоставлены рекомендации по ускорению, безопасности и бэкапам",
-      "solution_en": ".",
+      "solution_en": "Complete audit: redirect chain fix, sitemap cleanup, Last-Modified headers, robots.txt fix, 404 redirects, meta descriptions, HTML markup, W3C validation, homepage duplicate normalization, cookie consent. Every fix documented with screenshots.",
       "result_ru": "📊 Сайт из технически проблемного превратился в корректно индексируемый. Реклама стала работать эффективнее.\r\n\r\n🤝 Клиент обращается регулярно - более 5 заказов по разным медицинским сайтам. Качество и оперативность подтверждены многократно.",
-      "result_en": ".",
+      "result_en": "Site transformed from technically problematic to properly indexed. Ad campaigns perform more effectively. Repeat client - 5+ orders across different medical websites.",
       "before_media_id": null,
       "after_media_id": "https://bot.yanksweb.ru/uploads/7fdd43d3e5aa4938899177b18fb6bfe1_bariatria.webp",
       "url": "https://bariatria.ru/",
@@ -788,7 +788,7 @@ const DATA_LIVE = {
       "promo_code": "PERSONAL15",
       "discount_percent": 15,
       "deadline": "2027-12-31",
-      "is_active": 0,
+      "is_active": 1,
       "created_at": "2026-04-02 16:07:28",
       "is_published": 1
     },
@@ -952,15 +952,15 @@ const DATA_LIVE = {
       "quiz.quick": "⚡ Быстрая заявка",
       "quiz.quick_desc": "3–4 вопроса, займёт минуту",
       "quiz.detailed": "📋 Подробная заявка",
-      "quiz.detailed_desc": "6–7 вопросов — помогает точнее оценить стоимость",
+      "quiz.detailed_desc": "5 вопросов - помогает точнее оценить стоимость",
       "quiz.q_site_type": "Что нужно сделать?",
       "quiz.q_has_design": "Есть ли дизайн-макет или примеры для референса?",
       "quiz.q_budget": "Примерный бюджет?",
       "quiz.q_contact": "Как с вами связаться? (Telegram, телефон или email)",
-      "quiz.q_about": "Расскажите о проекте — чем занимаетесь и что хотите получить в итоге:",
+      "quiz.q_about": "Расскажите о проекте - чем занимаетесь и что хотите получить. Если есть примеры сайтов, которые нравятся - укажите ссылки здесь же:",
       "quiz.q_features": "Какой функционал нужен?",
       "quiz.q_examples": "Есть сайты, которые нравятся? Пришлите ссылки или нажмите «Пропустить»:",
-      "quiz.q_budget_timeline": "Бюджет и желаемые сроки — напишите как удобно:",
+      "quiz.q_budget_timeline": "Бюджет и желаемые сроки. Если есть промокод - укажите его здесь же:",
       "quiz.design_yes": "Есть готовый макет",
       "quiz.design_no": "Нет, нужен дизайн",
       "quiz.design_examples": "Есть примеры / референсы",
@@ -1351,15 +1351,15 @@ const DATA_LIVE = {
       "quiz.quick": "⚡ Quick Request",
       "quiz.quick_desc": "3–4 questions, takes a minute",
       "quiz.detailed": "📋 Detailed Request",
-      "quiz.detailed_desc": "6–7 questions — helps estimate the cost more accurately",
+      "quiz.detailed_desc": "5 questions - helps estimate the cost more accurately",
       "quiz.q_site_type": "What do you need?",
       "quiz.q_has_design": "Do you have a design mockup or references?",
       "quiz.q_budget": "Approximate budget?",
       "quiz.q_contact": "How can I reach you? (Telegram, phone, or email)",
-      "quiz.q_about": "Tell me about the project — what you do and what you want to achieve:",
+      "quiz.q_about": "Tell me about the project - what you do and what you want to achieve. If you have reference websites you like - share links here:",
       "quiz.q_features": "What features do you need?",
       "quiz.q_examples": "Any websites you like as reference? Send links or tap \"Skip\":",
-      "quiz.q_budget_timeline": "Budget and timeline — feel free to write in any format:",
+      "quiz.q_budget_timeline": "Budget and timeline. If you have a promo code - include it here:",
       "quiz.design_yes": "Have a ready mockup",
       "quiz.design_no": "No, need a design",
       "quiz.design_examples": "Have references",
@@ -1653,8 +1653,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "Адаптивная HTML/CSS вёрстка лендинга. Без CMS — статичный сайт, контент меняется через код.\n\n✅ Вёрстка до 10 блоков, адаптив под все устройства\n✅ Форма обратной связи с отправкой на почту\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Responsive HTML/CSS landing page layout. No CMS — static site, content is edited through code.\n\n✅ Up to 10 sections, responsive on all devices\n✅ Contact form with email delivery\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 10 000 ₽ (~$120)",
-              "price_en": "from $120",
+              "price_ru": "от 15 000 ₽ (~$175)",
+              "price_en": "from $175",
               "sort_order": 0
             },
             {
@@ -1664,8 +1664,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "Лендинг под ключ на WordPress — редактируете контент сами, без разработчика.\n\n✅ Согласование структуры и стиля сайта\n✅ Адаптивная вёрстка\n✅ WordPress: меняйте тексты, фото и контент самостоятельно\n✅ Базовая SEO-настройка (Yoast)\n✅ Форма обратной связи\n✅ Краткая инструкция по работе с админкой\n✅ Установка и настройка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Turnkey WordPress landing — edit content yourself, no developer needed.\n\n✅ Design style and structure approval\n✅ Responsive layout\n✅ WordPress: update texts, images and content yourself\n✅ Basic SEO setup (Yoast)\n✅ Contact form\n✅ Admin panel quick-start guide\n✅ Deployment and hosting setup\n✅ 14-day guarantee",
-              "price_ru": "от 20 000 ₽ (~$235)",
-              "price_en": "from $235",
+              "price_ru": "от 25 000 ₽ (~$295)",
+              "price_en": "from $295",
               "sort_order": 1
             },
             {
@@ -1675,8 +1675,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Кастомная разработка на PHP/Laravel — когда WordPress не подходит под задачу.\n\n✅ Любая бизнес-логика и нестандартный функционал\n✅ REST API, интеграции с внешними сервисами\n✅ Личные кабинеты, роли, авторизация — если нужно\n✅ MySQL база данных\n✅ Деплой и настройка на сервере\n✅ Гарантия 14 дней",
               "description_en": "Custom PHP/Laravel development — when WordPress doesn't cut it.\n\n✅ Any business logic and non-standard functionality\n✅ REST API, integrations with external services\n✅ User accounts, roles, auth — if needed\n✅ MySQL database\n✅ Server deployment and configuration\n✅ 14-day guarantee",
-              "price_ru": "от 35 000 ₽ (~$415)",
-              "price_en": "from $415",
+              "price_ru": "от 40 000 ₽ (~$470)",
+              "price_en": "from $470",
               "sort_order": 2
             }
           ]
@@ -1715,8 +1715,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Сайт-визитка на ModX, Webflow, Drupal или другой CMS — если есть технические требования к платформе.\n\n✅ Тот же результат что WordPress-вариант, но на выбранной CMS\n✅ Согласование стиля и структуры\n✅ Адаптивная вёрстка\n✅ Краткая инструкция по работе с CMS\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Business card site on ModX, Webflow, Drupal or another CMS — if you have platform requirements.\n\n✅ Same result as WordPress option, on your chosen CMS\n✅ Style and structure approval\n✅ Responsive layout\n✅ CMS quick-start guide\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 20 000 ₽ (~$235)",
-              "price_en": "from $235",
+              "price_ru": "от 25 000 ₽ (~$295)",
+              "price_en": "from $295",
               "sort_order": 2
             }
           ]
@@ -1744,8 +1744,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "Корпоративный сайт на ModX, Joomla, OpenCart или другой CMS.\n\n✅ Тот же объём что WordPress-вариант\n✅ Платформа по вашим требованиям или ТЗ\n✅ Согласование стиля и структуры\n✅ Адаптивная вёрстка\n✅ Инструкция по работе с CMS\n✅ Установка на хостинге\n✅ Гарантия 14 дней\n\n<i>Итоговая цена зависит от выбранной CMS и объёма</i>",
               "description_en": "Corporate site on ModX, Joomla, OpenCart or another CMS.\n\n✅ Same scope as WordPress option\n✅ Platform per your requirements or spec\n✅ Style and structure approval\n✅ Responsive layout\n✅ CMS guide\n✅ Deployment on hosting\n✅ 14-day guarantee\n\n<i>Final price depends on CMS and scope</i>",
-              "price_ru": "от 40 000 ₽ (~$470)",
-              "price_en": "from $470",
+              "price_ru": "от 50 000 ₽ (~$590)",
+              "price_en": "from $590",
               "sort_order": 1
             },
             {
@@ -1892,8 +1892,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "WooCommerce до 50 товаров — полностью готов к продажам.\n\n✅ Согласование стиля и структуры магазина\n✅ Адаптивная вёрстка\n✅ WordPress + WooCommerce\n✅ Каталог, категории, карточки товаров\n✅ Корзина и оформление заказа\n✅ Онлайн-оплата: ЮKасса, Robokassa, Т-Банк, Альфа-Банк\n✅ Доставка: СДЭК, Почта России\n✅ Уведомления о заказах на почту\n✅ Инструкция по работе с магазином\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "WooCommerce store up to 50 products — ready to sell from day one.\n\n✅ Store style and structure approval\n✅ Responsive layout\n✅ WordPress + WooCommerce\n✅ Catalog, categories, product cards\n✅ Cart and checkout\n✅ Online payment: YooKassa, Robokassa, T-Bank, Alfa-Bank\n✅ Shipping: SDEK, Russian Post\n✅ Order email notifications\n✅ Store management guide\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 25 000 ₽ (~$295)",
-              "price_en": "from $295",
+              "price_ru": "от 30 000 ₽ (~$355)",
+              "price_en": "from $355",
               "sort_order": 0
             },
             {
@@ -1903,8 +1903,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "WooCommerce для каталогов от 500 товаров.\n\n✅ Всё из тарифа Старт\n✅ Импорт товаров из Excel / XML / CSV\n✅ Умные фильтры по характеристикам товаров\n✅ Интеграция с CRM: Bitrix24, AmoCRM и другие с API\n✅ Акции, скидки, промокоды\n✅ Гарантия 14 дней",
               "description_en": "WooCommerce for catalogs with 500+ products.\n\n✅ Everything from Start\n✅ Product import from Excel / XML / CSV\n✅ Smart filters by product attributes\n✅ CRM integration: Bitrix24, AmoCRM and others with API\n✅ Sales, discounts, promo codes\n✅ 14-day guarantee",
-              "price_ru": "от 45 000 ₽ (~$530)",
-              "price_en": "from $530",
+              "price_ru": "от 50 000 ₽ (~$590)",
+              "price_en": "from $590",
               "sort_order": 1
             },
             {
@@ -1914,8 +1914,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Продвинутый WooCommerce для сложных проектов.\n\n✅ Всё из тарифа Профи\n✅ Мультиязычность (русский + другие языки)\n✅ Кастомные типы товаров (варианты, комплекты, подписки)\n✅ Сложная логика скидок и бонусных программ\n✅ Личный кабинет покупателя с историей заказов\n✅ Гарантия 14 дней",
               "description_en": "Advanced WooCommerce for complex projects.\n\n✅ Everything from Pro\n✅ Multilingual (Russian + other languages)\n✅ Custom product types (variants, bundles, subscriptions)\n✅ Complex discount and loyalty program logic\n✅ Customer account with order history\n✅ 14-day guarantee",
-              "price_ru": "от 70 000 ₽ (~$825)",
-              "price_en": "from $825",
+              "price_ru": "от 80 000 ₽ (~$940)",
+              "price_en": "from $940",
               "sort_order": 2
             }
           ]
@@ -2011,8 +2011,8 @@ const DATA_LIVE = {
               "name_en": "Hourly",
               "description_ru": "Трачу N часов, вы платите за потраченное время — удобно для мелких задач.\n\n✅ Мелкие правки и доработки\n✅ Консультации по сайту\n✅ Задачи без чёткого ТЗ\n✅ Быстрые фиксы",
               "description_en": "You pay for time spent — convenient for small tasks.\n\n✅ Small fixes and tweaks\n✅ Website consultations\n✅ Tasks without a clear spec\n✅ Quick fixes",
-              "price_ru": "1 000 ₽/час (~$12/час)",
-              "price_en": "$12/hour",
+              "price_ru": "1 000 - 1 500 ₽/час (~$12-18/час)",
+              "price_en": "$12-18/hour",
               "sort_order": 1
             }
           ]
@@ -2058,8 +2058,8 @@ const DATA_LIVE = {
               "name_en": "Setup",
               "description_ru": "Полная настройка хостинга и домена — сайт в интернете без сюрпризов.\n\n✅ Выбор и настройка хостинга под задачу\n✅ Регистрация или перенос домена\n✅ SSL-сертификат (HTTPS)\n✅ Настройка DNS-записей\n✅ Почта на домене — по запросу\n✅ Размещение сайта",
               "description_en": "Full hosting and domain setup — your site goes live without surprises.\n\n✅ Hosting selection and configuration\n✅ Domain registration or transfer\n✅ SSL certificate (HTTPS)\n✅ DNS records configuration\n✅ Domain email — on request\n✅ Site deployment",
-              "price_ru": "от 3 000 ₽ (~$35)",
-              "price_en": "from $35",
+              "price_ru": "от 3 000 - 5 000 ₽ (~$35-60)",
+              "price_en": "from $35-60",
               "sort_order": 0
             }
           ]
@@ -2105,8 +2105,8 @@ const DATA_LIVE = {
               "name_en": "Optimization",
               "description_ru": "Ускорение сайта до PageSpeed 90+.\n\n✅ Аудит текущей скорости загрузки\n✅ Настройка кеширования (серверное + плагины)\n✅ Оптимизация изображений и конвертация в WebP\n✅ Минификация JS/CSS\n✅ Подключение CDN\n✅ Серверные настройки (nginx, PHP)",
               "description_en": "Site speed optimization to PageSpeed 90+.\n\n✅ Current load speed audit\n✅ Caching setup (server + plugins)\n✅ Image optimization and WebP conversion\n✅ JS/CSS minification\n✅ CDN setup\n✅ Server configuration (nginx, PHP)",
-              "price_ru": "от 5 000 ₽ (~$60)",
-              "price_en": "from $60",
+              "price_ru": "от 5 000 - 15 000 ₽ (~$60-175)",
+              "price_en": "from $60-175",
               "sort_order": 0
             }
           ]
@@ -2151,8 +2151,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "Простой чистый дизайн лендинга — быстро и функционально.\n\n✅ Макет до 5 экранов в Figma\n✅ Согласование стиля, цветов, шрифтов\n✅ Мобильная версия\n✅ Figma-файл с исходником передаётся вам\n\n<i>Без излишеств — для простых проектов с ограниченным бюджетом</i>",
               "description_en": "Simple clean landing design — fast and functional.\n\n✅ Up to 5 screens in Figma\n✅ Style, colors and fonts approval\n✅ Mobile version\n✅ Figma source file delivered to you\n\n<i>No excess — for simple projects with limited budget</i>",
-              "price_ru": "5 000 – 10 000 ₽ (~$60–120)",
-              "price_en": "$60 – $120",
+              "price_ru": "10 000 - 15 000 ₽ (~$120-175)",
+              "price_en": "$120-175",
               "sort_order": 0
             },
             {
@@ -2162,8 +2162,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "Продуманный дизайн с вниманием к деталям и UX.\n\n✅ Макет 5–8 экранов в Figma (desktop + mobile)\n✅ Проработанная визуальная иерархия\n✅ Анимации и hover-эффекты отражены в макете\n✅ Уникальная типографика и цветовая система\n✅ Figma-файл с исходником передаётся вам",
               "description_en": "Well-thought-out design with attention to detail and UX.\n\n✅ 5–8 screens in Figma (desktop + mobile)\n✅ Crafted visual hierarchy\n✅ Animations and hover effects reflected in the mockup\n✅ Unique typography and color system\n✅ Figma source file delivered to you",
-              "price_ru": "15 000 – 20 000 ₽ (~$175–235)",
-              "price_en": "$175 – $235",
+              "price_ru": "20 000 - 30 000 ₽ (~$235-355)",
+              "price_en": "$235-355",
               "sort_order": 1
             },
             {
@@ -2173,8 +2173,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Эксклюзивный дизайн — для проектов, где внешний вид является главным конкурентным преимуществом.\n\n✅ Уникальная концепция с нуля\n✅ Кастомная графика и иллюстрации\n✅ Макет всех экранов в Figma (desktop + tablet + mobile)\n✅ Интерактивный прототип\n✅ Figma-файл с исходником передаётся вам",
               "description_en": "Exclusive design — for projects where look is the main competitive edge.\n\n✅ Unique concept from scratch\n✅ Custom graphics and illustrations\n✅ All screens in Figma (desktop + tablet + mobile)\n✅ Interactive prototype\n✅ Figma source file delivered to you",
-              "price_ru": "30 000 – 50 000 ₽ (~$355–590)",
-              "price_en": "$355 – $590",
+              "price_ru": "от 50 000 ₽ (~$590+)",
+              "price_en": "from $590+",
               "sort_order": 2
             }
           ]
@@ -2215,7 +2215,7 @@ const DATA_LIVE = {
     "base_price.card": 10000.0,
     "base_price.corporate": 25000.0,
     "base_price.default": 15000.0,
-    "base_price.landing": 10000.0,
+    "base_price.landing": 15000.0,
     "base_price.shop": 35000.0,
     "design_mult.examples": 1.2,
     "design_mult.needed": 1.5,

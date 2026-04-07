@@ -653,6 +653,7 @@ body.app-ready #app {
 }
 
 .booking-form__date-input {
+    position: relative;
     color-scheme: light dark;
 }
 
@@ -660,8 +661,24 @@ body.app-ready #app {
     color: transparent;
 }
 
-.booking-form__date-input:not(.booking-form__date-input--filled)::-webkit-datetime-edit {
+.booking-form__date-input:not(.booking-form__date-input--filled)::-webkit-datetime-edit,
+.booking-form__date-input:not(.booking-form__date-input--filled)::-webkit-datetime-edit-fields-wrapper,
+.booking-form__date-input:not(.booking-form__date-input--filled)::-webkit-datetime-edit-text,
+.booking-form__date-input:not(.booking-form__date-input--filled)::-webkit-datetime-edit-month-field,
+.booking-form__date-input:not(.booking-form__date-input--filled)::-webkit-datetime-edit-day-field,
+.booking-form__date-input:not(.booking-form__date-input--filled)::-webkit-datetime-edit-year-field {
     color: transparent;
+}
+
+.booking-form__date-input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 0;
+    width: 18px;
+    height: 18px;
 }
 
 .booking-form__submit {

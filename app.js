@@ -318,7 +318,7 @@ function applyStaticTexts() {
     setText('#bookingOpenBtn', text('waitlist.webapp_open', 'Забронировать дату'));
     setText('#bookingForm .booking-form__title', text('waitlist.webapp_form_title', 'Бронирование даты'));
     setText('#bookingForm .booking-form__subtitle', text('waitlist.webapp_form_subtitle', 'Выберите дату, когда хотите начать обсуждение и работу. Это не дедлайн - просто ориентир, чтобы я зарезервировал время'));
-    setText('#bookingDateHint', text('waitlist.webapp_date_hint', 'Нажмите, чтобы выбрать дату'));
+    setText('#bookingDateHint', text('waitlist.webapp_date_hint', 'Выберите дату'));
     setPlaceholder('#bookingName', text('waitlist.webapp_name_placeholder', 'Как к вам обращаться'));
     setPlaceholder('#bookingTask', text('waitlist.webapp_task_placeholder', 'Например: интернет-магазин одежды'));
     setText('#bookingSubmitBtn', text('waitlist.webapp_submit', 'Отправить бронь'));
@@ -579,8 +579,10 @@ const HomePage = {
         function checkFormReady() {
             submitBtn.disabled = !(dateInput.value && nameInput.value.trim());
             if (dateInput.value) {
+                dateInput.classList.add('booking-form__date-input--filled');
                 dateHint.classList.add('booking-form__date-hint--hidden');
             } else {
+                dateInput.classList.remove('booking-form__date-input--filled');
                 dateHint.classList.remove('booking-form__date-hint--hidden');
             }
         }

@@ -1084,7 +1084,7 @@ const DATA_LIVE = {
       "waitlist.webapp_form_title": "Бронирование даты",
       "waitlist.webapp_form_subtitle": "Выберите дату, когда хотите начать обсуждение и работу. Это не дедлайн - просто ориентир, чтобы я зарезервировал время",
       "waitlist.webapp_date_label": "Когда планируете начать?",
-      "waitlist.webapp_date_hint": "Нажмите, чтобы выбрать дату",
+      "waitlist.webapp_date_hint": "Выберите дату",
       "waitlist.webapp_name_label": "Ваше имя",
       "waitlist.webapp_name_placeholder": "Как к вам обращаться",
       "waitlist.webapp_task_label": "Кратко о задаче",

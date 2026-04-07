@@ -630,15 +630,20 @@ body.app-ready #app {
 
 .booking-form__date-wrap .booking-form__input {
     margin-bottom: 0;
+    padding-right: 48px;
 }
 
 .booking-form__date-hint {
     position: absolute;
     left: 16px;
+    right: 48px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--hint);
     font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     pointer-events: none;
     transition: opacity 0.3s ease;
 }
@@ -649,6 +654,14 @@ body.app-ready #app {
 
 .booking-form__date-input {
     color-scheme: light dark;
+}
+
+.booking-form__date-input:not(.booking-form__date-input--filled) {
+    color: transparent;
+}
+
+.booking-form__date-input:not(.booking-form__date-input--filled)::-webkit-datetime-edit {
+    color: transparent;
 }
 
 .booking-form__submit {

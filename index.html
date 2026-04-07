@@ -148,12 +148,14 @@
 
                 <h2 class="section-title">Быстрый вопрос</h2>
                 <div class="quick-question">
+                    <label class="sr-only" for="quickQuestionInput">Ваш вопрос</label>
                     <div class="quick-question__field">
-                        <input class="quick-question__input" id="quickQuestionInput" type="text" placeholder="Напишите ваш вопрос...">
+                        <input class="quick-question__input" id="quickQuestionInput" type="text" placeholder="Напишите ваш вопрос..." aria-describedby="quickQuestionHint">
                         <button class="quick-question__send" id="quickQuestionSend" aria-label="Отправить">
                             <i data-lucide="send"></i>
                         </button>
                     </div>
+                    <span class="sr-only" id="quickQuestionHint">Поле для быстрого вопроса по проекту</span>
                 </div>
 
                 <h2 class="section-title">Бронирование</h2>
@@ -418,9 +420,11 @@
                     <h2 class="page__title">Экспресс-аудит сайта</h2>
                 </header>
                 <p class="audit__desc">Укажите адрес вашего сайта, и я проведу быстрый анализ: скорость загрузки, SEO, мобильная версия, основные ошибки.</p>
+                <label class="sr-only" for="auditUrlInput">Адрес сайта для аудита</label>
                 <div class="audit__field">
-                    <input class="input" id="auditUrlInput" type="url" placeholder="https://example.com">
+                    <input class="input" id="auditUrlInput" type="url" placeholder="https://example.com" aria-describedby="auditUrlHint">
                 </div>
+                <span class="sr-only" id="auditUrlHint">Введите URL сайта для проверки скорости и технических метрик</span>
                 <button class="btn btn--primary audit__submit" id="auditSubmitBtn">Проверить</button>
                 <p class="audit__note">Результат придет в течение 5-10 минут в этот чат</p>
             </section>
@@ -490,10 +494,11 @@
         </nav>
 
         <!-- More Menu Bottom Sheet -->
-        <div class="more-menu" id="more-menu">
+        <div class="more-menu" id="more-menu" aria-hidden="true">
             <div class="more-menu__backdrop"></div>
-            <div class="more-menu__sheet">
+            <div class="more-menu__sheet" role="dialog" aria-modal="true" aria-labelledby="moreMenuTitle" tabindex="-1">
                 <div class="more-menu__handle"></div>
+                <h2 class="sr-only" id="moreMenuTitle">Дополнительные разделы</h2>
                 <button class="more-menu__item" data-navigate="favorites">
                     <span class="more-menu__item-icon"><i data-lucide="heart"></i></span>
                     <span>Избранное</span>

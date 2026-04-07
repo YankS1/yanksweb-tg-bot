@@ -432,7 +432,14 @@ const DATA = {
       { value: "no",       label: "Нет, нужен дизайн" },
       { value: "examples", label: "Есть примеры / референсы" }
     ],
-    budgetOptions: [      { value: "20",       label: "до 20 000 ₽" },      { value: "40",       label: "20 000 - 40 000 ₽" },      { value: "70",       label: "40 000 - 70 000 ₽" },      { value: "90",       label: "70 000 - 90 000 ₽" },      { value: "120",      label: "90 000 - 120 000 ₽" },      { value: "170",      label: "120 000 - 170 000 ₽" },      { value: "250",      label: "170 000 - 250 000 ₽" },      { value: "250plus",  label: "250 000+ ₽" },      { value: "unknown",  label: "Пока не определился" }    ],
+    budgetOptions: [
+      { value: "30",       label: "до 30 000 ₽" },
+      { value: "50",       label: "30 000 - 50 000 ₽" },
+      { value: "100",      label: "50 000 - 100 000 ₽" },
+      { value: "200",      label: "100 000 - 200 000 ₽" },
+      { value: "200plus",  label: "200 000+ ₽" },
+      { value: "unknown",  label: "Пока не определился" }
+    ],
     featureOptions: [
       { value: "forms",   label: "Формы" },
       { value: "crm",     label: "CRM" },

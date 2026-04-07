@@ -396,6 +396,8 @@ const AppState = {
     favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
 };
 
+let lastMoreMenuTrigger = null;
+
 /* === Router === */
 
 const Router = {
@@ -471,13 +473,34 @@ function updateTabBar(pageId) {
 function toggleMoreMenu() {
     const menu = document.getElementById('more-menu');
     const isOpen = menu.classList.toggle('more-menu--open');
+    const sheet = menu.querySelector('.more-menu__sheet');
+    menu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
     document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (isOpen) {
+        lastMoreMenuTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        window.requestAnimationFrame(() => {
+            const firstAction = menu.querySelector('.more-menu__item');
+            if (firstAction) {
+                firstAction.focus();
+            } else if (sheet) {
+                sheet.focus();
+            }
+        });
+    } else if (lastMoreMenuTrigger) {
+        lastMoreMenuTrigger.focus();
+        lastMoreMenuTrigger = null;
+    }
 }
 
 function closeMoreMenu() {
     const menu = document.getElementById('more-menu');
     menu.classList.remove('more-menu--open');
+    menu.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    if (lastMoreMenuTrigger) {
+        lastMoreMenuTrigger.focus();
+        lastMoreMenuTrigger = null;
+    }
 }
 
 /* === Detail Overlay === */

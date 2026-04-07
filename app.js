@@ -236,26 +236,21 @@ function interpolateText(template, values = {}) {
     return result;
 }
 
-function quizSuccessCopy() {
-    const handle = String(DATA?.contact?.username || '').replace(/^@/, '').trim();
-    const rawTemplate = getLiveTexts()['quiz.thank_you'] || '';
-    const raw = interpolateText(rawTemplate, { contact: handle });
-    const plain = plainText(raw);
-    const lines = plain.split('\n').map(line => line.trim()).filter(Boolean);
-    const title = stripLeadingDecorators(lines.shift() || 'Получил вашу заявку!');
-    let body = lines.join(' ');
-    const directHandle = handle ? `@${handle}` : '';
-    if (directHandle) {
-        body = body.replace(directHandle, '').replace(/\s{2,}/g, ' ').trim();
-        body = body.replace(/Пишите:\s*$/i, '').trim();
-        body = body.replace(/Write me:\s*$/i, '').trim();
-    }
-    if (!body) {
-        body = text('quick_question.webapp_sent', 'Свяжусь с вами в ближайшее время');
-    }
+function leadSuccessCopy() {
     return {
-        title,
-        body,
+        title: 'Спасибо, ваша заявка принята!',
+        body: 'Я свяжусь с вами в течение 15 минут для уточнения деталей.',
+        short: 'Спасибо, ваша заявка принята! Я свяжусь с вами в течение 15 минут.',
+    };
+}
+
+function quizSuccessCopy() {
+    const success = leadSuccessCopy();
+    const handle = String(DATA?.contact?.username || '').replace(/^@/, '').trim();
+    const directHandle = handle ? `@${handle}` : '';
+    return {
+        title: success.title,
+        body: success.body,
         handle: directHandle,
     };
 }
@@ -533,8 +528,9 @@ const HomePage = {
             sendBtn.removeAttribute('aria-busy');
 
             if (result.ok) {
+                const success = leadSuccessCopy();
                 input.value = '';
-                showToast(text('quick_question.webapp_sent', 'Получил ваш вопрос! Отвечу в ближайшее время.'), {
+                showToast(success.short, {
                     type: 'success',
                     duration: 3200,
                 });
@@ -609,11 +605,12 @@ const HomePage = {
                 return;
             }
 
+            const success = leadSuccessCopy();
             form.innerHTML = `
                 <div class="booking-form__done">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
-                    <h3>${escapeHtml(text('waitlist.webapp_sent_title', 'Бронь отправлена!'))}</h3>
-                    <p>${escapeHtml(text('waitlist.webapp_confirmed', 'Свяжусь с вами в ближайшее время для уточнения деталей'))}</p>
+                    <h3>${escapeHtml(success.title)}</h3>
+                    <p>${escapeHtml(success.body)}</p>
                     <button class="btn btn--ghost" id="bookingReset" style="margin-top:12px">Забронировать ещё</button>
                 </div>
             `;
@@ -2145,8 +2142,9 @@ const AuditPage = {
             const result = await submitToApi('audit', { url });
             input.value = '';
             if (note) {
+                const success = leadSuccessCopy();
                 note.textContent = result.ok
-                    ? text('audit.webapp_success_note', 'Результат отправлен в чат с ботом')
+                    ? success.short
                     : text('audit.webapp_error_note', 'Ошибка, попробуйте позже');
                 if (result.ok) note.classList.add('audit__note--success');
             }

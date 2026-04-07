@@ -294,7 +294,7 @@ function applyStaticTexts() {
     if (homeSectionTitles[2]) homeSectionTitles[2].textContent = text('home.booking_title', 'Бронирование');
 
     setText('[data-page="services"] .page__title', text('services.title', 'Услуги и цены'));
-    setText('[data-page="portfolio"] .page__title', text('portfolio.title', 'Мои работы'));
+    setText('[data-page="portfolio"] .page__title', labelText('portfolio.title', 'Мои работы'));
     setText('[data-page="reviews"] .page__title', text('reviews.title', 'Отзывы клиентов'));
     setText('[data-page="cases"] .page__title', text('reviews.cases_title', 'Кейсы'));
     setText('[data-page="faq"] .page__title', text('faq.title', 'Частые вопросы'));
@@ -313,7 +313,7 @@ function applyStaticTexts() {
     setText('#bookingOpenBtn', text('waitlist.webapp_open', 'Забронировать дату'));
     setText('#bookingForm .booking-form__title', text('waitlist.webapp_form_title', 'Бронирование даты'));
     setText('#bookingForm .booking-form__subtitle', text('waitlist.webapp_form_subtitle', 'Выберите дату, когда хотите начать обсуждение и работу. Это не дедлайн - просто ориентир, чтобы я зарезервировал время'));
-    setText('#bookingDateHint', text('waitlist.webapp_date_hint', 'Выберите дату'));
+    setText('#bookingDateHint', text('waitlist.webapp_date_hint', 'Нажмите, чтобы выбрать дату'));
     setPlaceholder('#bookingName', text('waitlist.webapp_name_placeholder', 'Как к вам обращаться'));
     setPlaceholder('#bookingTask', text('waitlist.webapp_task_placeholder', 'Например: интернет-магазин одежды'));
     setText('#bookingSubmitBtn', text('waitlist.webapp_submit', 'Отправить бронь'));
@@ -444,7 +444,8 @@ const Router = {
         if (pageId === 'cases') CasesPage.render();
         if (pageId === 'faq') FaqPage.render();
         if (pageId === 'promos') PromosPage.render();
-        if (pageId === 'portfolio') PortfolioPage.render();
+        if (pageId === 'portfolio') { PortfolioPage.render(AppState.portfolio?.filter); PortfolioPage.updateFavoritesCount(); }
+        if (pageId === 'favorites') FavoritesPage.render();
 
         lucide.createIcons();
 
@@ -516,7 +517,12 @@ const HomePage = {
             const input = document.getElementById('quickQuestionInput');
             const sendBtn = document.getElementById('quickQuestionSend');
             const msg = input.value.trim();
-            if (!msg) return;
+            if (!msg) {
+                input.classList.add("input--error");
+                showToast(text("common.field_required", "Заполните это поле, пожалуйста"), { type: "info", duration: 2000 });
+                setTimeout(() => input.classList.remove("input--error"), 1500);
+                return;
+            }
             if (sendBtn.disabled) return;
 
             sendBtn.disabled = true;
@@ -575,10 +581,8 @@ const HomePage = {
         function checkFormReady() {
             submitBtn.disabled = !(dateInput.value && nameInput.value.trim());
             if (dateInput.value) {
-                dateInput.classList.add('booking-form__date-input--filled');
                 dateHint.classList.add('booking-form__date-hint--hidden');
             } else {
-                dateInput.classList.remove('booking-form__date-input--filled');
                 dateHint.classList.remove('booking-form__date-hint--hidden');
             }
         }
@@ -818,6 +822,7 @@ function toggleFavorite(id) {
 const PortfolioPage = {
     _filtersBound: false,
     _eventsBound: false,
+    _videoObserver: null,
 
     bootstrap() {
         this.initFilters();
@@ -850,22 +855,22 @@ const PortfolioPage = {
                     <div class="portfolio-item__body">
                         <h3 class="portfolio-item__title">${escapeHtml(item.title)}</h3>
                         ${item.description ? `<p class="portfolio-item__desc">${nl2br(escapeHtml(item.description))}</p>` : ''}
-                        <div class="portfolio-item__actions">
+                        <div class="portfolio-item__actions-row">
                             ${item.url ? `
                                 <button class="portfolio-item__btn" data-open-url="${escapeHtml(item.url)}">
                                     <i data-lucide="external-link"></i>
                                     ${escapeHtml(labelText('portfolio.open_site', 'Открыть сайт'))}
                                 </button>
                             ` : ''}
-                            <button class="portfolio-item__btn portfolio-item__btn--cta" data-pf-quiz>
-                                <i data-lucide="message-square"></i>
-                                ${escapeHtml(labelText('services.order', 'Обсудить проект'))}
-                            </button>
                             <button class="portfolio-item__btn portfolio-item__btn--fav ${isFav ? 'portfolio-item__btn--fav-active' : ''}" data-fav-id="${escapeHtml(String(item.id || ''))}">
                                 <i data-lucide="heart"></i>
                                 ${escapeHtml(text(isFav ? 'portfolio.favorites_added' : 'portfolio.favorites_add', isFav ? 'В избранном' : 'В избранное'))}
                             </button>
                         </div>
+                        <button class="portfolio-item__btn portfolio-item__btn--order" data-pf-quiz>
+                            <i data-lucide="message-square"></i>
+                            ${escapeHtml(labelText('services.order', 'Обсудить работу'))}
+                        </button>
                         ${item.tags ? `<span class="portfolio-item__tag">${escapeHtml(portfolioCategoryLabel(item.tags) || item.tags)}</span>` : ''}
                     </div>
                 </article>
@@ -878,6 +883,10 @@ const PortfolioPage = {
     },
 
     observeVideos() {
+        if (this._videoObserver) {
+            this._videoObserver.disconnect();
+            this._videoObserver = null;
+        }
         const videos = document.querySelectorAll('video[data-src]');
         if (!videos.length) return;
 
@@ -892,6 +901,7 @@ const PortfolioPage = {
         }, { rootMargin: '200px' });
 
         videos.forEach(v => observer.observe(v));
+        this._videoObserver = observer;
     },
 
     renderMedia(item) {
@@ -927,7 +937,8 @@ const PortfolioPage = {
             if (!favBtn) return;
             haptic();
 
-            const id = Number(favBtn.dataset.favId) || favBtn.dataset.favId;
+            const id = parseInt(favBtn.dataset.favId, 10);
+            if (isNaN(id)) return;
             toggleFavorite(id);
 
             const isFav = AppState.favorites.includes(id);
@@ -950,7 +961,7 @@ const PortfolioPage = {
         const badge = document.getElementById('favoritesCount');
         if (!badge) return;
         const count = AppState.favorites.length;
-        badge.textContent = count ? `♥ ${count}` : '';
+        badge.textContent = count ? `❤️ ${count}` : '';
         badge.style.display = count ? 'inline-flex' : 'none';
     },
 
@@ -1393,6 +1404,14 @@ const ReviewsPage = {
 const CasesPage = {
     _activeIndex: -1,
     _view: 'list',
+    _sliderCleanup: null,
+
+    _cleanupSlider() {
+        if (this._sliderCleanup) {
+            this._sliderCleanup();
+            this._sliderCleanup = null;
+        }
+    },
 
     render() {
         if (this._view === 'detail' && this._activeIndex >= 0) {
@@ -1472,6 +1491,7 @@ const CasesPage = {
     },
 
     _renderDetail() {
+        this._cleanupSlider();
         const list = document.getElementById('cases-list');
         const detail = document.getElementById('cases-detail');
         const title = document.getElementById('casesTitle');
@@ -1527,6 +1547,11 @@ const CasesPage = {
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 Все кейсы
             </button>
+            <div class="case-nav case-nav--top">
+                ${prevIdx !== null ? `<button class="case-nav__btn case-nav__btn--prev" data-go="${prevIdx}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> ${prevName}</button>` : '<span></span>'}
+                <span class="case-nav__counter">${idx + 1} / ${total}</span>
+                ${nextIdx !== null ? `<button class="case-nav__btn case-nav__btn--next" data-go="${nextIdx}">${nextName} <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : '<span></span>'}
+            </div>
             <div class="case-card animate-in">
                 ${mediaHtml}
                 <div class="case-card__body">
@@ -1547,6 +1572,7 @@ const CasesPage = {
 
         document.getElementById('caseBackBtn').addEventListener('click', () => {
             haptic();
+            this._cleanupSlider();
             this._view = 'list';
             this.render();
             document.querySelector('[data-page="cases"]')?.scrollTo(0, 0);
@@ -1581,6 +1607,7 @@ const CasesPage = {
     },
 
     _initSlider(el) {
+        this._cleanupSlider();
         if (!el) return;
         const handle = el.querySelector('.ba-slider__handle');
         const beforeWrap = el.querySelector('.ba-slider__before-wrap');
@@ -1611,7 +1638,12 @@ const CasesPage = {
         if (loaded >= 2) equalizeHeight();
 
         syncSize();
-        window.addEventListener('resize', () => { syncSize(); equalizeHeight(); });
+        let resizeTimer;
+        const onResize = () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => { syncSize(); equalizeHeight(); }, 150);
+        };
+        window.addEventListener('resize', onResize);
 
         let dragging = false;
 
@@ -1648,6 +1680,15 @@ const CasesPage = {
         el.addEventListener('click', (e) => {
             if (!dragging) move(e.clientX);
         });
+
+        this._sliderCleanup = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('touchend', onEnd);
+            window.removeEventListener('resize', onResize);
+            clearTimeout(resizeTimer);
+        };
     },
 };
 
@@ -1757,11 +1798,11 @@ const QuizPage = {
         const prefill = AppState.quiz.prefill || {};
 
         if (type === 'quick') {
-            AppState.quiz.steps = ['site_type', 'has_design', 'budget', 'contact'];
+            AppState.quiz.steps = ['site_type', 'has_design', 'budget'];
         } else {
             AppState.quiz.steps = [
                 'site_type', 'about', 'features', 'has_design',
-                'examples', 'budget_timeline', 'contact'
+                'examples', 'budget_timeline'
             ];
         }
 
@@ -1869,7 +1910,7 @@ const QuizPage = {
 
             case 'examples':
                 content = this.renderTextStep(
-                    text('quiz.q_examples', 'Есть примеры сайтов, которые нравятся?'),
+                    text('quiz.q_examples', 'Есть сайты, которые нравятся? Пришлите ссылки или нажмите «Пропустить»:'),
                     'Ссылки или описание (можно пропустить)',
                     'examples',
                     true
@@ -1980,7 +2021,12 @@ const QuizPage = {
             sendBtn?.addEventListener('click', () => {
                 haptic();
                 const val = input.value.trim();
-                if (!val && !skippable) return;
+                if (!val && !skippable) {
+                    input.classList.add("input--error");
+                    showToast(text("common.field_required", "Заполните это поле, пожалуйста"), { type: "info", duration: 2000 });
+                    setTimeout(() => input.classList.remove("input--error"), 1500);
+                    return;
+                }
                 AppState.quiz.answers[key] = val;
                 this.nextStep();
             });
@@ -2093,13 +2139,44 @@ const QuizPage = {
 
     async submit() {
         const container = document.getElementById('quiz-content');
+
+        // If user has favorites and hasn't been asked yet, show attach prompt
+        if (AppState.favorites.length && !AppState.quiz._favAsked) {
+            AppState.quiz._favAsked = true;
+            const favItems = DATA.portfolio.filter(p => AppState.favorites.includes(p.id));
+            if (favItems.length) {
+                container.innerHTML = `
+                    <div class="quiz-step animate-in">
+                        <h2 class="quiz-step__title">Прикрепить понравившиеся работы?</h2>
+                        <p class="quiz-fav-hint">Вы сохранили ${favItems.length} ${favItems.length === 1 ? 'работу' : 'работы'} в избранное. Прикрепить их к заявке как примеры желаемого результата?</p>
+                        <div class="quiz-fav-list">
+                            ${favItems.map(p => `<div class="quiz-fav-item">❤️ ${escapeHtml(p.title)}</div>`).join('')}
+                        </div>
+                        <button class="btn btn--primary quiz-next" id="favAttachYes">Да, прикрепить</button>
+                        <button class="btn btn--secondary quiz-skip" id="favAttachNo">Нет, отправить без них</button>
+                    </div>
+                `;
+                document.getElementById('favAttachYes').addEventListener('click', () => {
+                    haptic();
+                    AppState.quiz._attachFav = true;
+                    this.submit();
+                });
+                document.getElementById('favAttachNo').addEventListener('click', () => {
+                    haptic();
+                    AppState.quiz._attachFav = false;
+                    this.submit();
+                });
+                return;
+            }
+        }
+
         this.renderSubmitState(container, 'sending');
         const payload = {
             quiz_type: AppState.quiz.type,
             ...AppState.quiz.answers,
         };
 
-        if (AppState.favorites.length) {
+        if (AppState.quiz._attachFav !== false && AppState.favorites.length) {
             const favItems = DATA.portfolio.filter(p => AppState.favorites.includes(p.id));
             payload.favorites = favItems.map(p => p.title).join(', ');
         }
@@ -2118,42 +2195,275 @@ const QuizPage = {
     },
 };
 
+/* === Favorites Page === */
+
+const FavoritesPage = {
+    render() {
+        const container = document.getElementById('favoritesContent');
+        if (!container) return;
+
+        const favIds = AppState.favorites;
+        if (!favIds.length) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state__icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
+                    <p class="empty-state__title">Избранное пусто</p>
+                    <p>Здесь вы сможете сохранять понравившиеся работы из портфолио и прикрепить их к заявке как примеры желаемого результата. Нажмите ❤️ на любом проекте в разделе «Работы».</p>
+                    <button class="btn btn--primary" data-navigate="portfolio">Перейти в портфолио</button>
+                </div>
+            `;
+            container.querySelector('[data-navigate]')?.addEventListener('click', () => { haptic(); Router.navigate('portfolio'); });
+            return;
+        }
+
+        const items = DATA.portfolio.filter(p => favIds.includes(p.id));
+        if (!items.length) {
+            container.innerHTML = `<div class="empty-state"><p>Работы были удалены из портфолио</p></div>`;
+            return;
+        }
+
+        container.innerHTML = `
+            <p class="favorites-hint">Нравящиеся работы будут прикреплены к вашей заявке как примеры</p>
+            <div class="favorites-list">
+                ${items.map(item => `
+                    <div class="favorites-item" data-fav-item="${item.id}">
+                        <div class="favorites-item__info">
+                            <strong>${escapeHtml(item.title)}</strong>
+                            ${item.url ? `<span class="favorites-item__url">${escapeHtml(item.url)}</span>` : ''}
+                        </div>
+                        <button class="favorites-item__remove" data-remove-fav="${item.id}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="favorites-actions">
+                <button class="btn btn--primary" id="favQuizBtn">Обсудить проект</button>
+            </div>
+        `;
+
+        container.querySelectorAll('[data-remove-fav]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                const id = parseInt(btn.dataset.removeFav, 10);
+                if (isNaN(id)) return;
+                AppState.favorites = AppState.favorites.filter(f => f !== id);
+                localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+                PortfolioPage?.updateFavoritesCount?.();
+                this.render();
+            });
+        });
+
+        document.getElementById('favQuizBtn')?.addEventListener('click', () => {
+            haptic();
+            Router.navigate('quiz');
+        });
+    },
+};
+
 /* === Audit Page === */
 
 const AuditPage = {
     init() {
-        document.getElementById('auditSubmitBtn').addEventListener('click', async () => {
-            haptic();
-            const input = document.getElementById('auditUrlInput');
-            const url = input.value.trim();
+        document.getElementById('auditSubmitBtn').addEventListener('click', () => this.runAudit());
+    },
 
-            if (!url || !url.includes('.')) {
-                input.classList.add('input--error');
-                setTimeout(() => input.classList.remove('input--error'), 1500);
-                return;
-            }
+    async runAudit() {
+        haptic();
+        const input = document.getElementById('auditUrlInput');
+        const url = input.value.trim();
 
-            const note = document.querySelector('.audit__note');
-            if (note) {
-                note.textContent = text('audit.loading', 'Анализирую сайт...');
-                note.classList.remove('audit__note--success');
-            }
+        let testUrl = url;
+        if (!testUrl.startsWith('http')) testUrl = 'https://' + testUrl;
+        try {
+            const parsed = new URL(testUrl);
+            if (!parsed.hostname.includes('.')) throw new Error();
+        } catch {
+            input.classList.add('input--error');
+            showToast(text("common.enter_valid_url", "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0439 URL"), { type: "info", duration: 2000 });
+            setTimeout(() => input.classList.remove('input--error'), 1500);
+            return;
+        }
 
-            const result = await submitToApi('audit', { url });
-            input.value = '';
-            if (note) {
-                const success = leadSuccessCopy();
-                note.textContent = result.ok
-                    ? success.short
-                    : text('audit.webapp_error_note', 'Ошибка, попробуйте позже');
-                if (result.ok) note.classList.add('audit__note--success');
-            }
-            if (!result.ok) {
-                showRequestError('Не удалось запустить аудит. Напишите мне напрямую, и я помогу вручную.');
-            }
-        });
+        const container = document.querySelector('[data-page="audit"]');
+        this.renderLoading(container, url);
+
+        const _res = await submitToApi('audit', { url }); const result = _res.ok ? { ok: true, ..._res.data } : { ok: false, error: _res.error, ..._res.data };
+
+       if (_res.status === 429 || result.error === "limit_reached") {
+            this.renderLimitReached(container);
+            return;
+        }
+        if (result.ok && result.metrics) {
+            this.renderResult(container, result);
+        } else if (result.audit_error === 'invalid_url') {
+            this.renderError(container, text('audit.invalid_url', '\u041d\u0435\u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0439 URL'));
+        } else if (result.ok && result.audit_error === 'pagespeed_failed') {
+            this.renderPartial(container, result);
+        } else {
+            this.renderError(container, result.error || text('audit.webapp_error_note', '\u041e\u0448\u0438\u0431\u043a\u0430, \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u043f\u043e\u0437\u0436\u0435'));
+        }
+    },
+
+    renderLoading(container, url) {
+        container.innerHTML = `
+            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
+            <div class="audit-loading">
+                <div class="audit-loading__spinner"></div>
+                <p class="audit-loading__text">${escapeHtml(text('audit.loading', '\u0410\u043d\u0430\u043b\u0438\u0437\u0438\u0440\u0443\u044e \u0441\u0430\u0439\u0442...'))}</p>
+                <p class="audit-result__url">${escapeHtml(url)}</p>
+            </div>
+        `;
+    },
+
+    scoreColor(s) { return s >= 90 ? 'green' : s >= 50 ? 'yellow' : 'red'; },
+
+    issueText(key) {
+        const m = {
+            issue_render_blocking: '\u0411\u043b\u043e\u043a\u0438\u0440\u0443\u044e\u0449\u0438\u0435 \u0440\u0435\u0441\u0443\u0440\u0441\u044b',
+            issue_optimized_images: '\u0418\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f \u043d\u0435 \u043e\u043f\u0442\u0438\u043c\u0438\u0437\u0438\u0440\u043e\u0432\u0430\u043d\u044b',
+            issue_text_compression: '\u041d\u0435\u0442 \u0441\u0436\u0430\u0442\u0438\u044f \u0442\u0435\u043a\u0441\u0442\u0430',
+            issue_responsive_images: '\u041d\u0435\u0430\u0434\u0430\u043f\u0442\u0438\u0432\u043d\u044b\u0435 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f',
+            issue_cache_ttl: '\u041a\u043e\u0440\u043e\u0442\u043a\u0438\u0439 \u0441\u0440\u043e\u043a \u043a\u0435\u0448\u0430',
+            issue_unminified_css: 'CSS \u043d\u0435 \u043c\u0438\u043d\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u043d',
+            issue_unminified_js: 'JS \u043d\u0435 \u043c\u0438\u043d\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u043d',
+            issue_unused_css: '\u041d\u0435\u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u043c\u044b\u0439 CSS',
+            issue_unused_js: '\u041d\u0435\u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u043c\u044b\u0439 JS',
+            issue_dom_size: '\u0421\u043b\u0438\u0448\u043a\u043e\u043c \u0431\u043e\u043b\u044c\u0448\u043e\u0439 DOM',
+            issue_redirects: '\u041b\u0438\u0448\u043d\u0438\u0435 \u0440\u0435\u0434\u0438\u0440\u0435\u043a\u0442\u044b',
+            issue_server_response: '\u041c\u0435\u0434\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0435\u0440\u0432\u0435\u0440',
+            issue_preconnect: '\u041d\u0435\u0442 preconnect',
+            issue_font_display: '\u0428\u0440\u0438\u0444\u0442\u044b \u0431\u043b\u043e\u043a\u0438\u0440\u0443\u044e\u0442 \u0440\u0435\u043d\u0434\u0435\u0440',
+            issue_meta_description: '\u041d\u0435\u0442 meta description',
+            issue_document_title: '\u041d\u0435\u0442 title',
+            issue_image_alt: '\u041d\u0435\u0442 alt \u0443 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0439',
+            issue_viewport: '\u041d\u0435\u0442 viewport meta',
+        };
+        return m[key] || key;
+    },
+
+    renderScoreCard(score, label) {
+        return `<div class="audit-score-card audit-score-card--${this.scoreColor(score)}">
+            <div class="audit-score-card__value">${score}</div>
+            <div class="audit-score-card__label">${escapeHtml(label)}</div>
+        </div>`;
+    },
+
+    renderResult(container, r) {
+        const m = r.metrics;
+        const ssl = r.ssl || {};
+        const sslOk = ssl.valid === true;
+        const issues = m.issues || [];
+        const isGood = r.is_good;
+
+        container.innerHTML = `
+            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
+            <div class="audit-result">
+                <p class="audit-result__url">${escapeHtml(r.url || r.domain)}</p>
+                <div class="audit-scores">
+                    ${this.renderScoreCard(m.performance, text('audit.cat_performance', '\u0421\u043a\u043e\u0440\u043e\u0441\u0442\u044c'))}
+                    ${this.renderScoreCard(m.seo, 'SEO')}
+                    ${this.renderScoreCard(m.accessibility, text('audit.cat_accessibility', '\u0414\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u044c'))}
+                    ${this.renderScoreCard(m.best_practices, text('audit.cat_best_practices', '\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0438'))}
+                </div>
+                <div class="audit-vitals">
+                    <div class="audit-vitals__title">Core Web Vitals</div>
+                    <div class="audit-vitals__grid">
+                        ${m.lcp != null ? `<div class="audit-vital"><span class="audit-vital__name">LCP</span><span class="audit-vital__value">${m.lcp}s</span></div>` : ''}
+                        ${m.fcp != null ? `<div class="audit-vital"><span class="audit-vital__name">FCP</span><span class="audit-vital__value">${m.fcp}s</span></div>` : ''}
+                        ${m.cls != null ? `<div class="audit-vital"><span class="audit-vital__name">CLS</span><span class="audit-vital__value">${m.cls}</span></div>` : ''}
+                        ${m.tbt != null ? `<div class="audit-vital"><span class="audit-vital__name">TBT</span><span class="audit-vital__value">${m.tbt}ms</span></div>` : ''}
+                        ${m.speed_index != null ? `<div class="audit-vital"><span class="audit-vital__name">Speed Index</span><span class="audit-vital__value">${m.speed_index}s</span></div>` : ''}
+                    </div>
+                </div>
+                <div class="audit-ssl ${sslOk ? 'audit-ssl--ok' : 'audit-ssl--bad'}">
+                    <span class="audit-ssl__icon">${sslOk ? '\ud83d\udd12' : '\u26a0\ufe0f'}</span>
+                    <span class="audit-ssl__text">SSL: ${sslOk ? (ssl.days_left ? ssl.days_left + ' \u0434\u043d.' : 'OK') : '\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442'}</span>
+                </div>
+                ${issues.length ? `
+                <div class="audit-issues">
+                    <div class="audit-issues__title">\u041d\u0430\u0439\u0434\u0435\u043d\u043d\u044b\u0435 \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u044b (${issues.length})</div>
+                    ${issues.map(i => `<div class="audit-issue">${escapeHtml(this.issueText(i))}</div>`).join('')}
+                </div>` : ''}
+                <div class="audit-verdict ${isGood ? 'audit-verdict--good' : 'audit-verdict--bad'}">
+                    <div class="audit-verdict__icon">${isGood ? '\u2705' : '\u26a0\ufe0f'}</div>
+                    <div class="audit-verdict__text">${isGood ? '\u0421\u0430\u0439\u0442 \u0432 \u0445\u043e\u0440\u043e\u0448\u0435\u043c \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0438' : '\u0415\u0441\u0442\u044c \u0447\u0442\u043e \u0443\u043b\u0443\u0447\u0448\u0438\u0442\u044c - \u043c\u043e\u0433\u0443 \u043f\u043e\u043c\u043e\u0447\u044c!'}</div>
+                </div>
+                <div class="audit-result__actions">
+                    <button class="btn btn--secondary" id="auditRetryBtn">\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0434\u0440\u0443\u0433\u043e\u0439</button>
+                    ${!isGood ? `<button class="btn btn--primary" id="auditOrderBtn">${escapeHtml(labelText('services.order', '\u041e\u0431\u0441\u0443\u0434\u0438\u0442\u044c \u043f\u0440\u043e\u0435\u043a\u0442'))}</button>` : ''}
+                </div>
+                ${r.remaining != null ? `<p class="audit-remaining">Осталось проверок: ${r.remaining} из ${r.limit || 5}</p>` : ''}
+            </div>
+        `;
+        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(container); });
+        document.getElementById('auditOrderBtn')?.addEventListener('click', () => { haptic(); Router.navigate('quiz'); });
+    },
+
+    renderPartial(container, r) {
+        const ssl = r.ssl || {};
+        const sslOk = ssl.valid === true;
+        container.innerHTML = `
+            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
+            <div class="audit-result">
+                <p class="audit-result__url">${escapeHtml(r.url || r.domain)}</p>
+                <div class="audit-ssl ${sslOk ? 'audit-ssl--ok' : 'audit-ssl--bad'}">
+                    <span class="audit-ssl__icon">${sslOk ? '\ud83d\udd12' : '\u26a0\ufe0f'}</span>
+                    <span class="audit-ssl__text">SSL: ${sslOk ? 'OK' : '\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442'}</span>
+                </div>
+                <div class="audit-verdict audit-verdict--bad">
+                    <div class="audit-verdict__icon">\u26a0\ufe0f</div>
+                    <div class="audit-verdict__text">\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0434\u0430\u043d\u043d\u044b\u0435 PageSpeed</div>
+                </div>
+                <div class="audit-result__actions">
+                    <button class="btn btn--secondary" id="auditRetryBtn">\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0434\u0440\u0443\u0433\u043e\u0439</button>
+                </div>
+            </div>
+        `;
+        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(container); });
+    },
+
+    renderError(container, msg) {
+        container.innerHTML = `
+            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
+            <div class="audit-result">
+                <div class="audit-verdict audit-verdict--bad">
+                    <div class="audit-verdict__icon">\u274c</div>
+                    <div class="audit-verdict__text">${escapeHtml(msg)}</div>
+                </div>
+                <div class="audit-result__actions">
+                    <button class="btn btn--secondary" id="auditRetryBtn">\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0434\u0440\u0443\u0433\u043e\u0439</button>
+                </div>
+            </div>
+        `;
+        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(container); });
+    },
+
+    renderLimitReached(container) {
+        container.innerHTML = `
+            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', 'Экспресс-аудит сайта'))}</h2></header>
+            <div class="audit-result">
+                <div class="audit-verdict audit-verdict--bad">
+                    <div class="audit-verdict__icon">⏳</div>
+                    <div class="audit-verdict__text">Лимит исчерпан. Попробуйте завтра!</div>
+                </div>
+            </div>
+        `;
+    },
+
+        renderForm(container) {
+        container.innerHTML = `
+            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
+            <p class="audit__desc">${escapeHtml(text('audit.desc', '\u0423\u043a\u0430\u0436\u0438\u0442\u0435 \u0430\u0434\u0440\u0435\u0441 \u0441\u0430\u0439\u0442\u0430 - \u043f\u0440\u043e\u0430\u043d\u0430\u043b\u0438\u0437\u0438\u0440\u0443\u044e \u0441\u043a\u043e\u0440\u043e\u0441\u0442\u044c, SEO, SSL \u0438 \u043c\u043e\u0431\u0438\u043b\u044c\u043d\u043e\u0441\u0442\u044c.'))}</p>
+            <div class="audit__field">
+                <input class="input" id="auditUrlInput" type="url" placeholder="https://example.com">
+            </div>
+            <button class="btn btn--primary audit__submit" id="auditSubmitBtn">${escapeHtml(text('audit.webapp_submit', '\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c'))}</button>
+        `;
+        document.getElementById('auditSubmitBtn').addEventListener('click', () => this.runAudit());
     },
 };
+
 
 /* === Contact Page === */
 

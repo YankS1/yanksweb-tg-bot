@@ -60,7 +60,7 @@
             margin: 0 auto 16px;
             border-radius: 22px;
             background: linear-gradient(135deg, #5b8ee6, #6b79d8);
-            box-shadow: 0 10px 34px rgba(91, 142, 230, 0.28);
+            box-shadow: 0 10px 34px rgba(91, 142, 230, 0.28); display: flex; align-items: center; justify-content: center;
         }
 
         .app-loader__title {
@@ -98,13 +98,13 @@
             100% { transform: translateX(320%); }
         }
     </style>
-    <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
-    <link rel="stylesheet" href="style.css?v=3">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css?v=1775171989">
 </head>
 <body class="app-loading">
     <div id="app-loader" aria-live="polite">
         <div class="app-loader__box">
-            <div class="app-loader__logo"></div>
+            <div class="app-loader__logo"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg></div>
             <div class="app-loader__title">YankSWeb</div>
             <div class="app-loader__subtitle" id="appLoaderText">Загружаю Mini App...</div>
             <div class="app-loader__bar"></div>
@@ -134,7 +134,7 @@
                     </button>
                     <button class="quick-actions__btn animate-in" data-navigate="calculator">
                         <span class="quick-actions__icon quick-actions__icon--green"><i data-lucide="calculator"></i></span>
-                        <span class="quick-actions__label">Расчет</span>
+                        <span class="quick-actions__label">Расчёт</span>
                     </button>
                     <button class="quick-actions__btn animate-in" data-navigate="quiz">
                         <span class="quick-actions__icon quick-actions__icon--purple"><i data-lucide="message-square"></i></span>
@@ -271,7 +271,7 @@
                     <div class="calc-step__header">
                         <span class="calc-step__counter">2 / 5</span>
                         <h2 class="calc-step__title">Сколько страниц?</h2>
-                        <p class="calc-step__subtitle">Примерный объем сайта</p>
+                        <p class="calc-step__subtitle">Примерный объём сайта</p>
                     </div>
                     <div class="calc-step__options">
                         <button class="option option--compact" data-pages="1_3" data-next="3">
@@ -403,7 +403,7 @@
                 <div id="faq-list"></div>
                 <div class="empty-state" id="faqEmpty">
                     <div class="empty-state__icon"><i data-lucide="help-circle"></i></div>
-                    <p>Раздел в разработке</p>
+                    <p>Частые вопросы скоро появятся</p>
                 </div>
             </section>
 
@@ -455,6 +455,14 @@
                 </div>
             </section>
 
+            <!-- Favorites -->
+            <section class="page" data-page="favorites">
+                <header class="page__header">
+                    <h2 class="page__title">Избранное</h2>
+                </header>
+                <div id="favoritesContent"></div>
+            </section>
+
         </main>
 
         <!-- Tab Bar -->
@@ -473,7 +481,7 @@
             </button>
             <button class="tab-bar__tab" data-page="calculator">
                 <i data-lucide="calculator"></i>
-                <span>Расчет</span>
+                <span>Расчёт</span>
             </button>
             <button class="tab-bar__tab" data-page="more">
                 <i data-lucide="menu"></i>
@@ -486,6 +494,10 @@
             <div class="more-menu__backdrop"></div>
             <div class="more-menu__sheet">
                 <div class="more-menu__handle"></div>
+                <button class="more-menu__item" data-navigate="favorites">
+                    <span class="more-menu__item-icon"><i data-lucide="heart"></i></span>
+                    <span>Избранное</span>
+                </button>
                 <button class="more-menu__item" data-navigate="reviews">
                     <span class="more-menu__item-icon"><i data-lucide="star"></i></span>
                     <span>Отзывы</span>
@@ -524,9 +536,9 @@
         </div>
     </div>
 
-    <script src="lucide.js?v=3" defer></script>
-    <script src="data.js?v=3" defer></script>
-    <script src="data-live.js?v=3" defer></script>
-    <script src="app.js?v=3" defer></script>
+    <script src="lucide.js?v=1774825514" defer></script>
+    <script src="data.js?v=1775165451" defer></script>
+    <script src="data-live.js?v=1775171664" defer></script>
+    <script src="app.js?v=1775171565" defer></script>
 </body>
 </html>

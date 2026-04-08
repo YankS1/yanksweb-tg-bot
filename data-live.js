@@ -2317,20 +2317,37 @@ const DATA_LIVE_ICON_MAP = {
     image: pick(item.media_file_id, item.media_url, item.image),
   });
 
-  const mapCase = (item) => ({
-    id: item.id,
-    title: pick(item.title_ru, item.title_en, item.title),
-    task: pick(item.task_ru, item.task_en, item.task),
-    solution: pick(item.solution_ru, item.solution_en, item.solution),
-    result: pick(item.result_ru, item.result_en, item.result),
-    url: pick(item.url),
-    image_before: pick(item.before_media_id, item.before_media_url),
-    image_after: pick(item.after_media_id, item.after_media_url),
-    client_name: pick(item.client_name),
-    niche: pick(item.niche),
-    stack: pick(item.stack),
-    timeline: pick(item.timeline),
-  });
+  const thumbUrl = (url) => {
+    if (!url) return "";
+    const ext = (url.split(".").pop() || "").toLowerCase();
+    if (!["jpg", "jpeg", "png", "webp"].includes(ext)) return "";
+    const parts = url.split("/");
+    const fname = parts.pop();
+    const thumbName = fname.replace(/\.[^.]+$/, ".webp");
+    parts.push("thumbs", thumbName);
+    return parts.join("/");
+  };
+
+  const mapCase = (item) => {
+    const imgBefore = pick(item.before_media_id, item.before_media_url);
+    const imgAfter = pick(item.after_media_id, item.after_media_url);
+    return {
+      id: item.id,
+      title: pick(item.title_ru, item.title_en, item.title),
+      task: pick(item.task_ru, item.task_en, item.task),
+      solution: pick(item.solution_ru, item.solution_en, item.solution),
+      result: pick(item.result_ru, item.result_en, item.result),
+      url: pick(item.url),
+      image_before: imgBefore,
+      image_after: imgAfter,
+      thumb_before: thumbUrl(imgBefore),
+      thumb_after: thumbUrl(imgAfter),
+      client_name: pick(item.client_name),
+      niche: pick(item.niche),
+      stack: pick(item.stack),
+      timeline: pick(item.timeline),
+    };
+  };
 
   const mapFaq = (item) => ({
     id: item.id,

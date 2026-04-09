@@ -1230,7 +1230,20 @@ const DATA_LIVE = {
       "miniapp.more.promos": "Акции",
       "cases.title": "Кейсы",
       "cases.before": "До",
-      "cases.after": "После"
+      "cases.after": "После",
+      "audit.hub_title": "Аудит сайта",
+      "audit.hub_desc": "Выберите тип аудита:",
+      "audit.seo_btn": "SEO-аудит",
+      "audit.perf_btn": "Аудит скорости",
+      "seo_audit.title": "SEO-аудит",
+      "seo_audit.prompt": "Отправьте ссылку на сайт - я проверю 22 SEO-параметра и покажу, что можно улучшить.\n\nПроверка занимает 10-15 секунд.",
+      "seo_audit.loading": "Анализирую SEO...",
+      "seo_audit.remaining": "Осталось проверок сегодня: {n}",
+      "seo_audit.limit_reached": "Лимит SEO-проверок на сегодня исчерпан. Попробуйте завтра.",
+      "seo_audit.full_report": "Полный отчёт",
+      "seo_audit.order_audit": "Заказать полный аудит и исправления",
+      "seo_audit.order_sent": "Заявка отправлена!",
+      "seo_audit.order_desc": "Мы свяжемся с вами в ближайшее время для обсуждения деталей."
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel — YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end — design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -1629,7 +1642,20 @@ const DATA_LIVE = {
       "miniapp.more.promos": "Deals",
       "cases.title": "Case Studies",
       "cases.before": "Before",
-      "cases.after": "After"
+      "cases.after": "After",
+      "audit.hub_title": "Website Audit",
+      "audit.hub_desc": "Choose audit type:",
+      "audit.seo_btn": "SEO Audit",
+      "audit.perf_btn": "Speed Audit",
+      "seo_audit.title": "SEO Audit",
+      "seo_audit.prompt": "Send a website link - I'll check 22 SEO parameters and show what can be improved.\n\nThe check takes 10-15 seconds.",
+      "seo_audit.loading": "Analyzing SEO...",
+      "seo_audit.remaining": "Checks remaining today: {n}",
+      "seo_audit.limit_reached": "SEO audit limit reached for today. Try again tomorrow.",
+      "seo_audit.full_report": "Full Report",
+      "seo_audit.order_audit": "Order full audit & fixes",
+      "seo_audit.order_sent": "Request sent!",
+      "seo_audit.order_desc": "We'll contact you shortly to discuss the details."
     }
   },
   "services": [

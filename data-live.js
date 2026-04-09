@@ -2317,6 +2317,7 @@ const DATA_LIVE_ICON_MAP = {
     image: pick(item.media_file_id, item.media_url, item.image),
   });
 
+  const THUMB_V = 2;
   const thumbUrl = (url) => {
     if (!url) return "";
     const ext = (url.split(".").pop() || "").toLowerCase();
@@ -2325,7 +2326,7 @@ const DATA_LIVE_ICON_MAP = {
     const fname = parts.pop();
     const thumbName = fname.replace(/\.[^.]+$/, ".webp");
     parts.push("thumbs", thumbName);
-    return parts.join("/");
+    return parts.join("/") + "?v=" + THUMB_V;
   };
 
   const mapCase = (item) => {

@@ -790,7 +790,9 @@ const DATA_LIVE = {
       "deadline": "2027-12-31",
       "is_active": 1,
       "created_at": "2026-04-02 16:07:28",
-      "is_published": 1
+      "is_published": 1,
+      "activation_duration_days": null,
+      "is_eternal": 0
     },
     {
       "id": 2,
@@ -803,7 +805,9 @@ const DATA_LIVE = {
       "deadline": "2026-06-30",
       "is_active": 1,
       "created_at": "2026-04-02 01:05:05",
-      "is_published": 1
+      "is_published": 1,
+      "activation_duration_days": null,
+      "is_eternal": 0
     },
     {
       "id": 3,
@@ -816,7 +820,9 @@ const DATA_LIVE = {
       "deadline": "2026-05-31",
       "is_active": 1,
       "created_at": "2026-04-02 01:05:05",
-      "is_published": 1
+      "is_published": 1,
+      "activation_duration_days": null,
+      "is_eternal": 0
     },
     {
       "id": 1,
@@ -829,7 +835,9 @@ const DATA_LIVE = {
       "deadline": "2026-12-31",
       "is_active": 1,
       "created_at": "2026-04-02 01:04:50",
-      "is_published": 1
+      "is_published": 1,
+      "activation_duration_days": null,
+      "is_eternal": 0
     }
   ],
   "texts": {
@@ -1251,7 +1259,41 @@ const DATA_LIVE = {
       "quiz.have_promo": "Хотите получить скидку?",
       "quiz.skip_promo": "Пропустить",
       "quiz.promo_instruction": "Отправьте промокод в сообщение боту, и я зафиксирую за вами скидку.",
-      "quiz.no_active_promos": "Сейчас нет активных акций."
+      "quiz.no_active_promos": "Сейчас нет активных акций.",
+      "promo.eternal": "🔁 Постоянная акция",
+      "promo.timer_info": "⏱ Действует {days} дней после активации",
+      "promo.active_eternal": "✅ Активна постоянно",
+      "promo.active_until": "✅ Активна до {date}",
+      "promo.left_label": "⏱ Осталось: {left}",
+      "promo.code_label": "🎟 Код: <code>{code}</code>",
+      "promo.expired": "❌ Время использования истекло",
+      "promo.expired_hint": "Но не переживайте - скоро появятся новые акции и скидки!",
+      "promo.activate_btn": "Активировать",
+      "promo.days_one": "день",
+      "promo.days_few": "дня",
+      "promo.days_many": "дней",
+      "promo.hours_short": "ч",
+      "promo.minutes_short": "мин",
+      "promo.activate_btn_with_title": "Активировать: {title}",
+      "promo.activation_duration": "Действует {days} дней после активации",
+      "promo.activation_duration_one": "Действует 1 день после активации",
+      "promo.eternal_active": "Постоянная акция",
+      "promo.activated_until": "Активно до {date}",
+      "promo.time_left_label": "Осталось:",
+      "promo.promo_code_label": "Промокод:",
+      "promo.already_activated": "Вы уже активировали эту акцию",
+      "promo.activation_success": "Промокод активирован! Код закреплён за вами",
+      "promo.activation_failed": "Не удалось активировать. Акция могла закончиться.",
+      "promo.activation_failed_deadline": "Срок акции истёк",
+      "promo.expired_title": "Время использования истекло",
+      "promo.expired_message": "Но не переживайте - скоро появятся новые акции и скидки!",
+      "promo.notification_24h": "⏰ Через 24 часа истечёт скидка \"{title}\"!\n\n🎟 Промокод: <code>{code}</code>",
+      "promo.notification_1h": "⚡ Последний час скидки \"{title}\"!\n\n🎟 Промокод: <code>{code}</code>",
+      "promo.notifications_off_btn": "Больше не уведомлять",
+      "promo.notifications_disabled": "Уведомления отключены. Таймер продолжает идти",
+      "promo.type_timer_label": "С таймером",
+      "promo.type_eternal_label": "Вечная",
+      "promo.copy_code_hint": "Нажмите на код чтобы скопировать"
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel — YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end — design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -1671,7 +1713,41 @@ const DATA_LIVE = {
       "quiz.have_promo": "Want to get a discount?",
       "quiz.skip_promo": "Skip",
       "quiz.promo_instruction": "Send the promo code as a message to the bot, and I'll apply your discount.",
-      "quiz.no_active_promos": "No active promotions right now."
+      "quiz.no_active_promos": "No active promotions right now.",
+      "promo.eternal": "🔁 Permanent promotion",
+      "promo.timer_info": "⏱ Valid for {days} days after activation",
+      "promo.active_eternal": "✅ Active permanently",
+      "promo.active_until": "✅ Active until {date}",
+      "promo.left_label": "⏱ Left: {left}",
+      "promo.code_label": "🎟 Code: <code>{code}</code>",
+      "promo.expired": "❌ Time to use has expired",
+      "promo.expired_hint": "But don't worry - new promotions and discounts are coming soon!",
+      "promo.activate_btn": "Activate",
+      "promo.days_one": "day",
+      "promo.days_few": "days",
+      "promo.days_many": "days",
+      "promo.hours_short": "h",
+      "promo.minutes_short": "min",
+      "promo.activate_btn_with_title": "Activate: {title}",
+      "promo.activation_duration": "Valid for {days} days after activation",
+      "promo.activation_duration_one": "Valid for 1 day after activation",
+      "promo.eternal_active": "Permanent promotion",
+      "promo.activated_until": "Active until {date}",
+      "promo.time_left_label": "Time left:",
+      "promo.promo_code_label": "Promo code:",
+      "promo.already_activated": "You already activated this promotion",
+      "promo.activation_success": "Promo code activated! Reserved for you",
+      "promo.activation_failed": "Activation failed. The promotion may have ended.",
+      "promo.activation_failed_deadline": "Promotion deadline has passed",
+      "promo.expired_title": "Your activation time has expired",
+      "promo.expired_message": "Don't worry, new promotions and discounts are coming soon!",
+      "promo.notification_24h": "⏰ Your discount \"{title}\" expires in 24 hours!\n\n🎟 Promo code: <code>{code}</code>",
+      "promo.notification_1h": "⚡ Last hour of discount \"{title}\"!\n\n🎟 Promo code: <code>{code}</code>",
+      "promo.notifications_off_btn": "Stop notifying",
+      "promo.notifications_disabled": "Notifications disabled. Timer continues running",
+      "promo.type_timer_label": "Timer-based",
+      "promo.type_eternal_label": "Permanent",
+      "promo.copy_code_hint": "Tap the code to copy"
     }
   },
   "services": [
@@ -2405,6 +2481,8 @@ const DATA_LIVE_ICON_MAP = {
     code: pick(item.promo_code, item.code),
     discount: item.discount_percent ? `-${item.discount_percent}%` : pick(item.discount),
     deadline: pick(item.deadline),
+    activation_duration_days: item.activation_duration_days,
+    is_eternal: item.is_eternal === 1,
   });
 
   const applyCalculator = (liveCalc) => {

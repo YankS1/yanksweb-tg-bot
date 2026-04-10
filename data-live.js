@@ -1243,7 +1243,15 @@ const DATA_LIVE = {
       "seo_audit.full_report": "Полный отчёт",
       "seo_audit.order_audit": "Заказать полный аудит и исправления",
       "seo_audit.order_sent": "Заявка отправлена!",
-      "seo_audit.order_desc": "Мы свяжемся с вами в ближайшее время для обсуждения деталей."
+      "seo_audit.order_desc": "Мы свяжемся с вами в ближайшее время для обсуждения деталей.",
+      "portfolio.discuss_similar": "💬 Обсудить похожий проект",
+      "quiz.ready_to_send": "Отлично! Ваша заявка готова.",
+      "quiz.send_request": "Отправить заявку",
+      "quiz.describe_more": "Описать проект подробнее",
+      "quiz.have_promo": "У вас есть промокод?",
+      "quiz.skip_promo": "Пропустить",
+      "quiz.promo_instruction": "Отправьте промокод в сообщение боту, и я зафиксирую за вами скидку.",
+      "quiz.no_active_promos": "Сейчас нет активных акций."
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel — YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end — design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -1655,7 +1663,15 @@ const DATA_LIVE = {
       "seo_audit.full_report": "Full Report",
       "seo_audit.order_audit": "Order full audit & fixes",
       "seo_audit.order_sent": "Request sent!",
-      "seo_audit.order_desc": "We'll contact you shortly to discuss the details."
+      "seo_audit.order_desc": "We'll contact you shortly to discuss the details.",
+      "portfolio.discuss_similar": "💬 Discuss a similar project",
+      "quiz.ready_to_send": "Your request is ready.",
+      "quiz.send_request": "Submit request",
+      "quiz.describe_more": "Describe project in detail",
+      "quiz.have_promo": "Do you have a promo code?",
+      "quiz.skip_promo": "Skip",
+      "quiz.promo_instruction": "Send the promo code as a message to the bot, and I'll apply your discount.",
+      "quiz.no_active_promos": "No active promotions right now."
     }
   },
   "services": [
@@ -1679,8 +1695,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "Адаптивная HTML/CSS вёрстка лендинга. Без CMS — статичный сайт, контент меняется через код.\n\n✅ Вёрстка до 10 блоков, адаптив под все устройства\n✅ Форма обратной связи с отправкой на почту\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Responsive HTML/CSS landing page layout. No CMS — static site, content is edited through code.\n\n✅ Up to 10 sections, responsive on all devices\n✅ Contact form with email delivery\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 15 000 ₽ (~$175)",
-              "price_en": "from $175",
+              "price_ru": "от 25 000 ₽ (~$295)",
+              "price_en": "from $295",
               "sort_order": 0
             },
             {
@@ -1690,8 +1706,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "Лендинг под ключ на WordPress — редактируете контент сами, без разработчика.\n\n✅ Согласование структуры и стиля сайта\n✅ Адаптивная вёрстка\n✅ WordPress: меняйте тексты, фото и контент самостоятельно\n✅ Базовая SEO-настройка (Yoast)\n✅ Форма обратной связи\n✅ Краткая инструкция по работе с админкой\n✅ Установка и настройка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Turnkey WordPress landing — edit content yourself, no developer needed.\n\n✅ Design style and structure approval\n✅ Responsive layout\n✅ WordPress: update texts, images and content yourself\n✅ Basic SEO setup (Yoast)\n✅ Contact form\n✅ Admin panel quick-start guide\n✅ Deployment and hosting setup\n✅ 14-day guarantee",
-              "price_ru": "от 25 000 ₽ (~$295)",
-              "price_en": "from $295",
+              "price_ru": "от 35 000 ₽ (~$410)",
+              "price_en": "from $410",
               "sort_order": 1
             },
             {
@@ -1701,8 +1717,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Кастомная разработка на PHP/Laravel — когда WordPress не подходит под задачу.\n\n✅ Любая бизнес-логика и нестандартный функционал\n✅ REST API, интеграции с внешними сервисами\n✅ Личные кабинеты, роли, авторизация — если нужно\n✅ MySQL база данных\n✅ Деплой и настройка на сервере\n✅ Гарантия 14 дней",
               "description_en": "Custom PHP/Laravel development — when WordPress doesn't cut it.\n\n✅ Any business logic and non-standard functionality\n✅ REST API, integrations with external services\n✅ User accounts, roles, auth — if needed\n✅ MySQL database\n✅ Server deployment and configuration\n✅ 14-day guarantee",
-              "price_ru": "от 40 000 ₽ (~$470)",
-              "price_en": "from $470",
+              "price_ru": "от 55 000 ₽ (~$650)",
+              "price_en": "from $650",
               "sort_order": 2
             }
           ]
@@ -1719,8 +1735,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "Простой сайт-визитка на HTML/CSS — быстро, чисто, без лишнего.\n\n✅ 1–3 страницы: главная, контакты, о нас\n✅ Адаптив под мобильные\n✅ Форма обратной связи с отправкой на почту\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Simple HTML/CSS business card site — fast, clean, no bloat.\n\n✅ 1–3 pages: home, contacts, about us\n✅ Mobile responsive\n✅ Contact form with email delivery\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 10 000 ₽ (~$120)",
-              "price_en": "from $120",
+              "price_ru": "от 15 000 ₽ (~$175)",
+              "price_en": "from $175",
               "sort_order": 0
             },
             {
@@ -1730,8 +1746,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "Сайт-визитка на WordPress — стиль согласовываем, контент редактируете сами.\n\n✅ Согласование стиля и структуры\n✅ Адаптивная вёрстка\n✅ WordPress: меняйте тексты, фото, контакты самостоятельно\n✅ Базовая SEO-настройка\n✅ Форма обратной связи\n✅ Краткая инструкция по работе с админкой\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "WordPress business card site — we agree on the style, you edit content yourself.\n\n✅ Style and structure approval\n✅ Responsive layout\n✅ WordPress: edit texts, photos and contacts yourself\n✅ Basic SEO setup\n✅ Contact form\n✅ Admin panel quick-start guide\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 15 000 ₽ (~$175)",
-              "price_en": "from $175",
+              "price_ru": "от 25 000 ₽ (~$295)",
+              "price_en": "from $295",
               "sort_order": 1
             },
             {
@@ -1741,8 +1757,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Сайт-визитка на ModX, Webflow, Drupal или другой CMS — если есть технические требования к платформе.\n\n✅ Тот же результат что WordPress-вариант, но на выбранной CMS\n✅ Согласование стиля и структуры\n✅ Адаптивная вёрстка\n✅ Краткая инструкция по работе с CMS\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Business card site on ModX, Webflow, Drupal or another CMS — if you have platform requirements.\n\n✅ Same result as WordPress option, on your chosen CMS\n✅ Style and structure approval\n✅ Responsive layout\n✅ CMS quick-start guide\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 25 000 ₽ (~$295)",
-              "price_en": "from $295",
+              "price_ru": "от 35 000 ₽ (~$410)",
+              "price_en": "from $410",
               "sort_order": 2
             }
           ]
@@ -1759,8 +1775,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "Корпоративный сайт на WordPress под ключ.\n\n✅ Главная страница + 2–3 короткие доп. страницы (О нас, Контакты и подобные)\n✅ Согласование стиля и структуры\n✅ Адаптивная вёрстка\n✅ WordPress: редактируйте весь контент самостоятельно\n✅ Базовая SEO-настройка\n✅ Форма обратной связи\n✅ Краткая инструкция по работе с админкой\n✅ Установка на хостинге\n✅ Гарантия 14 дней\n\n<i>Дополнительные страницы — +5 000 ₽ каждая</i>",
               "description_en": "Turnkey corporate site on WordPress.\n\n✅ Home page + 2–3 short additional pages (About, Contacts and similar)\n✅ Style and structure approval\n✅ Responsive layout\n✅ WordPress: edit all content yourself\n✅ Basic SEO setup\n✅ Contact form\n✅ Admin panel quick-start guide\n✅ Deployment on hosting\n✅ 14-day guarantee\n\n<i>Extra pages — +$60 each</i>",
-              "price_ru": "от 25 000 ₽ (~$295)",
-              "price_en": "from $295",
+              "price_ru": "от 55 000 ₽ (~$650)",
+              "price_en": "from $650",
               "sort_order": 0
             },
             {
@@ -1770,8 +1786,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "Корпоративный сайт на ModX, Joomla, OpenCart или другой CMS.\n\n✅ Тот же объём что WordPress-вариант\n✅ Платформа по вашим требованиям или ТЗ\n✅ Согласование стиля и структуры\n✅ Адаптивная вёрстка\n✅ Инструкция по работе с CMS\n✅ Установка на хостинге\n✅ Гарантия 14 дней\n\n<i>Итоговая цена зависит от выбранной CMS и объёма</i>",
               "description_en": "Corporate site on ModX, Joomla, OpenCart or another CMS.\n\n✅ Same scope as WordPress option\n✅ Platform per your requirements or spec\n✅ Style and structure approval\n✅ Responsive layout\n✅ CMS guide\n✅ Deployment on hosting\n✅ 14-day guarantee\n\n<i>Final price depends on CMS and scope</i>",
-              "price_ru": "от 50 000 ₽ (~$590)",
-              "price_en": "from $590",
+              "price_ru": "от 70 000 ₽ (~$825)",
+              "price_en": "from $825",
               "sort_order": 1
             },
             {
@@ -1799,8 +1815,8 @@ const DATA_LIVE = {
               "name_en": "Standard",
               "description_ru": "Разработка на ModX, Webflow или Drupal — гибкие CMS для нестандартных проектов.\n\n✅ Структура и функционал под ваш проект\n✅ Редактирование контента через CMS\n✅ Адаптивная вёрстка\n✅ Установка и настройка\n✅ Гарантия 14 дней\n\n<i>Базовая цена за лендинг или визитку. Многостраничный сайт — дороже.</i>",
               "description_en": "Development on ModX, Webflow or Drupal — flexible CMS for non-standard projects.\n\n✅ Structure and functionality for your project\n✅ Content editing via CMS\n✅ Responsive layout\n✅ Installation and setup\n✅ 14-day guarantee\n\n<i>Base price for landing or card site. Multi-page — higher.</i>",
-              "price_ru": "от 25 000 ₽ (~$295)",
-              "price_en": "from $295",
+              "price_ru": "от 35 000 ₽ (~$410)",
+              "price_en": "from $410",
               "sort_order": 0
             },
             {
@@ -1810,8 +1826,8 @@ const DATA_LIVE = {
               "name_en": "Advanced",
               "description_ru": "Разработка на OpenCart или Joomla — хорошо подходит для каталогов и многостраничников.\n\n✅ Структура и функционал под ваш проект\n✅ Редактирование через CMS\n✅ Адаптивная вёрстка\n✅ Установка и настройка\n✅ Гарантия 14 дней\n\n<i>Базовая цена за лендинг или визитку. Полноценный магазин — дороже.</i>",
               "description_en": "Development on OpenCart or Joomla — great for catalogs and multi-page sites.\n\n✅ Structure and functionality for your project\n✅ Content editing via CMS\n✅ Responsive layout\n✅ Installation and setup\n✅ 14-day guarantee\n\n<i>Base price for landing or card site. Full store — higher.</i>",
-              "price_ru": "от 30 000 ₽ (~$355)",
-              "price_en": "from $355",
+              "price_ru": "от 45 000 ₽ (~$530)",
+              "price_en": "from $530",
               "sort_order": 1
             },
             {
@@ -1821,8 +1837,8 @@ const DATA_LIVE = {
               "name_en": "Enterprise",
               "description_ru": "Разработка на 1C-Bitrix — корпоративный стандарт для среднего и крупного бизнеса.\n\n✅ Нативная интеграция с 1С (товары, остатки, заказы)\n✅ Встроенная CRM Bitrix24\n✅ Корпоративный портал или интернет-магазин\n✅ Высокий уровень безопасности и масштабируемости\n✅ Управление через удобную панель Bitrix\n✅ Гарантия 14 дней",
               "description_en": "Development on 1C-Bitrix — the enterprise standard for medium and large businesses.\n\n✅ Native 1C integration (products, stock, orders)\n✅ Built-in Bitrix24 CRM\n✅ Corporate portal or online store\n✅ High security and scalability\n✅ Management via the Bitrix admin panel\n✅ 14-day guarantee",
-              "price_ru": "от 50 000 ₽ (~$590)",
-              "price_en": "from $590",
+              "price_ru": "от 70 000 ₽ (~$825)",
+              "price_en": "from $825",
               "sort_order": 2
             }
           ]
@@ -1839,8 +1855,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "Разработка API и интеграции с внешними сервисами на PHP/Laravel.\n\n✅ REST API разработка\n✅ Интеграции с CRM: Bitrix24, AmoCRM и любые с API\n✅ Подключение платёжных систем\n✅ Telegram-бот, email-рассылки, уведомления\n✅ Автоматизация бизнес-задач\n✅ Гарантия 14 дней",
               "description_en": "API development and external service integrations in PHP/Laravel.\n\n✅ REST API development\n✅ CRM integrations: Bitrix24, AmoCRM and any with API\n✅ Payment system connections\n✅ Telegram bot, email newsletters, notifications\n✅ Business process automation\n✅ 14-day guarantee",
-              "price_ru": "от 15 000 ₽ (~$175)",
-              "price_en": "from $175",
+              "price_ru": "от 25 000 ₽ (~$295)",
+              "price_en": "from $295",
               "sort_order": 0
             },
             {
@@ -1850,8 +1866,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Разработка веб-приложения или портала на Laravel + MySQL.\n\n✅ Любая сложная бизнес-логика\n✅ Авторизация, роли и права доступа\n✅ Личные кабинеты пользователей\n✅ Административная панель\n✅ Оптимизированная структура базы данных\n✅ Деплой, настройка сервера, SSL\n✅ Гарантия 14 дней\n\n<i>Цена рассчитывается индивидуально</i>",
               "description_en": "Web application or portal development on Laravel + MySQL.\n\n✅ Any complex business logic\n✅ Auth, roles and access permissions\n✅ User account dashboards\n✅ Admin panel\n✅ Optimized database structure\n✅ Server deployment, configuration, SSL\n✅ 14-day guarantee\n\n<i>Price is calculated individually</i>",
-              "price_ru": "от 50 000 ₽ (~$590)",
-              "price_en": "from $590",
+              "price_ru": "от 70 000 ₽ (~$825)",
+              "price_en": "from $825",
               "sort_order": 1
             }
           ]
@@ -1878,8 +1894,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "Простой интернет-магазин: главная-лендинг + каталог товаров.\n\n✅ Главная страница с описанием и преимуществами\n✅ Страница каталога с карточками товаров\n✅ Покупка через форму заявки — без онлайн-оплаты\n✅ Уведомления о новых заявках на почту\n✅ Адаптив под мобильные\n✅ WordPress (с редактированием) или HTML (без CMS) — зависит от задачи\n✅ Гарантия 14 дней",
               "description_en": "Simple online store: landing home page + product catalog.\n\n✅ Home page with description and benefits\n✅ Catalog page with product cards\n✅ Purchase via request form — no online payment\n✅ Email notifications for new requests\n✅ Mobile responsive\n✅ WordPress (with editing) or HTML (no CMS) — depends on the task\n✅ 14-day guarantee",
-              "price_ru": "20 000 – 25 000 ₽ (~$235–295)",
-              "price_en": "$235 – $295",
+              "price_ru": "35 000 - 40 000 ₽ (~$410-470)",
+              "price_en": "$410 - $470",
               "sort_order": 0
             },
             {
@@ -1889,8 +1905,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "Каталог + подключение онлайн-оплаты.\n\n✅ Всё из тарифа Старт\n✅ Онлайн-оплата: ЮKасса, Robokassa, Т-Банк, Альфа-Банк\n✅ Автоматическое подтверждение и уведомление о платеже\n✅ Гарантия 14 дней",
               "description_en": "Catalog + online payment integration.\n\n✅ Everything from Start\n✅ Online payment: YooKassa, Robokassa, T-Bank, Alfa-Bank\n✅ Automatic payment confirmation and notification\n✅ 14-day guarantee",
-              "price_ru": "28 000 – 30 000 ₽ (~$330–355)",
-              "price_en": "$330 – $355",
+              "price_ru": "40 000 - 50 000 ₽ (~$470-590)",
+              "price_en": "$470 - $590",
               "sort_order": 1
             },
             {
@@ -1900,8 +1916,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Полноценный интернет-магазин под ключ.\n\n✅ Всё из тарифа Профи\n✅ Корзина товаров\n✅ Управление заказами в административной панели\n✅ Подключение служб доставки (СДЭК, Почта России)\n✅ Личный кабинет покупателя\n✅ Гарантия 14 дней",
               "description_en": "Full turnkey online store.\n\n✅ Everything from Pro\n✅ Shopping cart\n✅ Order management in admin panel\n✅ Delivery service integration (SDEK, Russian Post)\n✅ Customer account\n✅ 14-day guarantee",
-              "price_ru": "33 000 – 36 000 ₽ (~$390–425)",
-              "price_en": "$390 – $425",
+              "price_ru": "60 000 - 70 000 ₽ (~$705-825)",
+              "price_en": "$705 - $825",
               "sort_order": 2
             }
           ]
@@ -1918,8 +1934,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "WooCommerce до 50 товаров — полностью готов к продажам.\n\n✅ Согласование стиля и структуры магазина\n✅ Адаптивная вёрстка\n✅ WordPress + WooCommerce\n✅ Каталог, категории, карточки товаров\n✅ Корзина и оформление заказа\n✅ Онлайн-оплата: ЮKасса, Robokassa, Т-Банк, Альфа-Банк\n✅ Доставка: СДЭК, Почта России\n✅ Уведомления о заказах на почту\n✅ Инструкция по работе с магазином\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "WooCommerce store up to 50 products — ready to sell from day one.\n\n✅ Store style and structure approval\n✅ Responsive layout\n✅ WordPress + WooCommerce\n✅ Catalog, categories, product cards\n✅ Cart and checkout\n✅ Online payment: YooKassa, Robokassa, T-Bank, Alfa-Bank\n✅ Shipping: SDEK, Russian Post\n✅ Order email notifications\n✅ Store management guide\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 30 000 ₽ (~$355)",
-              "price_en": "from $355",
+              "price_ru": "от 45 000 ₽ (~$530)",
+              "price_en": "from $530",
               "sort_order": 0
             },
             {
@@ -1929,8 +1945,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "WooCommerce для каталогов от 500 товаров.\n\n✅ Всё из тарифа Старт\n✅ Импорт товаров из Excel / XML / CSV\n✅ Умные фильтры по характеристикам товаров\n✅ Интеграция с CRM: Bitrix24, AmoCRM и другие с API\n✅ Акции, скидки, промокоды\n✅ Гарантия 14 дней",
               "description_en": "WooCommerce for catalogs with 500+ products.\n\n✅ Everything from Start\n✅ Product import from Excel / XML / CSV\n✅ Smart filters by product attributes\n✅ CRM integration: Bitrix24, AmoCRM and others with API\n✅ Sales, discounts, promo codes\n✅ 14-day guarantee",
-              "price_ru": "от 50 000 ₽ (~$590)",
-              "price_en": "from $590",
+              "price_ru": "от 70 000 ₽ (~$825)",
+              "price_en": "from $825",
               "sort_order": 1
             },
             {
@@ -1940,8 +1956,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Продвинутый WooCommerce для сложных проектов.\n\n✅ Всё из тарифа Профи\n✅ Мультиязычность (русский + другие языки)\n✅ Кастомные типы товаров (варианты, комплекты, подписки)\n✅ Сложная логика скидок и бонусных программ\n✅ Личный кабинет покупателя с историей заказов\n✅ Гарантия 14 дней",
               "description_en": "Advanced WooCommerce for complex projects.\n\n✅ Everything from Pro\n✅ Multilingual (Russian + other languages)\n✅ Custom product types (variants, bundles, subscriptions)\n✅ Complex discount and loyalty program logic\n✅ Customer account with order history\n✅ 14-day guarantee",
-              "price_ru": "от 80 000 ₽ (~$940)",
-              "price_en": "from $940",
+              "price_ru": "от 120 000 ₽ (~$1410)",
+              "price_en": "from $1410",
               "sort_order": 2
             }
           ]
@@ -1958,8 +1974,8 @@ const DATA_LIVE = {
               "name_en": "Standard",
               "description_ru": "Интернет-магазин на OpenCart — зрелая платформа с богатой экосистемой модулей.\n\n✅ Каталог, категории, карточки товаров\n✅ Корзина, онлайн-оплата, доставка\n✅ Управление товарами и заказами\n✅ Импорт товаров из CSV/XML\n✅ Адаптивная вёрстка\n✅ Установка и настройка\n✅ Гарантия 14 дней",
               "description_en": "Online store on OpenCart — a mature platform with a rich module ecosystem.\n\n✅ Catalog, categories, product cards\n✅ Cart, online payment, shipping\n✅ Product and order management\n✅ Product import from CSV/XML\n✅ Responsive layout\n✅ Installation and setup\n✅ 14-day guarantee",
-              "price_ru": "от 35 000 ₽ (~$415)",
-              "price_en": "from $415",
+              "price_ru": "от 50 000 ₽ (~$590)",
+              "price_en": "from $590",
               "sort_order": 0
             },
             {
@@ -1969,8 +1985,8 @@ const DATA_LIVE = {
               "name_en": "Advanced",
               "description_ru": "Интернет-магазин на Joomla + VirtueMart.\n\n✅ Каталог, корзина, онлайн-оплата, доставка\n✅ Подходит если у вас уже есть сайт на Joomla\n✅ Управление товарами и заказами\n✅ Адаптивная вёрстка\n✅ Установка и настройка\n✅ Гарантия 14 дней",
               "description_en": "Online store on Joomla + VirtueMart.\n\n✅ Catalog, cart, online payment, shipping\n✅ Ideal if you already have a Joomla site\n✅ Product and order management\n✅ Responsive layout\n✅ Installation and setup\n✅ 14-day guarantee",
-              "price_ru": "от 40 000 ₽ (~$470)",
-              "price_en": "from $470",
+              "price_ru": "от 60 000 ₽ (~$705)",
+              "price_en": "from $705",
               "sort_order": 1
             },
             {
@@ -1980,8 +1996,8 @@ const DATA_LIVE = {
               "name_en": "Enterprise",
               "description_ru": "Интернет-магазин на 1C-Bitrix — корпоративный уровень.\n\n✅ Нативная интеграция с 1С: товары, остатки, цены, заказы\n✅ Корзина, онлайн-оплата, доставка\n✅ Управление из единой панели с CRM Bitrix24\n✅ Высокая нагрузка и масштабируемость\n✅ Адаптивная вёрстка\n✅ Гарантия 14 дней",
               "description_en": "Online store on 1C-Bitrix — enterprise level.\n\n✅ Native 1C integration: products, stock, prices, orders\n✅ Cart, online payment, shipping\n✅ Manage from a unified panel with Bitrix24 CRM\n✅ High load and scalability\n✅ Responsive layout\n✅ 14-day guarantee",
-              "price_ru": "от 60 000 ₽ (~$705)",
-              "price_en": "from $705",
+              "price_ru": "от 90 000 ₽ (~$1060)",
+              "price_en": "from $1060",
               "sort_order": 2
             }
           ]
@@ -1998,8 +2014,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Уникальный интернет-магазин на PHP/Laravel — когда ни одна CMS не подходит.\n\n✅ Нестандартная логика работы магазина\n✅ Любые интеграции: 1С, CRM, маркетплейсы, внешние API\n✅ Высокая производительность и масштабируемость\n✅ Административная панель под ваши задачи\n✅ Деплой и настройка сервера\n✅ Гарантия 14 дней\n\n<i>Цена рассчитывается индивидуально под задачу</i>",
               "description_en": "Unique online store on PHP/Laravel — when no CMS fits the task.\n\n✅ Non-standard store logic\n✅ Any integrations: 1C, CRM, marketplaces, external APIs\n✅ High performance and scalability\n✅ Admin panel tailored to your needs\n✅ Server deployment and configuration\n✅ 14-day guarantee\n\n<i>Price is calculated per project</i>",
-              "price_ru": "от 100 000 ₽ (~$1175)",
-              "price_en": "from $1175",
+              "price_ru": "от 150 000 ₽ (~$1765)",
+              "price_en": "from $1765",
               "sort_order": 0
             }
           ]
@@ -2037,8 +2053,8 @@ const DATA_LIVE = {
               "name_en": "Hourly",
               "description_ru": "Трачу N часов, вы платите за потраченное время — удобно для мелких задач.\n\n✅ Мелкие правки и доработки\n✅ Консультации по сайту\n✅ Задачи без чёткого ТЗ\n✅ Быстрые фиксы",
               "description_en": "You pay for time spent — convenient for small tasks.\n\n✅ Small fixes and tweaks\n✅ Website consultations\n✅ Tasks without a clear spec\n✅ Quick fixes",
-              "price_ru": "1 000 - 1 500 ₽/час (~$12-18/час)",
-              "price_en": "$12-18/hour",
+              "price_ru": "1 500 - 2 000 ₽/час (~$18-24/час)",
+              "price_en": "$18-24/hour",
               "sort_order": 1
             }
           ]
@@ -2055,8 +2071,8 @@ const DATA_LIVE = {
               "name_en": "HTML",
               "description_ru": "Точное копирование сайта по образцу — HTML/CSS вёрстка.\n\n✅ Максимально близко к оригиналу внешне\n✅ Адаптивная вёрстка\n✅ Форма обратной связи\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Pixel-accurate site copy — HTML/CSS layout.\n\n✅ As close to the original look as possible\n✅ Responsive layout\n✅ Contact form\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 8 000 ₽ (~$95)",
-              "price_en": "from $95",
+              "price_ru": "от 12 000 ₽ (~$140)",
+              "price_en": "from $140",
               "sort_order": 0
             },
             {
@@ -2066,8 +2082,8 @@ const DATA_LIVE = {
               "name_en": "On WordPress",
               "description_ru": "Копирование сайта + перевод на WordPress — получаете точную копию с возможностью редактирования.\n\n✅ Внешний вид максимально близко к оригиналу\n✅ WordPress: меняйте контент самостоятельно\n✅ Инструкция по работе с админкой\n✅ Установка на хостинге\n✅ Гарантия 14 дней",
               "description_en": "Site copy + migration to WordPress — get an exact copy you can edit yourself.\n\n✅ Look as close to the original as possible\n✅ WordPress: edit content yourself\n✅ Admin panel guide\n✅ Deployment on hosting\n✅ 14-day guarantee",
-              "price_ru": "от 15 000 ₽ (~$175)",
-              "price_en": "from $175",
+              "price_ru": "от 20 000 ₽ (~$235)",
+              "price_en": "from $235",
               "sort_order": 1
             }
           ]
@@ -2084,8 +2100,8 @@ const DATA_LIVE = {
               "name_en": "Setup",
               "description_ru": "Полная настройка хостинга и домена — сайт в интернете без сюрпризов.\n\n✅ Выбор и настройка хостинга под задачу\n✅ Регистрация или перенос домена\n✅ SSL-сертификат (HTTPS)\n✅ Настройка DNS-записей\n✅ Почта на домене — по запросу\n✅ Размещение сайта",
               "description_en": "Full hosting and domain setup — your site goes live without surprises.\n\n✅ Hosting selection and configuration\n✅ Domain registration or transfer\n✅ SSL certificate (HTTPS)\n✅ DNS records configuration\n✅ Domain email — on request\n✅ Site deployment",
-              "price_ru": "от 3 000 - 5 000 ₽ (~$35-60)",
-              "price_en": "from $35-60",
+              "price_ru": "от 5 000 - 8 000 ₽ (~$60-95)",
+              "price_en": "from $60-95",
               "sort_order": 0
             }
           ]
@@ -2102,8 +2118,8 @@ const DATA_LIVE = {
               "name_en": "Plugins & services",
               "description_ru": "Подключение и настройка готовых решений.\n\n✅ CRM: Bitrix24, AmoCRM и другие с API\n✅ Онлайн-оплата: ЮKасса, Robokassa, Т-Банк\n✅ Email-рассылки: UniSender, SendPulse и другие\n✅ Telegram-бот для уведомлений о заявках\n✅ Аналитика: Яндекс.Метрика, Google Analytics\n✅ Любые готовые сервисы с официальным плагином",
               "description_en": "Connecting and configuring ready-made solutions.\n\n✅ CRM: Bitrix24, AmoCRM and others with API\n✅ Online payments: YooKassa, Robokassa, T-Bank\n✅ Email newsletters: UniSender, SendPulse and others\n✅ Telegram bot for lead notifications\n✅ Analytics: Yandex.Metrica, Google Analytics\n✅ Any service with an official plugin",
-              "price_ru": "от 5 000 ₽ (~$60)",
-              "price_en": "from $60",
+              "price_ru": "от 8 000 ₽ (~$95)",
+              "price_en": "from $95",
               "sort_order": 0
             },
             {
@@ -2113,8 +2129,8 @@ const DATA_LIVE = {
               "name_en": "API integrations",
               "description_ru": "Сложные интеграции с внешними системами через API.\n\n✅ Двусторонняя синхронизация данных\n✅ Маркетплейсы: Wildberries, Ozon и другие\n✅ 1С и другие учётные системы\n✅ Любые API — если есть документация, подключу\n✅ Автоматизация бизнес-процессов",
               "description_en": "Complex integrations with external systems via API.\n\n✅ Two-way data sync\n✅ Marketplaces: Wildberries, Ozon and others\n✅ 1C and other accounting systems\n✅ Any API — if there's documentation, I'll connect it\n✅ Business process automation",
-              "price_ru": "от 15 000 ₽ (~$175)",
-              "price_en": "from $175",
+              "price_ru": "от 20 000 ₽ (~$235)",
+              "price_en": "from $235",
               "sort_order": 1
             }
           ]
@@ -2131,8 +2147,8 @@ const DATA_LIVE = {
               "name_en": "Optimization",
               "description_ru": "Ускорение сайта до PageSpeed 90+.\n\n✅ Аудит текущей скорости загрузки\n✅ Настройка кеширования (серверное + плагины)\n✅ Оптимизация изображений и конвертация в WebP\n✅ Минификация JS/CSS\n✅ Подключение CDN\n✅ Серверные настройки (nginx, PHP)",
               "description_en": "Site speed optimization to PageSpeed 90+.\n\n✅ Current load speed audit\n✅ Caching setup (server + plugins)\n✅ Image optimization and WebP conversion\n✅ JS/CSS minification\n✅ CDN setup\n✅ Server configuration (nginx, PHP)",
-              "price_ru": "от 5 000 - 15 000 ₽ (~$60-175)",
-              "price_en": "from $60-175",
+              "price_ru": "от 10 000 - 25 000 ₽ (~$120-295)",
+              "price_en": "from $120-295",
               "sort_order": 0
             }
           ]
@@ -2149,8 +2165,8 @@ const DATA_LIVE = {
               "name_en": "Migration",
               "description_ru": "Перенос сайта между хостингами или доменами — без потерь и простоев.\n\n✅ Перенос всех файлов и базы данных\n✅ Настройка на новом хостинге\n✅ Обновление DNS-записей\n✅ Проверка работоспособности после переноса\n✅ Сайт работает без перерыва",
               "description_en": "Site migration between hosts or domains — no data loss, no downtime.\n\n✅ Transfer of all files and database\n✅ Setup on the new hosting\n✅ DNS records update\n✅ Functionality check after migration\n✅ Site stays online throughout",
-              "price_ru": "от 3 000 ₽ (~$35)",
-              "price_en": "from $35",
+              "price_ru": "от 5 000 ₽ (~$60)",
+              "price_en": "from $60",
               "sort_order": 0
             }
           ]
@@ -2177,8 +2193,8 @@ const DATA_LIVE = {
               "name_en": "Start",
               "description_ru": "Простой чистый дизайн лендинга — быстро и функционально.\n\n✅ Макет до 5 экранов в Figma\n✅ Согласование стиля, цветов, шрифтов\n✅ Мобильная версия\n✅ Figma-файл с исходником передаётся вам\n\n<i>Без излишеств — для простых проектов с ограниченным бюджетом</i>",
               "description_en": "Simple clean landing design — fast and functional.\n\n✅ Up to 5 screens in Figma\n✅ Style, colors and fonts approval\n✅ Mobile version\n✅ Figma source file delivered to you\n\n<i>No excess — for simple projects with limited budget</i>",
-              "price_ru": "10 000 - 15 000 ₽ (~$120-175)",
-              "price_en": "$120-175",
+              "price_ru": "20 000 - 30 000 ₽ (~$235-355)",
+              "price_en": "$235 - $355",
               "sort_order": 0
             },
             {
@@ -2188,8 +2204,8 @@ const DATA_LIVE = {
               "name_en": "Pro",
               "description_ru": "Продуманный дизайн с вниманием к деталям и UX.\n\n✅ Макет 5–8 экранов в Figma (desktop + mobile)\n✅ Проработанная визуальная иерархия\n✅ Анимации и hover-эффекты отражены в макете\n✅ Уникальная типографика и цветовая система\n✅ Figma-файл с исходником передаётся вам",
               "description_en": "Well-thought-out design with attention to detail and UX.\n\n✅ 5–8 screens in Figma (desktop + mobile)\n✅ Crafted visual hierarchy\n✅ Animations and hover effects reflected in the mockup\n✅ Unique typography and color system\n✅ Figma source file delivered to you",
-              "price_ru": "20 000 - 30 000 ₽ (~$235-355)",
-              "price_en": "$235-355",
+              "price_ru": "35 000 - 50 000 ₽ (~$410-590)",
+              "price_en": "$410 - $590",
               "sort_order": 1
             },
             {
@@ -2199,8 +2215,8 @@ const DATA_LIVE = {
               "name_en": "Flagship",
               "description_ru": "Эксклюзивный дизайн — для проектов, где внешний вид является главным конкурентным преимуществом.\n\n✅ Уникальная концепция с нуля\n✅ Кастомная графика и иллюстрации\n✅ Макет всех экранов в Figma (desktop + tablet + mobile)\n✅ Интерактивный прототип\n✅ Figma-файл с исходником передаётся вам",
               "description_en": "Exclusive design — for projects where look is the main competitive edge.\n\n✅ Unique concept from scratch\n✅ Custom graphics and illustrations\n✅ All screens in Figma (desktop + tablet + mobile)\n✅ Interactive prototype\n✅ Figma source file delivered to you",
-              "price_ru": "от 50 000 ₽ (~$590+)",
-              "price_en": "from $590+",
+              "price_ru": "от 70 000 ₽ (~$825, рассчитывается индивидуально)",
+              "price_en": "from $825 (calculated per project)",
               "sort_order": 2
             }
           ]
@@ -2217,8 +2233,8 @@ const DATA_LIVE = {
               "name_en": "Design only",
               "description_ru": "Аудит текущего сайта + новый дизайн в Figma. Без вёрстки.\n\n✅ Анализ текущего дизайна и UX\n✅ Новый дизайн в Figma (desktop + mobile)\n✅ Согласование по итерациям\n✅ Figma-файл с исходником передаётся вам\n\n<i>Отдаёте разработчику или реализуете сами</i>",
               "description_en": "Current site audit + new design in Figma. No layout.\n\n✅ Current design and UX analysis\n✅ New design in Figma (desktop + mobile)\n✅ Iterative approval process\n✅ Figma source file delivered to you\n\n<i>Hand it to a developer or implement yourself</i>",
-              "price_ru": "от 20 000 ₽ (~$235)",
-              "price_en": "from $235",
+              "price_ru": "от 30 000 ₽ (~$355)",
+              "price_en": "from $355",
               "sort_order": 0
             },
             {
@@ -2228,8 +2244,8 @@ const DATA_LIVE = {
               "name_en": "Turnkey",
               "description_ru": "Полный редизайн: дизайн + вёрстка + внедрение на существующий сайт.\n\n✅ Аудит текущего сайта\n✅ Новый дизайн в Figma\n✅ Адаптивная вёрстка\n✅ Внедрение на ваш сайт без переезда на новый домен\n✅ Figma-файл с исходником передаётся вам\n✅ Гарантия 14 дней",
               "description_en": "Full redesign: design + layout + implementation on your existing site.\n\n✅ Current site audit\n✅ New design in Figma\n✅ Responsive layout\n✅ Implementation on your site — no domain change\n✅ Figma source file delivered to you\n✅ 14-day guarantee",
-              "price_ru": "от 40 000 ₽ (~$470)",
-              "price_en": "from $470",
+              "price_ru": "от 55 000 ₽ (~$650)",
+              "price_en": "from $650",
               "sort_order": 1
             }
           ]
@@ -2238,20 +2254,20 @@ const DATA_LIVE = {
     }
   ],
   "calculator": {
-    "base_price.card": 10000.0,
-    "base_price.corporate": 25000.0,
-    "base_price.default": 15000.0,
-    "base_price.landing": 15000.0,
-    "base_price.shop": 35000.0,
+    "base_price.card": 15000.0,
+    "base_price.corporate": 55000.0,
+    "base_price.default": 25000.0,
+    "base_price.landing": 25000.0,
+    "base_price.shop": 70000.0,
     "design_mult.examples": 1.2,
     "design_mult.needed": 1.5,
     "design_mult.ready": 1.0,
-    "feature_cost.catalog": 8000.0,
-    "feature_cost.crm": 5000.0,
-    "feature_cost.forms": 2000.0,
-    "feature_cost.i18n": 5000.0,
-    "feature_cost.payment": 5000.0,
-    "feature_cost.seo": 3000.0,
+    "feature_cost.catalog": 12000.0,
+    "feature_cost.crm": 8000.0,
+    "feature_cost.forms": 3000.0,
+    "feature_cost.i18n": 8000.0,
+    "feature_cost.payment": 8000.0,
+    "feature_cost.seo": 5000.0,
     "page_mult.15plus": 2.5,
     "page_mult.1_3": 1.0,
     "page_mult.4_7": 1.4,

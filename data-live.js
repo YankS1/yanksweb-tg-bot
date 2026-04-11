@@ -2031,7 +2031,13 @@ const DATA_LIVE = {
       "miniapp_ui.plural_work_few": "работы",
       "miniapp_ui.plural_work_many": "работ",
       "miniapp_ui.lead_thank_title": "Спасибо, ваша заявка принята!",
-      "miniapp_ui.lead_thank_body": "Я свяжусь с вами в течение 15 минут для уточнения деталей."
+      "miniapp_ui.lead_thank_body": "Я свяжусь с вами в течение 15 минут для уточнения деталей.",
+      "quiz.thank_you_promo": "Ваш промокод применён - я зафиксирую скидку при обсуждении деталей.",
+      "promo.hint": "Когда я свяжусь с вами, отправьте этот промокод мне в ЛС - я зафиксирую скидку за вами.",
+      "promo.apply_prompt_title": "У вас есть активные промокоды",
+      "promo.apply_prompt_body": "Применить скидку к заявке?",
+      "promo.apply_btn": "Применить",
+      "promo.skip_btn": "Пропустить"
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel - YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end - design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -2535,7 +2541,13 @@ const DATA_LIVE = {
       "miniapp_ui.plural_work_few": "works",
       "miniapp_ui.plural_work_many": "works",
       "miniapp_ui.lead_thank_title": "Thanks, your request is received!",
-      "miniapp_ui.lead_thank_body": "I'll get back to you within 15 minutes to clarify the details."
+      "miniapp_ui.lead_thank_body": "I'll get back to you within 15 minutes to clarify the details.",
+      "quiz.thank_you_promo": "Your promo code is applied - I'll lock in the discount during our discussion.",
+      "promo.hint": "After I contact you, send me this promo code in DMs and I'll lock in the discount for you.",
+      "promo.apply_prompt_title": "You have active promo codes",
+      "promo.apply_prompt_body": "Apply a discount to your request?",
+      "promo.apply_btn": "Apply",
+      "promo.skip_btn": "Skip"
     }
   },
   "services": [

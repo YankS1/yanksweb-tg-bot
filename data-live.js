@@ -791,7 +791,7 @@ const DATA_LIVE = {
       "is_active": 1,
       "created_at": "2026-04-02 16:07:28",
       "is_published": 1,
-      "activation_duration_days": null,
+      "activation_duration_days": 3,
       "is_eternal": 0
     },
     {
@@ -806,7 +806,7 @@ const DATA_LIVE = {
       "is_active": 1,
       "created_at": "2026-04-02 01:05:05",
       "is_published": 1,
-      "activation_duration_days": null,
+      "activation_duration_days": 3,
       "is_eternal": 0
     },
     {
@@ -821,7 +821,7 @@ const DATA_LIVE = {
       "is_active": 1,
       "created_at": "2026-04-02 01:05:05",
       "is_published": 1,
-      "activation_duration_days": null,
+      "activation_duration_days": 3,
       "is_eternal": 0
     },
     {
@@ -837,7 +837,7 @@ const DATA_LIVE = {
       "created_at": "2026-04-02 01:04:50",
       "is_published": 1,
       "activation_duration_days": null,
-      "is_eternal": 0
+      "is_eternal": 1
     }
   ],
   "texts": {

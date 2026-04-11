@@ -1483,21 +1483,6 @@ const DATA_LIVE = {
       "is_eternal": 0
     },
     {
-      "id": 2,
-      "title_ru": "Бесплатный аудит вашего сайта",
-      "title_en": "Free website audit",
-      "text_ru": "Оставьте заявку на разработку - и получите подробный аудит вашего текущего сайта бесплатно. Анализ скорости, SEO, безопасности и рекомендации по улучшению.",
-      "text_en": "Submit a project request and get a detailed audit of your current website for free. Speed, SEO, security analysis and improvement recommendations.",
-      "promo_code": "FREEAUDIT",
-      "discount_percent": 0,
-      "deadline": "2026-06-30",
-      "is_active": 1,
-      "created_at": "2026-04-02 01:05:05",
-      "is_published": 1,
-      "activation_duration_days": 3,
-      "is_eternal": 0
-    },
-    {
       "id": 3,
       "title_ru": "Скидка 15% на первый проект",
       "title_en": "15% off your first project",
@@ -2037,7 +2022,10 @@ const DATA_LIVE = {
       "promo.apply_prompt_title": "У вас есть активные промокоды",
       "promo.apply_prompt_body": "Применить скидку к заявке?",
       "promo.apply_btn": "Применить",
-      "promo.skip_btn": "Пропустить"
+      "promo.skip_btn": "Пропустить",
+      "promo.auto_title": "🎁 Для вас есть скидка!",
+      "promo.auto_body": "Активируйте промокод прямо сейчас и получите скидку на разработку.",
+      "promo.auto_activate_btn": "Активировать и применить"
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel - YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end - design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -2547,7 +2535,10 @@ const DATA_LIVE = {
       "promo.apply_prompt_title": "You have active promo codes",
       "promo.apply_prompt_body": "Apply a discount to your request?",
       "promo.apply_btn": "Apply",
-      "promo.skip_btn": "Skip"
+      "promo.skip_btn": "Skip",
+      "promo.auto_title": "🎁 Special offer for you!",
+      "promo.auto_body": "Activate a promo code right now and get a discount on your project.",
+      "promo.auto_activate_btn": "Activate and apply"
     }
   },
   "services": [

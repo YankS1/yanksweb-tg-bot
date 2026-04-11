@@ -7,12 +7,13 @@ const DATA_LIVE = {
       "title_en": "🚗 Black Edition Detailing Studio",
       "description_ru": "Black Edition - детейлинг-студия с акцентом на премиальный уход за автомобилем. Тёмная стилистика, портфолио работ и карта с адресом. Подходит для автосервисов, детейлинг-центров и тюнинг-мастерских, которым важно показать уровень через визуал и подачу.",
       "description_en": "Black Edition - a detailing studio focused on premium car care. Dark aesthetic, a portfolio of works and a map with the address. Suitable for car services, detailing centers and tuning shops that want to show their level through visuals and presentation.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/983c7f0c4f394f7eb13d9fb25f512318_blackdetailing.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/blackdetailing.mp4",
       "media_type": "video",
       "url": "https://iv-be.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 20:38:57",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIEUmnW8_fgUgunogvcAAGbb37ORoSP4QACIwsAAjYhRFLXycMxvRtkCTsE"
     },
     {
       "id": 3,
@@ -21,12 +22,13 @@ const DATA_LIVE = {
       "title_en": "💰 Capico - crypto trading platform",
       "description_ru": "Capico - платформа для криптотрейдинга с ботами и смарт-сделками. Мультибиржевой терминал с конструктором интерфейса, мультичартом, портфелем и статистикой. Подключение к Binance, Bybit, OKX и другим биржам из одного окна. Подходит для трейдеров, которым важны автоматизация и контроль позиций в одном месте.",
       "description_en": "Capico - a crypto trading platform with bots and smart trades. A multi-exchange terminal with a custom interface builder, multi-chart, portfolio and statistics. Connect to Binance, Bybit, OKX and other exchanges from a single window. Suitable for traders who value automation and position control in one place.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/605f33a2819e4a41bc32ba8ad9ea775a_capico.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/capico.mp4",
       "media_type": "video",
       "url": "https://capico.app/ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 20:58:18",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIEUmnW8_ob5YKNJnvMgwz5gETqfrjKAAKhCgACwqVNUr0nonrH1yvrOwQ"
     },
     {
       "id": 4,
@@ -35,12 +37,13 @@ const DATA_LIVE = {
       "title_en": "🚗 DetailInStyle - detailing studio in Ivanovo",
       "description_ru": " DetailInStyle - сайт детейлинг-студии в Иваново с акцентом на премиальный уход за автомобилем. Полировка, защитные покрытия, химчистка салона, тонировка и оклейка пленкой. Профессиональное оборудование Rupes и Makita, материалы Koch Chemie и Meguiar's. Подходит для автосервисов и детейлинг-центров, которым важно показать экспертизу через подробное описание услуг и портфолио работ.",
       "description_en": "DetailInStyle - a detailing studio website in Ivanovo focused on premium car care. Polishing, protective coatings, interior cleaning, window tinting and paint protection film. Professional Rupes and Makita equipment, Koch Chemie and Meguiar's materials. Suitable for car services and detailing centers that want to showcase expertise through detailed service descriptions and a portfolio.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/69f72d875570472983d2b0455e66e0bb_detailinstyle.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/detailinstyle.mp4",
       "media_type": "video",
       "url": "https://detailinstyle.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 21:01:34",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIEUmnW8_tlyRmqLkqHHQsdNstHUVONAAI7CgAC-yBVUtKwsbqUnAbNOwQ"
     },
     {
       "id": 5,
@@ -49,12 +52,13 @@ const DATA_LIVE = {
       "title_en": "⚽ FC Impulse Tula - youth football school",
       "description_ru": " ФК Импульс Тула - динамичный сайт детской футбольной школы для детей от 4 до 15 лет. Акцент на вовлечение ребенка в спорт, тренерский состав и площадки, быстрая заявка на пробное занятие. Подходит для детских академий, спортивных секций и лагерей, которым важно говорить на языке родителей и показать подход к воспитанию через футбол.",
       "description_en": "FC Impulse Tula - a dynamic website for a youth football school for kids aged 4 to 15. Focus on engaging children in sports, coaching staff and venues, quick sign-up for a trial session. Suitable for youth academies, sports sections and camps that want to speak the language of parents and demonstrate their approach to raising children through football.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/f90b4d2682934c41ae0cd7c2501f8efa_fk-impulse.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/fk-impulse.mp4",
       "media_type": "video",
       "url": "https://fc-impulstula.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 21:02:45",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgIAAxkDAAIFYWnasfQivlBAFxrEy0aOJrnbgHDeAAKpmAAC5vLYStGgmOjcqP6POwQ"
     },
     {
       "id": 6,
@@ -68,7 +72,8 @@ const DATA_LIVE = {
       "url": "https://www.it-mentor.dev/",
       "sort_order": 0,
       "created_at": "2026-03-28 21:30:18",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFLmnapVm32_OF7wzN5cMWLSjVe1l1AAKPCgACJHHdUgQOU4cmcpR_OwQ"
     },
     {
       "id": 7,
@@ -82,7 +87,8 @@ const DATA_LIVE = {
       "url": "https://magicpark-sochi.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 21:58:04",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFLmnapT2bBkzVnec2D32iQJBwRyXBAAKACgACcYbVUp6VoZTJWolLOwQ"
     },
     {
       "id": 8,
@@ -96,7 +102,8 @@ const DATA_LIVE = {
       "url": "https://new-point.bz/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:00:48",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFLmnapXVOs_PiYpvqOOPyfgN5g5vVAAIGCwACgorcUkmNBttF3j4VOwQ"
     },
     {
       "id": 9,
@@ -105,12 +112,13 @@ const DATA_LIVE = {
       "title_en": "📲 RAA Digital - Telegram Web Apps development",
       "description_ru": "RAA Digital - лендинг по разработке Web Apps для Telegram. Описаны сферы применения: интернет-магазины, образование, доставка, медиа и развлечения. Этапы запуска, преимущества перед обычными ботами и форма заявки. Чистая структура и акцент на то, что пользователь не покидает Telegram.",
       "description_en": "RAA Digital - a landing page about developing Web Apps for Telegram. It covers the use cases: online stores, education, delivery, media and entertainment. Launch stages, advantages over regular bots and a contact form. Clean structure and focus on the fact that the user never leaves Telegram.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/b4c6ca4341674cfb8379343a7062d5df_raadigital.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/raadigital.mp4",
       "media_type": "video",
       "url": "https://raadigital.ru/telegram-webapps",
       "sort_order": 0,
       "created_at": "2026-03-28 22:02:50",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgIAAxkDAAIFYmnasgXdpYYrAonPV_Jk-fcHdRpfAAKsmAAC5vLYSnl4f6EKTMPJOwQ"
     },
     {
       "id": 10,
@@ -124,7 +132,8 @@ const DATA_LIVE = {
       "url": "https://rosexperts.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:06:30",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFWGnar38xKBzV6Xxi3c-Ky-lC6R5MAAIpCwACZSfdUjN-SjUH7wgsOwQ"
     },
     {
       "id": 11,
@@ -133,12 +142,13 @@ const DATA_LIVE = {
       "title_en": "📌 SocAutoPoster - social media auto-posting service",
       "description_ru": " SocAutoPoster - веб-сервис для автоматизации публикаций в соцсетях. Управление несколькими аккаунтами из одной панели, планирование постов по расписанию, массовая загрузка и парсинг лучшего контента. Поддержка Facebook, Telegram, YouTube, Instagram, TikTok, Pinterest, X и LinkedIn. Меньше рутины - больше охвата и свободного времени.",
       "description_en": "SocAutoPoster - a web service for automating publications on social networks. Manage multiple accounts from one dashboard, schedule posts, bulk uploads and parse the best content. Supports Facebook, Telegram, YouTube, Instagram, TikTok, Pinterest, X and LinkedIn. Less routine - more reach and free time.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/f568414b01474e5b9849d314f9803f95_socautoposter.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/c6bfe14bba13478ca32119794395a555_socautoposter.mp4",
       "media_type": "video",
       "url": "https://onlineskyrim.com/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:08:55",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFKGnaoqaFzw_2y7xOLPJRWD0nSwruAAKJCgACwfjVUpHwywNIx5DIOwQ"
     },
     {
       "id": 12,
@@ -152,7 +162,8 @@ const DATA_LIVE = {
       "url": "https://architect-yug.ru",
       "sort_order": 0,
       "created_at": "2026-03-28 22:12:52",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFWmnar4K01UX-pjZSZYJ2cQ9IsdTZAALTCgACQ_DcUmrRHCPDCa-JOwQ"
     },
     {
       "id": 13,
@@ -166,7 +177,8 @@ const DATA_LIVE = {
       "url": "https://lanslight.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:14:43",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFW2nar4T0UixBGjghDM0zNHfz6AtKAALLCgACqsrcUqEQGzCJa3eSOwQ"
     },
     {
       "id": 14,
@@ -180,7 +192,8 @@ const DATA_LIVE = {
       "url": "https://drevosmart.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:20:04",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": null
     },
     {
       "id": 15,
@@ -194,7 +207,8 @@ const DATA_LIVE = {
       "url": "https://granit-memory.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:23:30",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": null
     },
     {
       "id": 16,
@@ -208,7 +222,8 @@ const DATA_LIVE = {
       "url": "https://iddepartment.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:25:25",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFLmnapTcwA0KYJLoU6p4NRPQ-hPYEAALGCgACj73dUgr0GRHAI_vlOwQ"
     },
     {
       "id": 17,
@@ -217,12 +232,13 @@ const DATA_LIVE = {
       "title_en": "📚 Akademik - support for students and applicants",
       "description_ru": "Академик - сайт центра консультационной помощи студентам, аспирантам и соискателям по всей России. Курсовые, дипломные, диссертации, научные статьи, бизнес-планы и десятки других видов работ. Эксперты-практики, сопровождение до защиты и понятная подача для человека, который хочет быстро разобраться, что ему могут помочь и как выстроен процесс",
       "description_en": "Akademik - a website of a consulting center for students, postgraduates and applicants across Russia. Term papers, theses, dissertations, scientific articles, business plans and dozens of other types of work. Expert practitioners, support all the way to the defense, and a clear presentation for someone who wants to quickly understand what kind of help they can get and how the process is structured.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/43d9daa066ef4e64b498cd47f6311f25_akademik.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/978b73511382402195a123c2dab5335e_академик.mp4",
       "media_type": "video",
       "url": "https://www.akademik.su/uslugi/kursovaja-rabota",
       "sort_order": 0,
       "created_at": "2026-03-28 22:29:31",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFEGnamrlow5q-MYWkXzUXF1HUOZPyAAIZCwACsDfdUg65FgqvFX7vOwQ"
     },
     {
       "id": 18,
@@ -231,12 +247,13 @@ const DATA_LIVE = {
       "title_en": "🍺 RCraft - craft brewery in Rubtsovsk",
       "description_ru": "RCraft - сайт авторской крафтовой пивоварни в Рубцовске. Малые варки на современном оборудовании, импортный хмель, премиальные солода и выдержка не менее 30 суток. Классические и авторские стили: лагер, вайс, охмеленные эли. Акцент на качество, прозрачность процессов и культуру ответственного потребления.",
       "description_en": "RCraft - a website of an original craft brewery in Rubtsovsk. Small batches on modern equipment, imported hops, premium malts and at least 30 days of aging. Classic and author styles: lager, weiss, hoppy ales. Focus on quality, process transparency and a culture of responsible consumption.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/f166abc5f594494887215c10afe0f38f_rubcraft.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/1200c1fc62c54ca889243fcc3b31a1e7_пивоварня.mp4",
       "media_type": "video",
       "url": "https://rubcraft.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:35:00",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFGmnanOH5RCac9NwOf3sqdi_cG7fkAAKQCgACujjcUk340wi-lihNOwQ"
     },
     {
       "id": 19,
@@ -250,7 +267,8 @@ const DATA_LIVE = {
       "url": "https://рускомпонент.рф/",
       "sort_order": 0,
       "created_at": "2026-03-28 22:59:55",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIEt2nZaKwyLXw9PXX-VwIJnc-yySPHAAIjCwACJbJkUjKHoHnJCzHGOwQ"
     },
     {
       "id": 20,
@@ -264,7 +282,8 @@ const DATA_LIVE = {
       "url": "https://bariatria.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 23:02:06",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFUmnartvvNZJFkSnETm-JywMM2lobAAJyCgAC8RJNUtabUzJ8L0JHOwQ"
     },
     {
       "id": 21,
@@ -278,7 +297,8 @@ const DATA_LIVE = {
       "url": "https://bazis-prom.com/",
       "sort_order": 0,
       "created_at": "2026-03-28 23:04:07",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFU2nart0mZEi74eYFTTEB8S2d6UeWAALHCgACsoPUUvmtg1rhDvzqOwQ"
     },
     {
       "id": 22,
@@ -292,7 +312,8 @@ const DATA_LIVE = {
       "url": "https://kraski-sale.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 23:06:09",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIFVGnaru-fbpSSxXODsQ0DVJow6_JnAAKACwACF_rcUu4jSKgJsRWHOwQ"
     },
     {
       "id": 23,
@@ -301,12 +322,13 @@ const DATA_LIVE = {
       "title_en": "🦷 Semenova School - courses and audits for dental clinics",
       "description_ru": "Школа Семеновой - сайт эксперта с 11-летним опытом в медицине и управлении клиниками. Обучение ассистентов стоматолога и старших медсестер, аудит документации, онлайн-консультации и юридическое сопровождение. Очно в Москве, с выездом в клинику или онлайн. Системный подход к процессам - от стандартов работы в кабинете до подготовки к проверкам.",
       "description_en": "Semenova School - a website of an expert with 11 years of experience in medicine and clinic management. Training of dental assistants and senior nurses, documentation audits, online consultations and legal support. In person in Moscow, with on-site clinic visits or online. A systematic approach to processes - from office standards to preparation for inspections.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/6447de6b2a6645ce8bca46e16edb6870_semenschool.mp4",
-      "media_type": "video",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/4629c2bb563a4b23a20fd26f4e36820e_semenova.webp",
+      "media_type": "photo",
       "url": "https://школасеменовой.рф/",
       "sort_order": 0,
       "created_at": "2026-03-28 23:11:44",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "AgACAgIAAxkDAAIFY2nasgb8B3pQE6iY000_Z9ube2TmAAKpFmsb5vLYSp7pX7FIemBaAQADAgADdwADOwQ"
     },
     {
       "id": 24,
@@ -320,7 +342,8 @@ const DATA_LIVE = {
       "url": "https://nddetailing.ru/",
       "sort_order": 0,
       "created_at": "2026-03-28 23:14:58",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": null
     },
     {
       "id": 25,
@@ -334,7 +357,8 @@ const DATA_LIVE = {
       "url": "https://www.sparkmotorsports.com/",
       "sort_order": 0,
       "created_at": "2026-03-28 23:42:45",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgIAAxkDAAIFYGnasGzlVHdBvFoVBMibpgV5XQvsAAKemAAC5vLYSlG4shhsI1XhOwQ"
     },
     {
       "id": 26,
@@ -348,7 +372,8 @@ const DATA_LIVE = {
       "url": "https://bolinet.online/",
       "sort_order": 0,
       "created_at": "2026-03-28 23:46:10",
-      "is_published": 1
+      "is_published": 1,
+      "tg_file_id": "BAACAgQAAxkDAAIE22nZb4pvlDXRmiTajpX48oJoKNraAAKWCgACjo9VUmhDYW4LRGuDOwQ"
     }
   ],
   "reviews": [
@@ -2028,7 +2053,7 @@ const DATA_LIVE = {
       "promo.auto_activate_btn": "Активировать и применить"
     },
     "en": {
-      "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniel - YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end - design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
+      "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniil - YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end - design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
       "start.choose_language": "<tg-emoji emoji-id=\"5870982283724328568\">⚙️</tg-emoji> Выберите язык / Choose language:",
       "start.main_menu": "🏠 Main Menu",
       "start.nav_prompt": "Choose a section:",
@@ -2335,7 +2360,7 @@ const DATA_LIVE = {
       "calculator.empty_features": "Not selected",
       "calculator.timeline_urgent_note": "x{x} to the price",
       "calculator.webapp_result_note": "This is a rough estimate. I'll confirm the exact price after a short discussion of the details.",
-      "contact.name": "Daniel",
+      "contact.name": "Daniil",
       "promo.finished": "Promotion ended",
       "promo.copy": "Copy",
       "promo.copied": "Copied",

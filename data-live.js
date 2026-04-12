@@ -3213,6 +3213,7 @@ const DATA_LIVE = {
     }
   ],
   "calculator": {
+    "_prices_version": 2.0,
     "base_price.card": 15000.0,
     "base_price.corporate": 55000.0,
     "base_price.default": 25000.0,

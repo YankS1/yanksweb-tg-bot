@@ -47,7 +47,7 @@ const DATA_LIVE = {
     },
     {
       "id": 5,
-      "category": "shops",
+      "category": "sites,shops",
       "title_ru": "⚽ФК Импульс Тула - детская футбольная школа",
       "title_en": "⚽ FC Impulse Tula - youth football school",
       "description_ru": " ФК Импульс Тула - динамичный сайт детской футбольной школы для детей от 4 до 15 лет. Акцент на вовлечение ребенка в спорт, тренерский состав и площадки, быстрая заявка на пробное занятие. Подходит для детских академий, спортивных секций и лагерей, которым важно говорить на языке родителей и показать подход к воспитанию через футбол.",
@@ -182,7 +182,7 @@ const DATA_LIVE = {
     },
     {
       "id": 14,
-      "category": "shops",
+      "category": "sites,shops",
       "title_ru": "🎁 ДревоСмарт - деревянные игрушки и сувениры",
       "title_en": "🎁 DrevoSmart - wooden toys and souvenirs",
       "description_ru": "ДревоСмарт - интернет-магазин деревянных изделий ручной работы. Настольная игра Туми Иши, игрушечная посуда, декор и интерьерные аксессуары. Каждая карточка товара с видео, отзывами, аксессуарами и гравировкой на заказ. Каталог выстроен так, чтобы покупатель выбирал не по картинке, а по смыслу и назначению подарка.",
@@ -197,7 +197,7 @@ const DATA_LIVE = {
     },
     {
       "id": 15,
-      "category": "shops",
+      "category": "sites,shops",
       "title_ru": " 🕊 Гранит-Мемори - гранитные памятники под ключ",
       "title_en": " 🕊 Granit-Memory - turnkey granite monuments",
       "description_ru": "Гранит-Мемори - сайт производителя гранитных памятников из карельского и уральского камня. Каталог с 1000+ моделями, от классических до нестандартных: прямые, фигурные, резные, горизонтальные. Бессрочная гарантия, установка на любом кладбище, рассрочка на 12 месяцев. Структура ведет посетителя от выбора формы к комплектации и бесплатному замеру.",
@@ -257,7 +257,7 @@ const DATA_LIVE = {
     },
     {
       "id": 19,
-      "category": "design",
+      "category": "sites,design",
       "title_ru": "🔌 РусКомпонент - поставка электронных компонентов",
       "title_en": "🔌 RusComponent - supply of electronic components",
       "description_ru": "РусКомпонент - сайт компании по поставке отечественных и импортных электронных компонентов. Микросхемы, резисторы, конденсаторы, разъемы и элементы питания. Контрактная сборка электронных узлов, подбор аналогов при дефиците и полное сопровождение документами. Каталог с категориями, проверенные производители и заявка в один клик.",
@@ -287,7 +287,7 @@ const DATA_LIVE = {
     },
     {
       "id": 21,
-      "category": "design",
+      "category": "sites,design",
       "title_ru": "🎨 Базис-Пром - краски и покрытия оптом",
       "title_en": "🎨 Bazis-Prom - wholesale paints and coatings",
       "description_ru": "Базис-Пром - сайт официального дистрибьютора лакокрасочных материалов с доставкой по Москве, России и СНГ. Краски для фасадов, дерева, металла, авто, промышленные и огнезащитные покрытия. На рынке более 25 лет, отгрузка за 24 часа, подбор решения под задачу за 15 минут. Каталог с категориями, карточками товаров и актуальными ценами.",
@@ -302,7 +302,7 @@ const DATA_LIVE = {
     },
     {
       "id": 22,
-      "category": "shops",
+      "category": "sites,shops",
       "title_ru": "🖌 Краски-Sale - интернет-магазин лакокрасочных материалов",
       "title_en": "🖌 Kraski-Sale - online store of paint materials",
       "description_ru": "Краски-Sale - оптовый интернет-магазин лакокрасочных материалов в Москве. Краски, эмали, лаки, антисептики, пропитки, растворители, сухие смеси и огнезащита. Широкий каталог с категориями, корзина, сравнение товаров и подбор специалистом. Минимальный заказ от 15 000 руб., доставка мелким и крупным оптом.",
@@ -317,7 +317,7 @@ const DATA_LIVE = {
     },
     {
       "id": 23,
-      "category": "design",
+      "category": "sites,design",
       "title_ru": "🦷 Школа Семеновой - курсы и аудиты для стоматологий",
       "title_en": "🦷 Semenova School - courses and audits for dental clinics",
       "description_ru": "Школа Семеновой - сайт эксперта с 11-летним опытом в медицине и управлении клиниками. Обучение ассистентов стоматолога и старших медсестер, аудит документации, онлайн-консультации и юридическое сопровождение. Очно в Москве, с выездом в клинику или онлайн. Системный подход к процессам - от стандартов работы в кабинете до подготовки к проверкам.",
@@ -332,7 +332,7 @@ const DATA_LIVE = {
     },
     {
       "id": 24,
-      "category": "design",
+      "category": "sites,design",
       "title_ru": "🚗 ND Detailing - детейлинг-студия в Щелково",
       "title_en": "🚗 ND Detailing - detailing studio in Shchelkovo",
       "description_ru": "ND Detailing - сайт премиум детейлинг-студии в Щелково. Оклейка защитной пленкой XPEL и SunTek с гарантией до 10 лет, многоэтапная полировка, керамические покрытия Gyeon и Ceramic Pro, химчистка салона. Сертифицированные мастера, премиальные материалы и студийный подход к каждому автомобилю.",
@@ -2050,7 +2050,10 @@ const DATA_LIVE = {
       "promo.skip_btn": "Пропустить",
       "promo.auto_title": "🎁 Для вас есть скидка!",
       "promo.auto_body": "Активируйте промокод прямо сейчас и получите скидку на разработку.",
-      "promo.auto_activate_btn": "Активировать и применить"
+      "promo.auto_activate_btn": "Активировать и применить",
+      "menu.question": "💬 Задать вопрос",
+      "menu.reviews_cases": "⭐ Отзывы и кейсы",
+      "menu.audit": "🔍 Аудит сайта"
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂</tg-emoji> <b>Hey! I'm Daniil - YankSWeb.</b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧</tg-emoji> I build websites end-to-end - design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉</tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -2563,7 +2566,10 @@ const DATA_LIVE = {
       "promo.skip_btn": "Skip",
       "promo.auto_title": "🎁 Special offer for you!",
       "promo.auto_body": "Activate a promo code right now and get a discount on your project.",
-      "promo.auto_activate_btn": "Activate and apply"
+      "promo.auto_activate_btn": "Activate and apply",
+      "menu.question": "💬 Ask a question",
+      "menu.reviews_cases": "⭐ Reviews & Cases",
+      "menu.audit": "🔍 Site Audit"
     }
   },
   "services": [

@@ -187,7 +187,7 @@ const DATA_LIVE = {
       "title_en": "🎁 DrevoSmart - wooden toys and souvenirs",
       "description_ru": "ДревоСмарт - интернет-магазин деревянных изделий ручной работы. Настольная игра Туми Иши, игрушечная посуда, декор и интерьерные аксессуары. Каждая карточка товара с видео, отзывами, аксессуарами и гравировкой на заказ. Каталог выстроен так, чтобы покупатель выбирал не по картинке, а по смыслу и назначению подарка.",
       "description_en": "DrevoSmart - an online store of handmade wooden goods. The Tumi Ishi board game, toy dishware, decor and interior accessories. Each product card has video, reviews, accessories and custom engraving. The catalog is built so that the buyer chooses not by the picture but by the meaning and purpose of the gift.",
-      "media_file_id": "https://bot.yanksweb.ru/uploads/7dda307f7d8942ca82651f8bd5827011_drevosmart.mp4",
+      "media_file_id": "https://bot.yanksweb.ru/uploads/daa3801c9531045f8f316c24fc939545_drevosmart.mp4",
       "media_type": "video",
       "url": "https://drevosmart.ru/",
       "sort_order": 0,

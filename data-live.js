@@ -2109,7 +2109,10 @@ const DATA_LIVE = {
       "ai.hard_ban": "Общение с AI-ассистентом заблокировано. Для связи оставьте заявку через «Обсудить проект».",
       "menu.ai_assistant": "🤖 AI-помощник",
       "ai.busy": "⏳ Отвечаю на ваше предыдущее сообщение. Дождитесь ответа и задайте следующий вопрос.",
-      "ai.retry_later": "⏰ AI-помощник сейчас перегружен. Попробуйте повторить ваш вопрос через 3-5 минут - к этому моменту я переключусь на запасного провайдера и смогу ответить."
+      "ai.retry_later": "⏰ AI-помощник сейчас перегружен. Попробуйте повторить ваш вопрос через 3-5 минут - к этому моменту я переключусь на запасного провайдера и смогу ответить.",
+      "ai.send_to_quote": "📝 Отправить на точный расчёт",
+      "ai.quote_sent": "Заявка передана! Даниил свяжется с вами лично для уточнения деталей и финальной цены.",
+      "ai.quote_not_found": "Диалог не найден. Задайте свои вопросы заново через AI-помощника."
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂<\/tg-emoji> <b>Hey! I'm Daniil - YankSWeb.<\/b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧<\/tg-emoji> I build websites end-to-end - design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉<\/tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -2636,7 +2639,10 @@ const DATA_LIVE = {
       "ai.hard_ban": "AI assistant access is blocked. To get in touch, submit a request via 'Discuss Project'.",
       "menu.ai_assistant": "🤖 AI Assistant",
       "ai.busy": "⏳ I'm still answering your previous message. Please wait for the reply before asking the next one.",
-      "ai.retry_later": "⏰ AI assistant is overloaded right now. Please retry your question in 3-5 minutes - by then I'll switch to a backup provider and can respond."
+      "ai.retry_later": "⏰ AI assistant is overloaded right now. Please retry your question in 3-5 minutes - by then I'll switch to a backup provider and can respond.",
+      "ai.send_to_quote": "📝 Send for exact quote",
+      "ai.quote_sent": "Request sent! Daniil will contact you personally to clarify details and finalize the price.",
+      "ai.quote_not_found": "Dialog not found. Ask your questions again via the AI assistant."
     }
   },
   "services": [

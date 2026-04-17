@@ -2107,7 +2107,8 @@ const DATA_LIVE = {
       "ai.follow_up": "Если хотите узнать что-то ещё - просто напишите следующее сообщение, с радостью отвечу 🙂",
       "ai.temp_ban": "Слишком много сообщений подряд. Общение с ассистентом временно приостановлено на 1 час. Если хотите обсудить проект - оставьте заявку.",
       "ai.hard_ban": "Общение с AI-ассистентом заблокировано. Для связи оставьте заявку через «Обсудить проект».",
-      "menu.ai_assistant": "🤖 AI-помощник"
+      "menu.ai_assistant": "🤖 AI-помощник",
+      "ai.busy": "⏳ Отвечаю на ваше предыдущее сообщение. Дождитесь ответа и задайте следующий вопрос."
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂<\/tg-emoji> <b>Hey! I'm Daniil - YankSWeb.<\/b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧<\/tg-emoji> I build websites end-to-end - design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉<\/tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -2632,7 +2633,8 @@ const DATA_LIVE = {
       "ai.follow_up": "If you'd like to know anything else - just type your next message, happy to help 🙂",
       "ai.temp_ban": "Too many messages. AI assistant is paused for 1 hour. To discuss a project, please submit a request.",
       "ai.hard_ban": "AI assistant access is blocked. To get in touch, submit a request via 'Discuss Project'.",
-      "menu.ai_assistant": "🤖 AI Assistant"
+      "menu.ai_assistant": "🤖 AI Assistant",
+      "ai.busy": "⏳ I'm still answering your previous message. Please wait for the reply before asking the next one."
     }
   },
   "services": [

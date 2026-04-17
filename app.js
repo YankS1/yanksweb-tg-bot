@@ -1,7 +1,12 @@
+/* === Fallback Guards === */
+
+if (typeof DATA === 'undefined') window.DATA = { portfolio: [], reviews: [], cases: [], faq: [], promos: [], services: [], contact: {}, quiz: { designIrrelevantTypes: [], siteTypes: [], designOptions: [], budgetOptions: [], featureOptions: [] }, calculator: { basePrices: {}, pageMultipliers: {}, designMultipliers: {}, featureCosts: {}, urgencyMultiplier: {} }, categoryNames: {}, subcategoryNames: {}, tariffPrefill: { siteType: {}, budget: {} } };
+if (typeof lucide === 'undefined') window.lucide = { createIcons: function() {} };
+
 /* === Telegram WebApp Init === */
 
 const tg = window.Telegram?.WebApp;
-const PROD_HOSTS = new Set(['bot.yanksweb.ru', '94.198.217.56']);
+const PROD_HOSTS = new Set(['bot.yanksweb.ru', '185.103.252.41']);
 const REVIEWS_CHANNEL_URL = 'https://t.me/yanksweb_reviews';
 const IS_PROD_MINIAPP = PROD_HOSTS.has(window.location.hostname);
 const BOOT_STARTED_AT = performance.now();
@@ -11,6 +16,25 @@ if (tg) {
     tg.ready();
     tg.expand();
     tg.BackButton?.onClick(() => {
+        // Overlay closes first if open
+        const overlay = document.getElementById('detail-overlay');
+        if (overlay && overlay.classList.contains('overlay--open')) {
+            if (typeof closeOverlay === 'function') {
+                closeOverlay();
+            } else {
+                overlay.classList.remove('overlay--open');
+            }
+            return;
+        }
+
+        // More menu closes if open
+        const moreMenu = document.getElementById('more-menu');
+        if (moreMenu && moreMenu.classList.contains('more-menu--open')) {
+            if (typeof toggleMoreMenu === 'function') toggleMoreMenu();
+            return;
+        }
+
+        // Services drill down
         if (AppState.currentPage === 'services') {
             if (AppState.services.level === 'tariffs') {
                 ServicesPage.renderSubcategories(AppState.services.catId);
@@ -21,6 +45,25 @@ if (tg) {
                 return;
             }
         }
+
+        // Calculator: step back to previous step
+        if (AppState.currentPage === 'calculator' && typeof CalculatorPage !== 'undefined') {
+            if (AppState.calculator.history && AppState.calculator.history.length > 1) {
+                CalculatorPage.goBack?.();
+                return;
+            }
+        }
+
+        // Cases: close detail view
+        if (AppState.currentPage === 'cases' && typeof CasesPage !== 'undefined') {
+            if (CasesPage._view === 'detail') {
+                CasesPage._cleanupSlider?.();
+                CasesPage._view = 'list';
+                CasesPage.render?.();
+                return;
+            }
+        }
+
         const prev = Router.history.pop() || 'home';
         Router._isBack = true;
         Router.navigate(prev);
@@ -231,16 +274,18 @@ function labelText(key, fallback = '') {
 function interpolateText(template, values = {}) {
     let result = String(template || '');
     for (const [key, value] of Object.entries(values)) {
-        result = result.replaceAll(`{${key}}`, String(value ?? ''));
+        result = result.split(`{${key}}`).join(String(value ?? ''));
     }
     return result;
 }
 
 function leadSuccessCopy() {
+    const title = text('miniapp_ui.lead_thank_title', 'Спасибо, ваша заявка принята!');
+    const body = text('miniapp_ui.lead_thank_body', 'Я свяжусь с вами в течение 15 минут для уточнения деталей.');
     return {
-        title: 'Спасибо, ваша заявка принята!',
-        body: 'Я свяжусь с вами в течение 15 минут для уточнения деталей.',
-        short: 'Спасибо, ваша заявка принята! Я свяжусь с вами в течение 15 минут.',
+        title,
+        body,
+        short: `${title} ${body}`,
     };
 }
 
@@ -276,6 +321,9 @@ function portfolioCategoryLabel(category) {
 }
 
 function applyStaticTexts() {
+    const userLang = tg?.initDataUnsafe?.user?.language_code === 'en' ? 'en' : 'ru';
+    document.documentElement.lang = userLang;
+
     const setText = (selector, value) => {
         const el = document.querySelector(selector);
         if (el && value) el.textContent = value;
@@ -298,7 +346,7 @@ function applyStaticTexts() {
     setText('[data-page="reviews"] .page__title', text('reviews.title', 'Отзывы клиентов'));
     setText('[data-page="cases"] .page__title', text('reviews.cases_title', 'Кейсы'));
     setText('[data-page="faq"] .page__title', text('faq.title', 'Частые вопросы'));
-    setText('[data-page="audit"] .page__title', text('audit.title', 'Экспресс-аудит сайта'));
+    setText('[data-page="audit"] .page__title', text('audit.title', 'Аудит сайта'));
     setText('[data-page="contact"] .page__title', labelText('contact.title', 'Написать напрямую'));
     setText('[data-page="promos"] .page__title', text('promo.title', 'Акции'));
 
@@ -332,13 +380,11 @@ function applyStaticTexts() {
     setText('#faqEmpty p', text('faq.empty', 'Раздел в разработке'));
     setText('#promosEmpty p', text('promo.empty', 'Сейчас акций нет, но они скоро появятся'));
 
-    setText('[data-page="audit"] .audit__desc', text('audit.prompt', 'Укажите адрес вашего сайта, и я проведу быстрый анализ: скорость загрузки, SEO, мобильная версия, основные ошибки.'));
     setPlaceholder('#auditUrlInput', text('audit.enter_url', 'https://example.com'));
     setText('#auditSubmitBtn', text('audit.webapp_submit', 'Проверить'));
-    setText('.audit__note', text('audit.webapp_ready_note', 'Результат придет в течение 5-10 минут в этот чат'));
     setText('.contact-card__name', text('contact.name', 'Даниил'));
     setText('#contactLink', labelText('contact.write', 'Написать в Telegram'));
-    setText('.contact-card__desc', text('contact.text', DATA.contact.description || ''));
+    setText('.contact-card__desc', text('contact.text', DATA?.contact?.description || ''));
 
     setText('#tab-bar [data-page="home"] span', text('miniapp.tab.home', 'Главная'));
     setText('#tab-bar [data-page="services"] span', text('miniapp.tab.services', 'Услуги'));
@@ -396,8 +442,6 @@ const AppState = {
     favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
 };
 
-let lastMoreMenuTrigger = null;
-
 /* === Router === */
 
 const Router = {
@@ -420,6 +464,10 @@ const Router = {
         if (target) {
             target.classList.add('page--active');
         }
+
+        PromosPage.timers.forEach(t => clearInterval(t));
+        PromosPage.timers = [];
+        if (typeof CasesPage !== 'undefined' && CasesPage._cleanupSlider) CasesPage._cleanupSlider();
 
         AppState.currentPage = pageId;
         updateTabBar(pageId);
@@ -448,6 +496,7 @@ const Router = {
         if (pageId === 'promos') PromosPage.render();
         if (pageId === 'portfolio') { PortfolioPage.render(AppState.portfolio?.filter); PortfolioPage.updateFavoritesCount(); }
         if (pageId === 'favorites') FavoritesPage.render();
+        if (pageId === 'audit' && !AuditPage._running) AuditPage.renderForm(document.getElementById('auditBody'));
 
         lucide.createIcons();
 
@@ -464,7 +513,8 @@ function updateTabBar(pageId) {
         }
     });
     if (!mainTabs.includes(pageId) && pageId !== 'more') {
-        document.querySelectorAll('.tab-bar__tab').forEach(t => t.classList.remove('tab-bar__tab--active'));
+        const moreTab = document.querySelector('.tab-bar__tab[data-page="more"]');
+        if (moreTab) moreTab.classList.add('tab-bar__tab--active');
     }
 }
 
@@ -473,23 +523,8 @@ function updateTabBar(pageId) {
 function toggleMoreMenu() {
     const menu = document.getElementById('more-menu');
     const isOpen = menu.classList.toggle('more-menu--open');
-    const sheet = menu.querySelector('.more-menu__sheet');
-    menu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    menu.setAttribute('aria-hidden', String(!isOpen));
     document.body.style.overflow = isOpen ? 'hidden' : '';
-    if (isOpen) {
-        lastMoreMenuTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        window.requestAnimationFrame(() => {
-            const firstAction = menu.querySelector('.more-menu__item');
-            if (firstAction) {
-                firstAction.focus();
-            } else if (sheet) {
-                sheet.focus();
-            }
-        });
-    } else if (lastMoreMenuTrigger) {
-        lastMoreMenuTrigger.focus();
-        lastMoreMenuTrigger = null;
-    }
 }
 
 function closeMoreMenu() {
@@ -497,10 +532,6 @@ function closeMoreMenu() {
     menu.classList.remove('more-menu--open');
     menu.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    if (lastMoreMenuTrigger) {
-        lastMoreMenuTrigger.focus();
-        lastMoreMenuTrigger = null;
-    }
 }
 
 /* === Detail Overlay === */
@@ -523,7 +554,11 @@ function closeOverlay() {
 /* === Home Page === */
 
 const HomePage = {
+    _inited: false,
     init() {
+        if (HomePage._inited) return;
+        HomePage._inited = true;
+
         document.querySelectorAll('[data-navigate]').forEach(btn => {
             btn.addEventListener('click', () => {
                 haptic();
@@ -581,6 +616,10 @@ const HomePage = {
         const submitBtn = document.getElementById('bookingSubmitBtn');
         const nameInput = document.getElementById('bookingName');
         const taskInput = document.getElementById('bookingTask');
+        const successBox = document.getElementById('bookingSuccess');
+        const successTitle = document.getElementById('bookingSuccessTitle');
+        const successBody = document.getElementById('bookingSuccessBody');
+        const resetBtn = document.getElementById('bookingReset');
 
         const today = new Date();
         const minDate = today.toISOString().split('T')[0];
@@ -605,14 +644,31 @@ const HomePage = {
             submitBtn.disabled = !(dateInput.value && nameInput.value.trim());
             if (dateInput.value) {
                 dateHint.classList.add('booking-form__date-hint--hidden');
+                dateInput.classList.add('booking-form__date-input--filled');
             } else {
                 dateHint.classList.remove('booking-form__date-hint--hidden');
+                dateInput.classList.remove('booking-form__date-input--filled');
             }
         }
         nameInput.addEventListener('input', checkFormReady);
         dateInput.addEventListener('input', checkFormReady);
         dateInput.addEventListener('change', checkFormReady);
         checkFormReady();
+
+        function resetBookingForm() {
+            dateInput.value = '';
+            nameInput.value = tgUser?.first_name || tgUser?.username || '';
+            taskInput.value = '';
+            successBox.classList.add('booking-form__done--hidden');
+            form.style.display = 'block';
+            submitBtn.textContent = text('waitlist.webapp_submit', 'Отправить бронь');
+            checkFormReady();
+        }
+
+        resetBtn.addEventListener('click', () => {
+            haptic();
+            resetBookingForm();
+        });
 
         submitBtn.addEventListener('click', async () => {
             haptic();
@@ -633,18 +689,10 @@ const HomePage = {
             }
 
             const success = leadSuccessCopy();
-            form.innerHTML = `
-                <div class="booking-form__done">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
-                    <h3>${escapeHtml(success.title)}</h3>
-                    <p>${escapeHtml(success.body)}</p>
-                    <button class="btn btn--ghost" id="bookingReset" style="margin-top:12px">Забронировать ещё</button>
-                </div>
-            `;
-            document.getElementById('bookingReset')?.addEventListener('click', () => {
-                haptic();
-                location.reload();
-            });
+            successTitle.textContent = success.title;
+            successBody.textContent = success.body;
+            form.style.display = 'none';
+            successBox.classList.remove('booking-form__done--hidden');
         });
     },
 };
@@ -795,7 +843,7 @@ const ServicesPage = {
                 <h2 class="tariff-detail__cat">${escapeHtml(catName)}</h2>
                 <div class="tariff-detail__price">${escapeHtml(tariff.price)}</div>
                 <div class="tariff-detail__desc">${formatDescription(tariff.description)}</div>
-                <button class="btn btn--primary tariff-detail__cta" data-tariff-quiz="${tariff.id}">${escapeHtml(labelText('services.order', 'Обсудить этот вариант'))}</button>
+                <button class="btn btn--primary tariff-detail__cta" data-tariff-quiz="${tariff.id}">${escapeHtml(labelText('services.order', 'Обсудить проект'))}</button>
             </div>
         `);
 
@@ -892,7 +940,7 @@ const PortfolioPage = {
                         </div>
                         <button class="portfolio-item__btn portfolio-item__btn--order" data-pf-quiz>
                             <i data-lucide="message-square"></i>
-                            ${escapeHtml(labelText('services.order', 'Обсудить работу'))}
+                            ${escapeHtml(labelText('portfolio.discuss_similar', 'Обсудить похожий проект'))}
                         </button>
                         ${item.tags ? `<span class="portfolio-item__tag">${escapeHtml(portfolioCategoryLabel(item.tags) || item.tags)}</span>` : ''}
                     </div>
@@ -1203,7 +1251,7 @@ const CalculatorPage = {
         const calc = DATA.calculator;
         const st = AppState.calculator;
 
-        let base = calc.basePrices[st.type] || 15000;
+        let base = calc.basePrices[st.type] || 25000;
         base *= calc.pageMultipliers[st.pages] || 1.0;
         base *= calc.designMultipliers[st.design] || 1.0;
 
@@ -1220,7 +1268,8 @@ const CalculatorPage = {
 
     formatPrice(amount) {
         const rub = amount.toLocaleString('ru-RU') + ' \u20BD';
-        const usd = Math.round(amount / DATA.calculator.usdRate);
+        const rate = DATA.calculator.usdRate || 85;
+        const usd = Math.round(amount / rate);
         return `${rub} (~$${usd})`;
     },
 
@@ -1245,11 +1294,11 @@ const CalculatorPage = {
 
     toQuiz() {
         const { max } = this.calculatePrice();
-        const budget = max <= 15000 ? '15'
-            : max <= 30000 ? '30'
-            : max <= 50000 ? '50'
-            : max <= 100000 ? '100'
-            : '200';
+        const budget = max <= 25000 ? '25'
+            : max <= 45000 ? '45'
+            : max <= 70000 ? '70'
+            : max <= 150000 ? '150'
+            : '300';
 
         const featureMap = {
             forms: 'forms',
@@ -1259,9 +1308,15 @@ const CalculatorPage = {
             i18n: 'multilang',
             seo: 'seo',
         };
+        const designMap = {
+            ready: 'yes',
+            needed: 'no',
+            examples: 'examples',
+        };
 
         AppState.quiz.prefill = {
             site_type: AppState.calculator.type,
+            has_design: designMap[AppState.calculator.design] || null,
             budget,
             features: AppState.calculator.features
                 .map(feature => featureMap[feature])
@@ -1391,7 +1446,7 @@ const ReviewsPage = {
                     ${r.company ? `<span class="review-card__company">${escapeHtml(r.company)}</span>` : ''}
                 </div>
                 <p class="review-card__text">${nl2br(escapeHtml(r.text || ''))}</p>
-                ${r.url ? `<button class="btn btn--ghost review-card__link" data-open-url="${escapeHtml(r.url)}"><i data-lucide="external-link"></i> Посмотреть сайт</button>` : ''}
+                ${r.url ? `<button class="btn btn--ghost review-card__link" data-open-url="${escapeHtml(r.url)}"><i data-lucide="external-link"></i> ${escapeHtml(text('miniapp_ui.portfolio_view_site', 'Посмотреть сайт'))}</button>` : ''}
             </div>
         `).join('');
 
@@ -1405,9 +1460,8 @@ const ReviewsPage = {
         });
 
         const allBtn = document.createElement('button');
-        allBtn.className = 'btn btn--secondary';
-        allBtn.style.marginTop = '16px';
-        allBtn.innerHTML = '<i data-lucide="star"></i> Все отзывы';
+        allBtn.className = 'btn btn--secondary reviews-all-btn';
+        allBtn.innerHTML = `<i data-lucide="star"></i> ${escapeHtml(text('miniapp_ui.reviews_all', 'Все отзывы'))}`;
         allBtn.addEventListener('click', () => {
             haptic();
             const url = REVIEWS_CHANNEL_URL;
@@ -1485,14 +1539,14 @@ const CasesPage = {
             const subtitle = escapeHtml(c.niche || '');
             const timeline = escapeHtml(c.timeline || '');
             const emoji = nicheEmoji(c.niche, c.title);
-            const thumb = c.image_after || c.image_before || '';
+            const thumb = c.thumb_after || c.thumb_before || c.image_after || c.image_before || '';
             return `<button class="cases-item animate-in" data-case-idx="${i}">
                 ${thumb
                     ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`
                     : `<div class="cases-item__emoji">${emoji}</div>`
                 }
                 <div class="cases-item__info">
-                    <span class="cases-item__name">${emoji} ${name}</span>
+                    <span class="cases-item__name">${name}</span>
                     ${subtitle ? `<span class="cases-item__niche">${subtitle}</span>` : ''}
                 </div>
                 ${timeline ? `<span class="cases-item__badge">${timeline}</span>` : ''}
@@ -1568,7 +1622,7 @@ const CasesPage = {
         detail.innerHTML = `
             <button class="case-back" id="caseBackBtn">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Все кейсы
+                ${escapeHtml(text('miniapp_ui.cases_all', 'Все кейсы'))}
             </button>
             <div class="case-nav case-nav--top">
                 ${prevIdx !== null ? `<button class="case-nav__btn case-nav__btn--prev" data-go="${prevIdx}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> ${prevName}</button>` : '<span></span>'}
@@ -1620,9 +1674,10 @@ const CasesPage = {
                 haptic();
                 this._activeIndex = parseInt(btn.dataset.go, 10);
                 this.render();
-                document.querySelector('[data-page="cases"]')?.scrollTo(0, 0);
             });
         });
+
+        document.querySelector('[data-page="cases"]')?.scrollTo({ top: 0, behavior: 'smooth' });
 
         if (hasBoth) this._initSlider(detail.querySelector('[data-ba-slider]'));
 
@@ -1685,6 +1740,7 @@ const CasesPage = {
         };
         const onMove = (e) => {
             if (!dragging) return;
+            if (e.cancelable) e.preventDefault();
             const x = e.touches ? e.touches[0].clientX : e.clientX;
             move(x);
         };
@@ -1696,7 +1752,7 @@ const CasesPage = {
         handle.addEventListener('mousedown', onStart);
         handle.addEventListener('touchstart', onStart, { passive: false });
         document.addEventListener('mousemove', onMove);
-        document.addEventListener('touchmove', onMove, { passive: true });
+        document.addEventListener('touchmove', onMove, { passive: false });
         document.addEventListener('mouseup', onEnd);
         document.addEventListener('touchend', onEnd);
 
@@ -1704,12 +1760,40 @@ const CasesPage = {
             if (!dragging) move(e.clientX);
         });
 
+        const circle = el.querySelector('.ba-slider__handle-circle');
+        const CIRCLE_TOP_DEFAULT = 32;
+        const CIRCLE_R = 22;
+        const STICKY_OFFSET = 16;
+
+        const setCircleY = (y) => {
+            circle.style.transform = `translate(-50%, ${y}px)`;
+        };
+
+        const updateCircleSticky = () => {
+            const sliderRect = el.getBoundingClientRect();
+            const sliderTop = sliderRect.top;
+            const sliderBottom = sliderRect.bottom;
+            const stickyTop = STICKY_OFFSET;
+
+            if (sliderTop >= stickyTop - CIRCLE_TOP_DEFAULT) {
+                setCircleY(CIRCLE_TOP_DEFAULT);
+            } else if (sliderBottom - stickyTop - CIRCLE_R * 2 < 0) {
+                setCircleY(Math.max(0, sliderRect.height - CIRCLE_R * 2 - 8));
+            } else {
+                setCircleY(stickyTop - sliderTop);
+            }
+        };
+
+        window.addEventListener('scroll', updateCircleSticky, { passive: true });
+        updateCircleSticky();
+
         this._sliderCleanup = () => {
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('touchmove', onMove);
             document.removeEventListener('mouseup', onEnd);
             document.removeEventListener('touchend', onEnd);
             window.removeEventListener('resize', onResize);
+            window.removeEventListener('scroll', updateCircleSticky);
             clearTimeout(resizeTimer);
         };
     },
@@ -1739,8 +1823,10 @@ const FaqPage = {
                     <i data-lucide="chevron-down"></i>
                 </button>
                 <div class="accordion__body">
-                    <div class="accordion__answer">${nl2br(escapeHtml(item.answer || ''))}</div>
-                    <button class="btn btn--primary faq-cta" data-faq-quiz>${escapeHtml(labelText('services.order', 'Обсудить проект'))}</button>
+                    <div class="accordion__answer">
+                        ${nl2br(escapeHtml(item.answer || ''))}
+                        <button class="btn btn--primary faq-cta" data-faq-quiz>${escapeHtml(labelText('services.order', 'Обсудить проект'))}</button>
+                    </div>
                 </div>
             </div>
         `).join('')}</div>`;
@@ -1769,45 +1855,22 @@ const FaqPage = {
 /* === Quiz Page === */
 
 const QuizPage = {
-    DESIGN_IRRELEVANT_TYPES: DATA.quiz.designIrrelevantTypes,
+    get DESIGN_IRRELEVANT_TYPES() { return DATA?.quiz?.designIrrelevantTypes || []; },
 
     renderTypeChoice() {
-        const container = document.getElementById('quiz-content');
-
-        container.innerHTML = `
-            <header class="page__header">
-                <h1 class="page__title">${escapeHtml(labelText('menu.request', 'Обсудить проект'))}</h1>
-            </header>
-            <p class="quiz-intro">${escapeHtml(text('quiz.choose_type', 'Выберите формат - отвечу в ближайшее время'))}</p>
-            <div class="quiz-types">
-                <button class="quiz-type-card animate-in" data-quiz-type="quick">
-                    <span class="quiz-type-card__icon quiz-type-card__icon--quick"><i data-lucide="zap"></i></span>
-                    <strong>${escapeHtml(labelText('quiz.quick', 'Быстрый опрос'))}</strong>
-                    <small>${escapeHtml(text('quiz.quick_desc', '4 вопроса - 1 минута'))}</small>
-                </button>
-                <button class="quiz-type-card animate-in" data-quiz-type="detailed">
-                    <span class="quiz-type-card__icon quiz-type-card__icon--detailed"><i data-lucide="clipboard-list"></i></span>
-                    <strong>${escapeHtml(labelText('quiz.detailed', 'Подробный опрос'))}</strong>
-                    <small>${escapeHtml(text('quiz.detailed_desc', '7 вопросов - 3 минуты'))}</small>
-                </button>
-            </div>
-        `;
-
-        container.querySelectorAll('[data-quiz-type]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                haptic();
-                this.startQuiz(btn.dataset.quizType);
-            });
-        });
-
-        lucide.createIcons();
-        animateIn(container);
+        this.startQuiz('quick');
     },
 
     startQuiz(type) {
         AppState.quiz.type = type;
         AppState.quiz.answers = {};
         AppState.quiz.currentStep = 0;
+        AppState.quiz._favAsked = false;
+        AppState.quiz._attachFav = null;
+        AppState.quiz._promoAsked = false;
+        AppState.quiz._promoApplied = false;
+
+        tg?.enableClosingConfirmation?.();
 
         const tgUser = tg?.initDataUnsafe?.user;
         if (tgUser?.id) {
@@ -1846,13 +1909,29 @@ const QuizPage = {
             if (idx > -1) AppState.quiz.steps.splice(idx, 1);
         }
 
+        if (prefill.has_design) {
+            AppState.quiz.answers.has_design = prefill.has_design;
+            const idx = AppState.quiz.steps.indexOf('has_design');
+            if (idx > -1) AppState.quiz.steps.splice(idx, 1);
+        }
+
+        if (Array.isArray(prefill.features) && prefill.features.length) {
+            AppState.quiz.answers.features = prefill.features;
+            const idx = AppState.quiz.steps.indexOf('features');
+            if (idx > -1) AppState.quiz.steps.splice(idx, 1);
+        }
+
         this.renderStep();
     },
 
     renderStep() {
         const step = AppState.quiz.steps[AppState.quiz.currentStep];
         if (!step) {
-            this.submit();
+            if (AppState.quiz.type === 'detailed') {
+                this.submit();
+            } else {
+                this.renderConfirm();
+            }
             return;
         }
 
@@ -1958,6 +2037,11 @@ const QuizPage = {
             </div>
         `;
 
+        if (this._pendingBind) {
+            this._pendingBind(container);
+            this._pendingBind = null;
+        }
+
         if (container.querySelector('[data-quiz-back]')) {
             container.querySelector('[data-quiz-back]').addEventListener('click', () => {
                 haptic();
@@ -1977,15 +2061,21 @@ const QuizPage = {
             </button>
         `).join('');
 
-        setTimeout(() => {
-            document.querySelectorAll('.quiz-option[data-quiz-value]').forEach(btn => {
+        this._pendingBind = (container) => {
+            container.querySelectorAll('.quiz-option[data-quiz-value]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     haptic();
                     AppState.quiz.answers[key] = btn.dataset.quizValue;
 
-                    if (key === 'site_type' && this.DESIGN_IRRELEVANT_TYPES.includes(btn.dataset.quizValue)) {
+                    if (key === 'site_type') {
+                        const isIrrelevant = this.DESIGN_IRRELEVANT_TYPES.includes(btn.dataset.quizValue);
                         const dIdx = AppState.quiz.steps.indexOf('has_design');
-                        if (dIdx > -1) AppState.quiz.steps.splice(dIdx, 1);
+                        if (isIrrelevant && dIdx > -1) {
+                            AppState.quiz.steps.splice(dIdx, 1);
+                        } else if (!isIrrelevant && dIdx === -1) {
+                            const insertAfter = AppState.quiz.steps.indexOf('site_type');
+                            AppState.quiz.steps.splice(insertAfter + 1, 0, 'has_design');
+                        }
                     }
 
                     btn.closest('.quiz-options').querySelectorAll('.quiz-option').forEach(o => o.classList.remove('quiz-option--selected'));
@@ -1993,7 +2083,7 @@ const QuizPage = {
                     setTimeout(() => this.nextStep(), 250);
                 });
             });
-        }, 0);
+        };
 
         return `<h2 class="quiz-step__title">${escapeHtml(title)}</h2><div class="quiz-options">${items}</div>`;
     },
@@ -2003,10 +2093,10 @@ const QuizPage = {
             <button class="chip" data-quiz-chip="${escapeHtml(opt.value)}">${escapeHtml(opt.label)}</button>
         `).join('');
 
-        setTimeout(() => {
+        this._pendingBind = (container) => {
             const selected = [];
 
-            document.querySelectorAll('[data-quiz-chip]').forEach(chip => {
+            container.querySelectorAll('[data-quiz-chip]').forEach(chip => {
                 chip.addEventListener('click', () => {
                     haptic();
                     const val = chip.dataset.quizChip;
@@ -2022,11 +2112,11 @@ const QuizPage = {
                 });
             });
 
-            document.querySelector('[data-quiz-next]')?.addEventListener('click', () => {
+            container.querySelector('[data-quiz-next]')?.addEventListener('click', () => {
                 haptic();
                 this.nextStep();
             });
-        }, 0);
+        };
 
         return `
             <h2 class="quiz-step__title">${escapeHtml(title)}</h2>
@@ -2036,10 +2126,10 @@ const QuizPage = {
     },
 
     renderTextStep(title, placeholder, key, skippable) {
-        setTimeout(() => {
-            const input = document.querySelector('[data-quiz-text]');
-            const sendBtn = document.querySelector('[data-quiz-send]');
-            const skipBtn = document.querySelector('[data-quiz-skip]');
+        this._pendingBind = (container) => {
+            const input = container.querySelector('[data-quiz-text]');
+            const sendBtn = container.querySelector('[data-quiz-send]');
+            const skipBtn = container.querySelector('[data-quiz-skip]');
 
             sendBtn?.addEventListener('click', () => {
                 haptic();
@@ -2063,7 +2153,7 @@ const QuizPage = {
                 AppState.quiz.answers[key] = '';
                 this.nextStep();
             });
-        }, 0);
+        };
 
         return `
             <h2 class="quiz-step__title">${escapeHtml(title)}</h2>
@@ -2078,7 +2168,12 @@ const QuizPage = {
     nextStep() {
         AppState.quiz.currentStep++;
         if (AppState.quiz.currentStep >= AppState.quiz.steps.length) {
-            this.submit();
+            // Detailed quiz: submit directly, no confirm screen
+            if (AppState.quiz.type === 'detailed') {
+                this.submit();
+            } else {
+                this.renderConfirm();
+            }
         } else {
             this.renderStep();
         }
@@ -2088,9 +2183,39 @@ const QuizPage = {
         if (AppState.quiz.currentStep > 0) {
             AppState.quiz.currentStep--;
             this.renderStep();
-        } else {
-            this.renderTypeChoice();
         }
+    },
+
+    renderConfirm() {
+        const container = document.getElementById('quiz-content');
+        const isQuick = AppState.quiz.type === 'quick';
+        container.innerHTML = `
+            <div class="quiz-step animate-in">
+                <div class="quiz-done__icon"><i data-lucide="file-text"></i></div>
+                <h2 class="quiz-step__title">${escapeHtml(text('quiz.ready_to_send', 'Спасибо за ответы! Хотите сразу отправить заявку или добавить подробности о проекте?'))}</h2>
+                <div class="quiz-confirm-actions">
+                    <button class="btn btn--primary" id="quizConfirmSend"><i data-lucide="send"></i> ${escapeHtml(text('quiz.send_request', 'Отправить заявку'))}</button>
+                    ${isQuick ? `<button class="btn btn--secondary" id="quizConfirmDetailed"><i data-lucide="pencil"></i> ${escapeHtml(text('quiz.describe_more', 'Добавить подробности'))}</button>` : ''}
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+        document.getElementById('quizConfirmSend').addEventListener('click', () => {
+            haptic();
+            this.submit();
+        });
+        document.getElementById('quizConfirmDetailed')?.addEventListener('click', () => {
+            haptic();
+            AppState.quiz.type = 'detailed';
+            const existing = AppState.quiz.steps.slice();
+            const detailedExtras = ['about', 'features', 'budget_timeline'].filter(s => !existing.includes(s));
+            AppState.quiz.steps = [...existing, ...detailedExtras];
+            if (Array.isArray(AppState.quiz.answers.features) && AppState.quiz.answers.features.length) {
+                AppState.quiz.steps = AppState.quiz.steps.filter(s => s !== 'features');
+            }
+            AppState.quiz.currentStep = existing.length;
+            this.renderStep();
+        });
     },
 
     renderSubmitState(container, state) {
@@ -2098,8 +2223,8 @@ const QuizPage = {
             container.innerHTML = `
                 <div class="quiz-done quiz-done--pending">
                     <div class="quiz-done__icon quiz-done__icon--spin"><i data-lucide="loader-circle"></i></div>
-                    <h2 class="quiz-done__title">${escapeHtml('Отправляю заявку...')}</h2>
-                    <p class="quiz-done__text">${escapeHtml('Подождите пару секунд, проверяю и сохраняю данные.')}</p>
+                    <h2 class="quiz-done__title">${escapeHtml(text('miniapp_ui.quiz_sending_title', 'Отправляю заявку...'))}</h2>
+                    <p class="quiz-done__text">${escapeHtml(text('miniapp_ui.quiz_sending_body', 'Подождите пару секунд, проверяю и сохраняю данные.'))}</p>
                 </div>
             `;
             lucide.createIcons();
@@ -2108,21 +2233,29 @@ const QuizPage = {
 
         if (state === 'success') {
             const success = quizSuccessCopy();
+            const hasPromos = DATA.promos && DATA.promos.length > 0;
+            const appliedNotice = AppState.quiz._promoApplied
+                ? `<p class="quiz-done__promo-applied">✅ ${escapeHtml(text('quiz.thank_you_promo', 'Ваш промокод применён - я зафиксирую скидку при обсуждении деталей.'))}</p>`
+                : '';
+            const promoCta = AppState.quiz._promoApplied ? '' : (hasPromos
+                ? `<button class="btn btn--primary" data-quiz-promo><i data-lucide="tag"></i> ${escapeHtml(text('quiz.have_promo', 'Хотите скидку?'))}</button>`
+                : '');
             container.innerHTML = `
                 <div class="quiz-done">
                     <div class="quiz-done__icon"><i data-lucide="check-circle"></i></div>
                     <h2 class="quiz-done__title">${escapeHtml(success.title)}</h2>
                     <p class="quiz-done__text">${escapeHtml(success.body)}</p>
-                    ${success.handle ? `<button class="quiz-done__contact" type="button" data-quiz-contact-link>${escapeHtml(success.handle)}</button>` : ''}
+                    ${appliedNotice}
                     <div class="quiz-done__actions">
-                        <button class="btn btn--secondary quiz-done__home" data-quiz-home>${escapeHtml(text('common.home', 'На главную'))}</button>
+                        ${promoCta}
+                        <button class="btn btn--secondary" data-quiz-home><i data-lucide="home"></i> ${escapeHtml(text('common.home', 'На главную'))}</button>
                     </div>
                 </div>
             `;
 
-            container.querySelector('[data-quiz-contact-link]')?.addEventListener('click', () => {
+            container.querySelector('[data-quiz-promo]')?.addEventListener('click', () => {
                 haptic();
-                openDirectContact();
+                Router.navigate('promos');
             });
             container.querySelector('[data-quiz-home]')?.addEventListener('click', () => {
                 haptic();
@@ -2135,11 +2268,11 @@ const QuizPage = {
         container.innerHTML = `
             <div class="quiz-done quiz-done--error">
                 <div class="quiz-done__icon"><i data-lucide="triangle-alert"></i></div>
-                <h2 class="quiz-done__title">${escapeHtml('Не удалось отправить заявку')}</h2>
-                <p class="quiz-done__text">${escapeHtml('Попробуйте ещё раз или напишите мне напрямую, чтобы я не потерял ваше обращение.')}</p>
+                <h2 class="quiz-done__title">${escapeHtml(text('miniapp_ui.quiz_error_title', 'Не удалось отправить заявку'))}</h2>
+                <p class="quiz-done__text">${escapeHtml(text('miniapp_ui.quiz_error_body', 'Попробуйте ещё раз или напишите мне напрямую - разберёмся.'))}</p>
                 <div class="quiz-done__actions">
                     <button class="btn btn--primary" data-quiz-contact>${escapeHtml(text('contact.write', 'Написать мне'))}</button>
-                    <button class="btn btn--secondary" data-quiz-retry>Повторить</button>
+                    <button class="btn btn--secondary" data-quiz-retry>${escapeHtml(text('miniapp_ui.quiz_error_retry', 'Повторить'))}</button>
                     <button class="btn btn--ghost quiz-done__home" data-quiz-home>${escapeHtml(text('common.home', 'На главную'))}</button>
                 </div>
             </div>
@@ -2160,6 +2293,124 @@ const QuizPage = {
         lucide.createIcons();
     },
 
+    renderPromoApplyPrompt(container, items) {
+        const titleLbl = text('promo.apply_prompt_title', 'У вас есть активные промокоды');
+        const bodyLbl  = text('promo.apply_prompt_body', 'Применить скидку к заявке?');
+        const applyLbl = text('promo.apply_btn', 'Применить');
+        const skipLbl  = text('promo.skip_btn', 'Пропустить');
+
+        const cards = items.map((a, idx) => {
+            const title = escapeHtml(a.promo_title_ru || a.promo_title_en || a.title || '');
+            const code = escapeHtml(a.promo_code || '');
+            return `
+                <label class="quiz-promo-card">
+                    <input type="radio" name="applyPromo" value="${code}" ${idx === 0 ? 'checked' : ''}>
+                    <div class="quiz-promo-card__body">
+                        <strong>${title}</strong>
+                        <code>${code}</code>
+                    </div>
+                </label>`;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="quiz-step animate-in">
+                <div class="quiz-done__icon"><i data-lucide="tag"></i></div>
+                <h2 class="quiz-step__title">${escapeHtml(titleLbl)}</h2>
+                <p class="quiz-fav-hint">${escapeHtml(bodyLbl)}</p>
+                <div class="quiz-promo-list">${cards}</div>
+                <button class="btn btn--primary quiz-next" id="promoApplyYes">${escapeHtml(applyLbl)}</button>
+                <button class="btn btn--secondary quiz-skip" id="promoApplyNo">${escapeHtml(skipLbl)}</button>
+            </div>
+        `;
+        lucide.createIcons();
+
+        container.querySelectorAll('.quiz-promo-card input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                container.querySelectorAll('.quiz-promo-card').forEach(c => c.classList.remove('quiz-promo-card--checked'));
+                radio.closest('.quiz-promo-card')?.classList.add('quiz-promo-card--checked');
+            });
+            if (radio.checked) radio.closest('.quiz-promo-card')?.classList.add('quiz-promo-card--checked');
+        });
+
+        document.getElementById('promoApplyYes').addEventListener('click', () => {
+            haptic();
+            const selected = container.querySelector('input[name="applyPromo"]:checked');
+            if (selected) {
+                AppState.quiz.answers.promo_code = selected.value;
+                AppState.quiz._promoApplied = true;
+            }
+            this.submit();
+        });
+        document.getElementById('promoApplyNo').addEventListener('click', () => {
+            haptic();
+            this.submit();
+        });
+    },
+
+    renderPromoActivatePrompt(container, promos) {
+        const titleLbl = text('promo.auto_title', '🎁 Для вас есть скидка!');
+        const bodyLbl  = text('promo.auto_body', 'Активируйте промокод прямо сейчас и получите скидку на разработку.');
+        const applyLbl = text('promo.auto_activate_btn', 'Активировать и применить');
+        const skipLbl  = text('promo.skip_btn', 'Пропустить');
+
+        const cards = promos.map((p, idx) => {
+            const title = escapeHtml(p.title_ru || p.title_en || p.title || '');
+            return `
+                <label class="quiz-promo-card">
+                    <input type="radio" name="activatePromo" value="${p.id}" ${idx === 0 ? 'checked' : ''}>
+                    <div class="quiz-promo-card__body">
+                        <strong>${title}</strong>
+                        <code>${escapeHtml(p.promo_code || '')}</code>
+                    </div>
+                </label>`;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="quiz-step animate-in">
+                <div class="quiz-done__icon"><i data-lucide="gift"></i></div>
+                <h2 class="quiz-step__title">${escapeHtml(titleLbl)}</h2>
+                <p class="quiz-fav-hint">${escapeHtml(bodyLbl)}</p>
+                <div class="quiz-promo-list">${cards}</div>
+                <button class="btn btn--primary quiz-next" id="promoActivateYes">${escapeHtml(applyLbl)}</button>
+                <button class="btn btn--secondary quiz-skip" id="promoActivateNo">${escapeHtml(skipLbl)}</button>
+            </div>
+        `;
+        lucide.createIcons();
+
+        container.querySelectorAll('.quiz-promo-card input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                container.querySelectorAll('.quiz-promo-card').forEach(c => c.classList.remove('quiz-promo-card--checked'));
+                radio.closest('.quiz-promo-card')?.classList.add('quiz-promo-card--checked');
+            });
+            if (radio.checked) radio.closest('.quiz-promo-card')?.classList.add('quiz-promo-card--checked');
+        });
+
+        document.getElementById('promoActivateYes').addEventListener('click', async () => {
+            haptic();
+            const selected = container.querySelector('input[name="activatePromo"]:checked');
+            if (selected && tg?.initData) {
+                try {
+                    const res = await fetch(`${API_URL}/api/promo-activate`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-App-Key': 'yanksweb-miniapp' },
+                        body: JSON.stringify({ promo_id: parseInt(selected.value), initData: tg.initData }),
+                    });
+                    const json = await res.json();
+                    const code = json?.activation?.promo_code || json?.data?.activation?.promo_code;
+                    if (code) {
+                        AppState.quiz.answers.promo_code = code;
+                        AppState.quiz._promoApplied = true;
+                    }
+                } catch (e) { console.warn('Promo activate error:', e); }
+            }
+            this.submit();
+        });
+        document.getElementById('promoActivateNo').addEventListener('click', () => {
+            haptic();
+            this.submit();
+        });
+    },
+
     async submit() {
         const container = document.getElementById('quiz-content');
 
@@ -2168,15 +2419,27 @@ const QuizPage = {
             AppState.quiz._favAsked = true;
             const favItems = DATA.portfolio.filter(p => AppState.favorites.includes(p.id));
             if (favItems.length) {
+                const count = favItems.length;
+                const lastTwo = count % 100;
+                const lastOne = count % 10;
+                let wordKey = 'miniapp_ui.plural_work_many';
+                let wordFallback = 'работ';
+                if (lastTwo < 11 || lastTwo > 14) {
+                    if (lastOne === 1) { wordKey = 'miniapp_ui.plural_work_one'; wordFallback = 'работу'; }
+                    else if (lastOne >= 2 && lastOne <= 4) { wordKey = 'miniapp_ui.plural_work_few'; wordFallback = 'работы'; }
+                }
+                const word = text(wordKey, wordFallback);
+                const bodyTemplate = text('miniapp_ui.fav_attach_body', 'Вы сохранили {count} {word}. Прикрепить к заявке?');
+                const body = interpolateText(bodyTemplate, { count, word });
                 container.innerHTML = `
                     <div class="quiz-step animate-in">
-                        <h2 class="quiz-step__title">Прикрепить понравившиеся работы?</h2>
-                        <p class="quiz-fav-hint">Вы сохранили ${favItems.length} ${favItems.length === 1 ? 'работу' : 'работы'} в избранное. Прикрепить их к заявке как примеры желаемого результата?</p>
+                        <h2 class="quiz-step__title">${escapeHtml(text('miniapp_ui.fav_attach_title', 'Прикрепить понравившиеся работы?'))}</h2>
+                        <p class="quiz-fav-hint">${escapeHtml(body)}</p>
                         <div class="quiz-fav-list">
                             ${favItems.map(p => `<div class="quiz-fav-item">❤️ ${escapeHtml(p.title)}</div>`).join('')}
                         </div>
-                        <button class="btn btn--primary quiz-next" id="favAttachYes">Да, прикрепить</button>
-                        <button class="btn btn--secondary quiz-skip" id="favAttachNo">Нет, отправить без них</button>
+                        <button class="btn btn--primary quiz-next" id="favAttachYes">${escapeHtml(text('miniapp_ui.fav_attach_yes', 'Да, прикрепить'))}</button>
+                        <button class="btn btn--secondary quiz-skip" id="favAttachNo">${escapeHtml(text('miniapp_ui.fav_attach_no', 'Нет, отправить без них'))}</button>
                     </div>
                 `;
                 document.getElementById('favAttachYes').addEventListener('click', () => {
@@ -2191,6 +2454,38 @@ const QuizPage = {
                 });
                 return;
             }
+        }
+
+        if (!AppState.quiz._promoAsked && tg?.initData) {
+            AppState.quiz._promoAsked = true;
+            try {
+                const res = await fetch(
+                    `${API_URL}/api/promo-activations?initData=${encodeURIComponent(tg.initData)}`,
+                    { headers: { 'X-App-Key': 'yanksweb-miniapp' } }
+                );
+                const json = await res.json();
+                const items = (json?.items || json?.data?.items || [])
+                    .filter(a => a.expires_at && (a.seconds_left == null || a.seconds_left > 0));
+                if (items.length) {
+                    this.renderPromoApplyPrompt(container, items);
+                    return;
+                }
+            } catch (e) { console.warn('Promo fetch error:', e); }
+
+            // No active activations - check if there are promos available to activate
+            try {
+                const res = await fetch(
+                    `${API_URL}/api/promos?initData=${encodeURIComponent(tg.initData)}`,
+                    { headers: { 'X-App-Key': 'yanksweb-miniapp' } }
+                );
+                const json = await res.json();
+                const available = (json?.items || json?.data?.items || [])
+                    .filter(p => !p.is_eternal && !p.user_activation);
+                if (available.length) {
+                    this.renderPromoActivatePrompt(container, available);
+                    return;
+                }
+            } catch (e) { console.warn('Promo available error:', e); }
         }
 
         this.renderSubmitState(container, 'sending');
@@ -2209,12 +2504,13 @@ const QuizPage = {
         AppState.quiz.prefill = null;
 
         if (result.ok) {
+            tg?.disableClosingConfirmation?.();
             this.renderSubmitState(container, 'success');
             return;
         }
 
         this.renderSubmitState(container, 'error');
-        showRequestError('Не удалось отправить заявку. Напишите мне напрямую, чтобы не потерять проект.');
+        showRequestError(text('miniapp_ui.quiz_error_direct', 'Не удалось отправить заявку. Напишите мне напрямую, чтобы не потерять проект.'));
     },
 };
 
@@ -2228,11 +2524,11 @@ const FavoritesPage = {
         const favIds = AppState.favorites;
         if (!favIds.length) {
             container.innerHTML = `
-                <div class="empty-state">
+                <div class="empty-state" style="display:flex">
                     <div class="empty-state__icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
-                    <p class="empty-state__title">Избранное пусто</p>
-                    <p>Здесь вы сможете сохранять понравившиеся работы из портфолио и прикрепить их к заявке как примеры желаемого результата. Нажмите ❤️ на любом проекте в разделе «Работы».</p>
-                    <button class="btn btn--primary" data-navigate="portfolio">Перейти в портфолио</button>
+                    <p class="empty-state__title">${escapeHtml(text('miniapp_ui.fav_empty_title', 'Избранное пусто'))}</p>
+                    <p>${escapeHtml(text('miniapp_ui.fav_empty_body', 'Здесь вы сможете сохранять понравившиеся работы из портфолио и прикрепить их к заявке. Нажмите ❤️ на любом проекте в разделе «Работы».'))}</p>
+                    <button class="btn btn--primary" data-navigate="portfolio">${escapeHtml(text('miniapp_ui.fav_empty_cta', 'Перейти в портфолио'))}</button>
                 </div>
             `;
             container.querySelector('[data-navigate]')?.addEventListener('click', () => { haptic(); Router.navigate('portfolio'); });
@@ -2246,7 +2542,7 @@ const FavoritesPage = {
         }
 
         container.innerHTML = `
-            <p class="favorites-hint">Нравящиеся работы будут прикреплены к вашей заявке как примеры</p>
+            <p class="favorites-hint">${escapeHtml(text('miniapp_ui.fav_attach_hint', 'Понравившиеся работы будут прикреплены к заявке как пример желаемого результата.'))}</p>
             <div class="favorites-list">
                 ${items.map(item => `
                     <div class="favorites-item" data-fav-item="${item.id}">
@@ -2261,7 +2557,7 @@ const FavoritesPage = {
                 `).join('')}
             </div>
             <div class="favorites-actions">
-                <button class="btn btn--primary" id="favQuizBtn">Обсудить проект</button>
+                <button class="btn btn--primary" id="favQuizBtn">${escapeHtml(text('miniapp_ui.fav_attach_continue', 'Обсудить проект'))}</button>
             </div>
         `;
 
@@ -2286,16 +2582,70 @@ const FavoritesPage = {
 
 /* === Audit Page === */
 
+const SEO_CHECK_NAMES = {
+    title: 'Title страницы',
+    meta_description: 'Meta Description',
+    h1: 'Заголовок H1',
+    heading_hierarchy: 'Иерархия заголовков',
+    img_alt: 'Alt у изображений',
+    open_graph: 'Open Graph разметка',
+    canonical: 'Canonical URL',
+    robots_txt: 'robots.txt',
+    sitemap: 'Sitemap.xml',
+    ssl: 'SSL-сертификат',
+    https_redirect: 'HTTPS-редирект',
+    www_consistency: 'WWW-консистентность',
+    mixed_content: 'Смешанный контент',
+    favicon: 'Favicon',
+    viewport: 'Viewport',
+    noindex: 'Индексация',
+    json_ld: 'Структурированные данные',
+    ttfb: 'Время ответа сервера',
+    hreflang: 'Hreflang',
+    last_modified: 'Last-Modified',
+    privacy_policy: 'Политика конфиденциальности',
+    lang_charset: 'Lang и Charset',
+};
+
+const SEO_CATEGORIES = {
+    meta: 'Мета-теги',
+    security: 'Безопасность',
+    indexing: 'Индексация',
+    content: 'Контент',
+    performance: 'Производительность',
+    legal: 'Юридическое',
+};
+
 const AuditPage = {
+    _running: false,
+    _mode: 'seo',
+
     init() {
-        document.getElementById('auditSubmitBtn').addEventListener('click', () => this.runAudit());
+        document.getElementById('auditSubmitBtn').addEventListener('click', () => this._submitAudit());
+        document.getElementById('auditTabs').addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-audit-type]');
+            if (!btn || this._running) return;
+            haptic();
+            const type = btn.dataset.auditType;
+            if (type === this._mode) return;
+            this._mode = type;
+            document.querySelectorAll('.audit-tabs__btn').forEach(b => b.classList.remove('audit-tabs__btn--active'));
+            btn.classList.add('audit-tabs__btn--active');
+            this.renderForm(document.getElementById('auditBody'));
+        });
     },
 
-    async runAudit() {
-        haptic();
+    _submitAudit() {
+        if (this._mode === 'seo') {
+            this.runSeoAudit();
+        } else {
+            this.runSpeedAudit();
+        }
+    },
+
+    _validateUrl() {
         const input = document.getElementById('auditUrlInput');
         const url = input.value.trim();
-
         let testUrl = url;
         if (!testUrl.startsWith('http')) testUrl = 'https://' + testUrl;
         try {
@@ -2303,37 +2653,203 @@ const AuditPage = {
             if (!parsed.hostname.includes('.')) throw new Error();
         } catch {
             input.classList.add('input--error');
-            showToast(text("common.enter_valid_url", "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0439 URL"), { type: "info", duration: 2000 });
+            showToast(text('common.enter_valid_url', 'Введите корректный URL'), { type: 'info', duration: 2000 });
             setTimeout(() => input.classList.remove('input--error'), 1500);
+            return null;
+        }
+        return url;
+    },
+
+    async runSeoAudit() {
+        if (this._running) return;
+        haptic();
+        const url = this._validateUrl();
+        if (!url) return;
+
+        const body = document.getElementById('auditBody');
+        this._running = true;
+        this._renderLoading(body, url);
+
+        const _res = await submitToApi('seo-audit', { url });
+        this._running = false;
+        const result = _res.ok
+            ? { ok: true, ..._res.data }
+            : { ok: false, error: _res.error, ..._res.data };
+
+        if (_res.status === 429 || result.error === 'limit_reached') {
+            this._renderLimitReached(body);
             return;
         }
-
-        const container = document.querySelector('[data-page="audit"]');
-        this.renderLoading(container, url);
-
-        const _res = await submitToApi('audit', { url }); const result = _res.ok ? { ok: true, ..._res.data } : { ok: false, error: _res.error, ..._res.data };
-
-       if (_res.status === 429 || result.error === "limit_reached") {
-            this.renderLimitReached(container);
-            return;
-        }
-        if (result.ok && result.metrics) {
-            this.renderResult(container, result);
-        } else if (result.audit_error === 'invalid_url') {
-            this.renderError(container, text('audit.invalid_url', '\u041d\u0435\u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u044b\u0439 URL'));
-        } else if (result.ok && result.audit_error === 'pagespeed_failed') {
-            this.renderPartial(container, result);
+        if (result.ok && result.checks) {
+            this.renderSeoResult(body, result);
         } else {
-            this.renderError(container, result.error || text('audit.webapp_error_note', '\u041e\u0448\u0438\u0431\u043a\u0430, \u043f\u043e\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u043f\u043e\u0437\u0436\u0435'));
+            this._renderError(body, result.error || 'Ошибка, попробуйте позже');
         }
     },
 
-    renderLoading(container, url) {
+    renderSeoResult(container, data) {
+        const passed = data.score_passed || 0;
+        const total = data.score_total || 1;
+        const pct = Math.round((passed / total) * 100);
+        const color = pct >= 80 ? 'green' : pct >= 50 ? 'yellow' : 'red';
+        const circumference = 2 * Math.PI * 52;
+        const offset = circumference - (pct / 100) * circumference;
+
+        const grouped = {};
+        (data.checks || []).forEach(c => {
+            const cat = c.category || 'meta';
+            if (!grouped[cat]) grouped[cat] = [];
+            grouped[cat].push(c);
+        });
+
+        let categoriesHtml = '';
+        for (const [catKey, catLabel] of Object.entries(SEO_CATEGORIES)) {
+            const checks = grouped[catKey];
+            if (!checks || !checks.length) continue;
+            const passCount = checks.filter(c => c.status === 'pass').length;
+            const failCount = checks.filter(c => c.status === 'fail').length;
+            const warnCount = checks.filter(c => c.status === 'warn').length;
+
+            let badgeHtml = '';
+            if (failCount) badgeHtml += `<span style="color:var(--destructive)">${failCount}</span>`;
+            if (warnCount) badgeHtml += `<span style="color:#eab308">${warnCount}</span>`;
+            badgeHtml += `<span style="color:#22c55e">${passCount}</span>`;
+
+            const checksHtml = checks.map(c => `
+                <div class="seo-check">
+                    <span class="seo-check__dot seo-check__dot--${c.status}"></span>
+                    <div class="seo-check__info">
+                        <div class="seo-check__name">${escapeHtml(SEO_CHECK_NAMES[c.id] || c.id)}</div>
+                        ${c.detail ? `<div class="seo-check__detail">${escapeHtml(c.detail)}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            categoriesHtml += `
+                <div class="seo-category">
+                    <div class="seo-category__header" data-seo-toggle>
+                        <span class="seo-category__title">${escapeHtml(catLabel)}</span>
+                        <span class="seo-category__badge">
+                            ${badgeHtml}
+                            <svg class="seo-category__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </span>
+                    </div>
+                    <div class="seo-category__checks">
+                        <div class="seo-category__checks-inner">${checksHtml}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        let multiHtml = '';
+        if (data.multi_page_issues && data.multi_page_issues.length) {
+            multiHtml = `
+                <div class="seo-multi-issues">
+                    <div class="seo-multi-issues__title">${escapeHtml(text('miniapp_ui.seo_multi_page', 'Проблемы на нескольких страницах'))}</div>
+                    ${data.multi_page_issues.map(i => {
+                        const detail = typeof i === 'object' ? (i.detail || JSON.stringify(i)) : String(i);
+                        const urls = (typeof i === 'object' && i.urls && i.urls.length)
+                            ? `<div class="seo-multi-issue__urls">${i.urls.map(u => `<span>${escapeHtml(u)}</span>`).join('')}</div>`
+                            : '';
+                        return `<div class="seo-multi-issue">
+                            <span class="seo-multi-issue__icon">&#9888;</span>
+                            <div class="seo-multi-issue__content">
+                                <div class="seo-multi-issue__text">${escapeHtml(detail)}</div>
+                                ${urls}
+                            </div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        const reportUrl = data.report_id ? `https://bot.yanksweb.ru/seo-report/${data.report_id}` : '';
+
         container.innerHTML = `
-            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
+            <div class="seo-score">
+                <div class="seo-score__circle">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="seo-score__circle-bg" cx="60" cy="60" r="52"/>
+                        <circle class="seo-score__circle-fill seo-score__circle-fill--${color}" cx="60" cy="60" r="52"
+                            stroke-dasharray="${circumference}"
+                            stroke-dashoffset="${offset}"/>
+                    </svg>
+                    <div class="seo-score__value seo-score__value--${color}">${passed}/${total}</div>
+                </div>
+                <div class="seo-score__label">${data.pages_crawled ? `Проверено страниц: ${data.pages_crawled}` : 'SEO-оценка'}</div>
+                <div class="seo-score__url">${escapeHtml(data.url || data.domain || '')}</div>
+            </div>
+            ${categoriesHtml}
+            ${multiHtml}
+            ${reportUrl ? `
+                <button class="seo-share" id="seoShareBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                    ${escapeHtml(text('miniapp_ui.seo_share_btn', 'Поделиться отчётом'))}
+                </button>
+            ` : ''}
+            <div class="audit-result__actions">
+                <button class="btn btn--primary" id="seoOrderBtn">${escapeHtml(text('miniapp_ui.seo_cta_order', 'Заказать полный аудит и исправления'))}</button>
+                <button class="btn btn--secondary" id="auditRetryBtn">${escapeHtml(text('miniapp_ui.seo_cta_retry', 'Проверить другой'))}</button>
+            </div>
+            ${data.remaining != null ? `<p class="audit-remaining">${escapeHtml(interpolateText(text('miniapp_ui.seo_quota_left', 'Осталось проверок: {remaining} из {limit}'), { remaining: data.remaining, limit: data.limit || 3 }))}</p>` : ''}
+        `;
+
+        container.querySelectorAll('[data-seo-toggle]').forEach(header => {
+            header.addEventListener('click', () => {
+                haptic();
+                header.closest('.seo-category').classList.toggle('seo-category--open');
+            });
+        });
+
+        document.getElementById('seoShareBtn')?.addEventListener('click', () => {
+            haptic();
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(reportUrl).then(() => {
+                    showToast(text('miniapp_ui.toast_link_copied', 'Ссылка скопирована'), { type: 'success', duration: 2000 });
+                });
+            }
+        });
+
+        document.getElementById('seoOrderBtn')?.addEventListener('click', () => { haptic(); Router.navigate('quiz'); });
+        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(document.getElementById('auditBody')); });
+    },
+
+    async runSpeedAudit() {
+        if (this._running) return;
+        haptic();
+        const url = this._validateUrl();
+        if (!url) return;
+
+        const body = document.getElementById('auditBody');
+        this._running = true;
+        this._renderLoading(body, url);
+
+        const _res = await submitToApi('audit', { url });
+        this._running = false;
+        const result = _res.ok
+            ? { ok: true, ..._res.data }
+            : { ok: false, error: _res.error, ..._res.data };
+
+        if (_res.status === 429 || result.error === 'limit_reached') {
+            this._renderLimitReached(body);
+            return;
+        }
+        if (result.ok && result.metrics) {
+            this.renderSpeedResult(body, result);
+        } else if (result.audit_error === 'invalid_url') {
+            this._renderError(body, text('audit.invalid_url', 'Некорректный URL'));
+        } else if (result.ok && result.audit_error === 'pagespeed_failed') {
+            this._renderPartial(body, result);
+        } else {
+            this._renderError(body, result.error || text('audit.webapp_error_note', 'Ошибка, попробуйте позже'));
+        }
+    },
+
+    _renderLoading(container, url) {
+        container.innerHTML = `
             <div class="audit-loading">
                 <div class="audit-loading__spinner"></div>
-                <p class="audit-loading__text">${escapeHtml(text('audit.loading', '\u0410\u043d\u0430\u043b\u0438\u0437\u0438\u0440\u0443\u044e \u0441\u0430\u0439\u0442...'))}</p>
+                <p class="audit-loading__text">${escapeHtml(text('audit.loading', 'Анализирую сайт...'))}</p>
                 <p class="audit-result__url">${escapeHtml(url)}</p>
             </div>
         `;
@@ -2343,24 +2859,24 @@ const AuditPage = {
 
     issueText(key) {
         const m = {
-            issue_render_blocking: '\u0411\u043b\u043e\u043a\u0438\u0440\u0443\u044e\u0449\u0438\u0435 \u0440\u0435\u0441\u0443\u0440\u0441\u044b',
-            issue_optimized_images: '\u0418\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f \u043d\u0435 \u043e\u043f\u0442\u0438\u043c\u0438\u0437\u0438\u0440\u043e\u0432\u0430\u043d\u044b',
-            issue_text_compression: '\u041d\u0435\u0442 \u0441\u0436\u0430\u0442\u0438\u044f \u0442\u0435\u043a\u0441\u0442\u0430',
-            issue_responsive_images: '\u041d\u0435\u0430\u0434\u0430\u043f\u0442\u0438\u0432\u043d\u044b\u0435 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f',
-            issue_cache_ttl: '\u041a\u043e\u0440\u043e\u0442\u043a\u0438\u0439 \u0441\u0440\u043e\u043a \u043a\u0435\u0448\u0430',
-            issue_unminified_css: 'CSS \u043d\u0435 \u043c\u0438\u043d\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u043d',
-            issue_unminified_js: 'JS \u043d\u0435 \u043c\u0438\u043d\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u043d',
-            issue_unused_css: '\u041d\u0435\u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u043c\u044b\u0439 CSS',
-            issue_unused_js: '\u041d\u0435\u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u043c\u044b\u0439 JS',
-            issue_dom_size: '\u0421\u043b\u0438\u0448\u043a\u043e\u043c \u0431\u043e\u043b\u044c\u0448\u043e\u0439 DOM',
-            issue_redirects: '\u041b\u0438\u0448\u043d\u0438\u0435 \u0440\u0435\u0434\u0438\u0440\u0435\u043a\u0442\u044b',
-            issue_server_response: '\u041c\u0435\u0434\u043b\u0435\u043d\u043d\u044b\u0439 \u0441\u0435\u0440\u0432\u0435\u0440',
-            issue_preconnect: '\u041d\u0435\u0442 preconnect',
-            issue_font_display: '\u0428\u0440\u0438\u0444\u0442\u044b \u0431\u043b\u043e\u043a\u0438\u0440\u0443\u044e\u0442 \u0440\u0435\u043d\u0434\u0435\u0440',
-            issue_meta_description: '\u041d\u0435\u0442 meta description',
-            issue_document_title: '\u041d\u0435\u0442 title',
-            issue_image_alt: '\u041d\u0435\u0442 alt \u0443 \u0438\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0439',
-            issue_viewport: '\u041d\u0435\u0442 viewport meta',
+            issue_render_blocking: 'Блокирующие ресурсы',
+            issue_optimized_images: 'Изображения не оптимизированы',
+            issue_text_compression: 'Нет сжатия текста',
+            issue_responsive_images: 'Неадаптивные изображения',
+            issue_cache_ttl: 'Короткий срок кеша',
+            issue_unminified_css: 'CSS не минифицирован',
+            issue_unminified_js: 'JS не минифицирован',
+            issue_unused_css: 'Неиспользуемый CSS',
+            issue_unused_js: 'Неиспользуемый JS',
+            issue_dom_size: 'Слишком большой DOM',
+            issue_redirects: 'Лишние редиректы',
+            issue_server_response: 'Медленный сервер',
+            issue_preconnect: 'Нет preconnect',
+            issue_font_display: 'Шрифты блокируют рендер',
+            issue_meta_description: 'Нет meta description',
+            issue_document_title: 'Нет title',
+            issue_image_alt: 'Нет alt у изображений',
+            issue_viewport: 'Нет viewport meta',
         };
         return m[key] || key;
     },
@@ -2372,7 +2888,7 @@ const AuditPage = {
         </div>`;
     },
 
-    renderResult(container, r) {
+    renderSpeedResult(container, r) {
         const m = r.metrics;
         const ssl = r.ssl || {};
         const sslOk = ssl.valid === true;
@@ -2380,14 +2896,13 @@ const AuditPage = {
         const isGood = r.is_good;
 
         container.innerHTML = `
-            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
             <div class="audit-result">
                 <p class="audit-result__url">${escapeHtml(r.url || r.domain)}</p>
                 <div class="audit-scores">
-                    ${this.renderScoreCard(m.performance, text('audit.cat_performance', '\u0421\u043a\u043e\u0440\u043e\u0441\u0442\u044c'))}
+                    ${this.renderScoreCard(m.performance, text('audit.cat_performance', 'Скорость'))}
                     ${this.renderScoreCard(m.seo, 'SEO')}
-                    ${this.renderScoreCard(m.accessibility, text('audit.cat_accessibility', '\u0414\u043e\u0441\u0442\u0443\u043f\u043d\u043e\u0441\u0442\u044c'))}
-                    ${this.renderScoreCard(m.best_practices, text('audit.cat_best_practices', '\u041f\u0440\u0430\u043a\u0442\u0438\u043a\u0438'))}
+                    ${this.renderScoreCard(m.accessibility, text('audit.cat_accessibility', 'Доступность'))}
+                    ${this.renderScoreCard(m.best_practices, text('audit.cat_best_practices', 'Практики'))}
                 </div>
                 <div class="audit-vitals">
                     <div class="audit-vitals__title">Core Web Vitals</div>
@@ -2401,89 +2916,89 @@ const AuditPage = {
                 </div>
                 <div class="audit-ssl ${sslOk ? 'audit-ssl--ok' : 'audit-ssl--bad'}">
                     <span class="audit-ssl__icon">${sslOk ? '\ud83d\udd12' : '\u26a0\ufe0f'}</span>
-                    <span class="audit-ssl__text">SSL: ${sslOk ? (ssl.days_left ? ssl.days_left + ' \u0434\u043d.' : 'OK') : '\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442'}</span>
+                    <span class="audit-ssl__text">SSL: ${sslOk ? (ssl.days_left ? ssl.days_left + ' дн.' : 'OK') : 'Отсутствует'}</span>
                 </div>
                 ${issues.length ? `
                 <div class="audit-issues">
-                    <div class="audit-issues__title">\u041d\u0430\u0439\u0434\u0435\u043d\u043d\u044b\u0435 \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u044b (${issues.length})</div>
+                    <div class="audit-issues__title">${escapeHtml(text('miniapp_ui.seo_issues_title', 'Найденные проблемы'))} (${issues.length})</div>
                     ${issues.map(i => `<div class="audit-issue">${escapeHtml(this.issueText(i))}</div>`).join('')}
                 </div>` : ''}
                 <div class="audit-verdict ${isGood ? 'audit-verdict--good' : 'audit-verdict--bad'}">
                     <div class="audit-verdict__icon">${isGood ? '\u2705' : '\u26a0\ufe0f'}</div>
-                    <div class="audit-verdict__text">${isGood ? '\u0421\u0430\u0439\u0442 \u0432 \u0445\u043e\u0440\u043e\u0448\u0435\u043c \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0438' : '\u0415\u0441\u0442\u044c \u0447\u0442\u043e \u0443\u043b\u0443\u0447\u0448\u0438\u0442\u044c - \u043c\u043e\u0433\u0443 \u043f\u043e\u043c\u043e\u0447\u044c!'}</div>
+                    <div class="audit-verdict__text">${escapeHtml(isGood ? text('miniapp_ui.seo_all_good', 'Сайт в хорошем состоянии') : text('miniapp_ui.seo_all_good_cta', 'Есть что улучшить - могу помочь!'))}</div>
                 </div>
                 <div class="audit-result__actions">
-                    <button class="btn btn--secondary" id="auditRetryBtn">\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0434\u0440\u0443\u0433\u043e\u0439</button>
-                    ${!isGood ? `<button class="btn btn--primary" id="auditOrderBtn">${escapeHtml(labelText('services.order', '\u041e\u0431\u0441\u0443\u0434\u0438\u0442\u044c \u043f\u0440\u043e\u0435\u043a\u0442'))}</button>` : ''}
+                    <button class="btn btn--secondary" id="auditRetryBtn">${escapeHtml(text('miniapp_ui.seo_cta_retry', 'Проверить другой'))}</button>
+                    ${!isGood ? `<button class="btn btn--primary" id="auditOrderBtn">${escapeHtml(labelText('services.order', 'Обсудить проект'))}</button>` : ''}
                 </div>
-                ${r.remaining != null ? `<p class="audit-remaining">Осталось проверок: ${r.remaining} из ${r.limit || 5}</p>` : ''}
+                ${r.remaining != null ? `<p class="audit-remaining">${escapeHtml(interpolateText(text('miniapp_ui.seo_quota_left', 'Осталось проверок: {remaining} из {limit}'), { remaining: r.remaining, limit: r.limit || 5 }))}</p>` : ''}
             </div>
         `;
-        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(container); });
+        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(document.getElementById('auditBody')); });
         document.getElementById('auditOrderBtn')?.addEventListener('click', () => { haptic(); Router.navigate('quiz'); });
     },
 
-    renderPartial(container, r) {
+    _renderPartial(container, r) {
         const ssl = r.ssl || {};
         const sslOk = ssl.valid === true;
         container.innerHTML = `
-            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
             <div class="audit-result">
                 <p class="audit-result__url">${escapeHtml(r.url || r.domain)}</p>
                 <div class="audit-ssl ${sslOk ? 'audit-ssl--ok' : 'audit-ssl--bad'}">
                     <span class="audit-ssl__icon">${sslOk ? '\ud83d\udd12' : '\u26a0\ufe0f'}</span>
-                    <span class="audit-ssl__text">SSL: ${sslOk ? 'OK' : '\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442'}</span>
+                    <span class="audit-ssl__text">SSL: ${sslOk ? 'OK' : 'Отсутствует'}</span>
                 </div>
                 <div class="audit-verdict audit-verdict--bad">
                     <div class="audit-verdict__icon">\u26a0\ufe0f</div>
-                    <div class="audit-verdict__text">\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0434\u0430\u043d\u043d\u044b\u0435 PageSpeed</div>
+                    <div class="audit-verdict__text">${escapeHtml(text('miniapp_ui.pagespeed_failed', 'Не удалось получить данные PageSpeed'))}</div>
                 </div>
                 <div class="audit-result__actions">
-                    <button class="btn btn--secondary" id="auditRetryBtn">\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0434\u0440\u0443\u0433\u043e\u0439</button>
+                    <button class="btn btn--secondary" id="auditRetryBtn">${escapeHtml(text('miniapp_ui.seo_cta_retry', 'Проверить другой'))}</button>
                 </div>
             </div>
         `;
-        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(container); });
+        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(document.getElementById('auditBody')); });
     },
 
-    renderError(container, msg) {
+    _renderError(container, msg) {
         container.innerHTML = `
-            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
             <div class="audit-result">
                 <div class="audit-verdict audit-verdict--bad">
                     <div class="audit-verdict__icon">\u274c</div>
                     <div class="audit-verdict__text">${escapeHtml(msg)}</div>
                 </div>
                 <div class="audit-result__actions">
-                    <button class="btn btn--secondary" id="auditRetryBtn">\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c \u0434\u0440\u0443\u0433\u043e\u0439</button>
+                    <button class="btn btn--secondary" id="auditRetryBtn">${escapeHtml(text('miniapp_ui.seo_cta_retry', 'Проверить другой'))}</button>
                 </div>
             </div>
         `;
-        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(container); });
+        document.getElementById('auditRetryBtn')?.addEventListener('click', () => { haptic(); this.renderForm(document.getElementById('auditBody')); });
     },
 
-    renderLimitReached(container) {
+    _renderLimitReached(container) {
         container.innerHTML = `
-            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', 'Экспресс-аудит сайта'))}</h2></header>
             <div class="audit-result">
                 <div class="audit-verdict audit-verdict--bad">
-                    <div class="audit-verdict__icon">⏳</div>
-                    <div class="audit-verdict__text">Лимит исчерпан. Попробуйте завтра!</div>
+                    <div class="audit-verdict__icon">\u23f3</div>
+                    <div class="audit-verdict__text">${escapeHtml(text('miniapp_ui.audit_limit_reached', 'Лимит исчерпан. Попробуйте завтра!'))}</div>
                 </div>
             </div>
         `;
     },
 
-        renderForm(container) {
+    renderForm(container) {
+        if (!container) container = document.getElementById('auditBody');
+        const descText = this._mode === 'seo'
+            ? 'Проверю SEO-оптимизацию: мета-теги, индексация, безопасность, структура и юридические требования.'
+            : text('audit.desc', 'Укажите адрес сайта - проанализирую скорость, SEO, SSL и мобильность.');
         container.innerHTML = `
-            <header class="page__header"><h2 class="page__title">${escapeHtml(text('audit.title', '\u042d\u043a\u0441\u043f\u0440\u0435\u0441\u0441-\u0430\u0443\u0434\u0438\u0442 \u0441\u0430\u0439\u0442\u0430'))}</h2></header>
-            <p class="audit__desc">${escapeHtml(text('audit.desc', '\u0423\u043a\u0430\u0436\u0438\u0442\u0435 \u0430\u0434\u0440\u0435\u0441 \u0441\u0430\u0439\u0442\u0430 - \u043f\u0440\u043e\u0430\u043d\u0430\u043b\u0438\u0437\u0438\u0440\u0443\u044e \u0441\u043a\u043e\u0440\u043e\u0441\u0442\u044c, SEO, SSL \u0438 \u043c\u043e\u0431\u0438\u043b\u044c\u043d\u043e\u0441\u0442\u044c.'))}</p>
+            <p class="audit__desc" id="auditDesc">${escapeHtml(descText)}</p>
             <div class="audit__field">
                 <input class="input" id="auditUrlInput" type="url" placeholder="https://example.com">
             </div>
-            <button class="btn btn--primary audit__submit" id="auditSubmitBtn">${escapeHtml(text('audit.webapp_submit', '\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c'))}</button>
+            <button class="btn btn--primary audit__submit" id="auditSubmitBtn">${escapeHtml(text('audit.webapp_submit', 'Проверить'))}</button>
         `;
-        document.getElementById('auditSubmitBtn').addEventListener('click', () => this.runAudit());
+        document.getElementById('auditSubmitBtn').addEventListener('click', () => this._submitAudit());
     },
 };
 
@@ -2501,13 +3016,83 @@ const ContactPage = {
 
 /* === Promos Page === */
 
+function pluralDays(n) {
+    if (n % 10 === 1 && n % 100 !== 11) return 'день';
+    if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'дня';
+    return 'дней';
+}
+
+function formatExpiresDate(isoString) {
+    if (!isoString) return '';
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleString('ru-RU', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+function formatTimeLeft(seconds) {
+    if (!seconds || seconds <= 0) return 'Истекло';
+    if (seconds >= 86400) {
+        const days = Math.floor(seconds / 86400);
+        return `${days} ${pluralDays(days)}`;
+    }
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    if (hours > 0) return `${hours} ч ${minutes} мин`;
+    return `${minutes} мин`;
+}
+
+function getPromoState(promo) {
+    const act = promo.user_activation;
+    if (!act) return 'available';
+    if (act.is_expired) return 'expired';
+    if (promo.is_eternal || act.expires_at === null) return 'eternal';
+    return 'active';
+}
+
 const PromosPage = {
     timers: [],
+
+    async loadUserActivations() {
+        if (!tg?.initData) return;
+        try {
+            const url = `${API_URL}/api/promos?initData=${encodeURIComponent(tg.initData)}`;
+            const res = await fetch(url, { headers: { 'X-App-Key': 'yanksweb-miniapp' } });
+            if (!res.ok) return;
+            const data = await res.json();
+            const items = data?.items || data?.data?.items || [];
+            if (!items.length) return;
+            items.forEach(serverPromo => {
+                const local = DATA.promos.find(p => p.id === serverPromo.id);
+                if (local) {
+                    local.user_activation = serverPromo.user_activation || null;
+                    local.is_eternal = Boolean(serverPromo.is_eternal);
+                    local.activation_duration_days = serverPromo.activation_duration_days || null;
+                }
+            });
+        } catch (e) {
+            console.warn('Failed to load activations', e);
+        }
+    },
 
     render() {
         const list = document.getElementById('promos-list');
         const empty = document.getElementById('promosEmpty');
 
+        this._paint(list, empty);
+
+        if (DATA.promos.length && tg?.initData) {
+            this.loadUserActivations().then(() => {
+                if (AppState.currentPage === 'promos') {
+                    this._paint(list, empty);
+                }
+            }).catch(() => {});
+        }
+    },
+
+    _paint(list, empty) {
         this.timers.forEach(t => clearInterval(t));
         this.timers = [];
 
@@ -2518,61 +3103,51 @@ const PromosPage = {
         }
 
         empty.style.display = 'none';
-        list.innerHTML = DATA.promos.map((promo, i) => `
-            <div class="promo-card animate-in">
-                ${promo.discount ? `<span class="promo-card__badge">${escapeHtml(promo.discount)}</span>` : ''}
-                <h3 class="promo-card__title">${escapeHtml(promo.title || '')}</h3>
-                <p class="promo-card__text">${nl2br(escapeHtml(promo.text || ''))}</p>
-                ${promo.code ? `
-                    <div class="promo-card__code">
-                        <span>${escapeHtml(promo.code)}</span>
-                        <button class="promo-card__copy" data-copy="${escapeHtml(promo.code)}" aria-label="${escapeHtml(text('promo.copy', 'Скопировать'))}">
-                            <i data-lucide="copy"></i>
-                        </button>
-                    </div>
-                ` : ''}
-                ${promo.deadline ? `<div class="promo-card__timer" data-promo-timer="${i}"></div>` : ''}
-            </div>
-        `).join('');
+        list.innerHTML = DATA.promos.map(promo => this.renderCard(promo)).join('');
 
-        list.querySelectorAll('[data-copy]').forEach(btn => {
+        list.querySelectorAll('[data-activate]').forEach(btn => {
             btn.addEventListener('click', () => {
+                const promoId = parseInt(btn.dataset.activate, 10);
                 haptic();
-                navigator.clipboard?.writeText(btn.dataset.copy);
-                btn.innerHTML = '<i data-lucide="check"></i>';
-                lucide.createIcons();
-                setTimeout(() => {
-                    btn.innerHTML = '<i data-lucide="copy"></i>';
-                    lucide.createIcons();
-                }, 2000);
+                this.activatePromo(promoId);
             });
         });
 
-        DATA.promos.forEach((promo, i) => {
-            if (!promo.deadline) return;
-            const timerEl = list.querySelector(`[data-promo-timer="${i}"]`);
-            if (!timerEl) return;
+        list.querySelectorAll('[data-copy-code]').forEach(el => {
+            el.addEventListener('click', () => {
+                const code = el.dataset.copyCode;
+                if (!code) return;
+                haptic();
+                if (navigator.clipboard?.writeText) {
+                    navigator.clipboard.writeText(code).then(() => {
+                        showToast(text('miniapp_ui.toast_code_copied', 'Код скопирован'), { type: 'success', duration: 2000 });
+                    }).catch(() => {
+                        showToast(text('miniapp_ui.toast_copy_failed', 'Не удалось скопировать'), { type: 'error', duration: 2000 });
+                    });
+                }
+            });
+        });
+
+        DATA.promos.forEach(promo => {
+            const state = getPromoState(promo);
+            if (state !== 'active') return;
+            const expiresAt = promo.user_activation?.expires_at;
+            if (!expiresAt) return;
+
+            const cdEl = list.querySelector(`[data-countdown="${promo.id}"]`);
+            if (!cdEl) return;
 
             const update = () => {
                 const now = Date.now();
-                const end = new Date(promo.deadline).getTime();
-                const diff = end - now;
+                const end = new Date(expiresAt).getTime();
+                const diff = Math.floor((end - now) / 1000);
 
                 if (diff <= 0) {
-                    timerEl.textContent = text('promo.finished', 'Акция завершена');
+                    if (promo.user_activation) promo.user_activation.is_expired = true;
+                    this._paint(list, empty);
                     return;
                 }
-
-                const days = Math.floor(diff / 86400000);
-                const hours = Math.floor((diff % 86400000) / 3600000);
-                const minutes = Math.floor((diff % 3600000) / 60000);
-
-                const parts = [];
-                if (days > 0) parts.push(`${days}д`);
-                parts.push(`${hours}ч`);
-                parts.push(`${minutes}мин`);
-
-                timerEl.textContent = `${text('promo.time_left', 'Осталось')}: ${parts.join(' ')}`;
+                cdEl.textContent = formatTimeLeft(diff);
             };
 
             update();
@@ -2581,6 +3156,178 @@ const PromosPage = {
 
         lucide.createIcons();
         animateIn(list);
+    },
+
+    renderCard(promo) {
+        const state = getPromoState(promo);
+        const badge = promo.discount ? `<span class="promo-card__badge">${escapeHtml(promo.discount)}</span>` : '';
+        const title = escapeHtml(promo.title || '');
+        const textBody = nl2br(escapeHtml(promo.text || ''));
+        const code = escapeHtml(promo.code || '');
+
+        const codeLabel = text('promo.promo_code_label', 'Промокод:');
+        const eternalLabel = text('miniapp_ui.promo_eternal_active', 'Постоянная акция');
+        const activateLabel = text('miniapp_ui.promo_activate_btn', 'Активировать');
+        const activeUntilLabel = text('miniapp_ui.promo_active_until', 'Действует до:');
+        const expiredTitle = text('miniapp_ui.promo_expired_title', 'Время использования истекло');
+        const expiredBody = text('miniapp_ui.promo_expired_body', 'Но не переживайте - скоро появятся новые акции и скидки!');
+
+        const hintText = text('promo.hint', 'Когда я свяжусь с вами, отправьте этот промокод мне в ЛС - я зафиксирую скидку за вами.');
+        const hintBlock = `<div class="promo-card__hint"><i data-lucide="message-circle"></i><span>${escapeHtml(hintText)}</span></div>`;
+
+        if (state === 'available') {
+            let durationLine = '';
+            if (promo.is_eternal) {
+                durationLine = eternalLabel;
+            } else if (promo.activation_duration_days) {
+                const days = promo.activation_duration_days;
+                if (days === 1) {
+                    durationLine = text('miniapp_ui.promo_activation_duration_one', 'Действует 1 день после активации');
+                } else {
+                    const template = text('miniapp_ui.promo_activation_duration', 'Действует {days} дней после активации');
+                    durationLine = interpolateText(template, { days });
+                }
+            }
+            return `
+                <div class="promo-card promo-card--available animate-in">
+                    <div class="promo-card__header">
+                        ${badge}
+                        <h3 class="promo-card__title">${title}</h3>
+                    </div>
+                    <p class="promo-card__text">${textBody}</p>
+                    ${durationLine ? `
+                        <div class="promo-card__duration">
+                            <i data-lucide="clock"></i>
+                            <span>${escapeHtml(durationLine)}</span>
+                        </div>
+                    ` : ''}
+                    <button class="btn btn--primary promo-card__activate" data-activate="${promo.id}">
+                        <i data-lucide="zap"></i>
+                        <span>${escapeHtml(activateLabel)}</span>
+                    </button>
+                    ${hintBlock}
+                </div>
+            `;
+        }
+
+        if (state === 'eternal') {
+            return `
+                <div class="promo-card promo-card--eternal animate-in">
+                    <div class="promo-card__header">
+                        ${badge}
+                        <h3 class="promo-card__title">${title}</h3>
+                    </div>
+                    <p class="promo-card__text">${textBody}</p>
+                    ${code ? `
+                        <div class="promo-card__code" data-copy-code="${code}">
+                            <span class="promo-card__code-label">${escapeHtml(codeLabel)}</span>
+                            <code>${code}</code>
+                            <i data-lucide="copy"></i>
+                        </div>
+                    ` : ''}
+                    <div class="promo-card__eternal-badge">
+                        <i data-lucide="infinity"></i>
+                        <span>${escapeHtml(eternalLabel)}</span>
+                    </div>
+                    ${hintBlock}
+                </div>
+            `;
+        }
+
+        if (state === 'active') {
+            const exp = promo.user_activation?.expires_at;
+            const secondsLeft = promo.user_activation?.seconds_left;
+            return `
+                <div class="promo-card promo-card--active animate-in">
+                    <div class="promo-card__header">
+                        ${badge}
+                        <h3 class="promo-card__title">${title}</h3>
+                    </div>
+                    <p class="promo-card__text">${textBody}</p>
+                    ${code ? `
+                        <div class="promo-card__code" data-copy-code="${code}">
+                            <span class="promo-card__code-label">${escapeHtml(codeLabel)}</span>
+                            <code>${code}</code>
+                            <i data-lucide="copy"></i>
+                        </div>
+                    ` : ''}
+                    <div class="promo-card__timer">
+                        <div class="promo-card__timer-label">${escapeHtml(activeUntilLabel)}</div>
+                        <div class="promo-card__timer-date">${escapeHtml(formatExpiresDate(exp))}</div>
+                        <div class="promo-card__countdown" data-countdown="${promo.id}">${escapeHtml(formatTimeLeft(secondsLeft))}</div>
+                    </div>
+                    ${hintBlock}
+                </div>
+            `;
+        }
+
+        // expired
+        return `
+            <div class="promo-card promo-card--expired animate-in">
+                <div class="promo-card__header">
+                    <h3 class="promo-card__title promo-card__title--dim">${title}</h3>
+                </div>
+                <div class="promo-card__expired-icon"><i data-lucide="clock-x"></i></div>
+                <div class="promo-card__expired-title">${escapeHtml(expiredTitle)}</div>
+                <p class="promo-card__expired-text">${escapeHtml(expiredBody)}</p>
+            </div>
+        `;
+    },
+
+    async activatePromo(promoId) {
+        const activateLabel = text('miniapp_ui.promo_activate_btn', 'Активировать');
+        const activatingLabel = text('miniapp_ui.promo_activating', 'Активирую...');
+        const btn = document.querySelector(`[data-activate="${promoId}"]`);
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-circle"></i><span>${escapeHtml(activatingLabel)}</span>`;
+            lucide.createIcons();
+        }
+
+        const resetBtn = () => {
+            if (!btn) return;
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="zap"></i><span>${escapeHtml(activateLabel)}</span>`;
+            lucide.createIcons();
+        };
+
+        try {
+            const res = await fetch(`${API_URL}/api/promo-activate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    promo_id: promoId,
+                    initData: tg?.initData || ''
+                })
+            });
+            const data = await res.json().catch(() => null);
+
+            const activation = data?.activation || data?.data?.activation;
+            if (res.ok && data?.success && activation) {
+                const promo = DATA.promos.find(p => p.id === promoId);
+                if (promo) {
+                    promo.user_activation = {
+                        expires_at: activation.expires_at || null,
+                        activated_at: activation.activated_at || new Date().toISOString(),
+                        is_expired: false,
+                        seconds_left: activation.expires_at
+                            ? Math.floor((new Date(activation.expires_at).getTime() - Date.now()) / 1000)
+                            : null,
+                    };
+                }
+                showToast(text('miniapp_ui.promo_activated_toast', 'Промокод активирован!'), { type: 'success' });
+                tg?.HapticFeedback?.notificationOccurred?.('success');
+                this._paint(document.getElementById('promos-list'), document.getElementById('promosEmpty'));
+            } else {
+                showToast(data?.error || text('miniapp_ui.promo_activation_error', 'Ошибка активации'), { type: 'error' });
+                tg?.HapticFeedback?.notificationOccurred?.('error');
+                resetBtn();
+            }
+        } catch (e) {
+            showToast(text('miniapp_ui.promo_connection_error', 'Ошибка соединения'), { type: 'error' });
+            tg?.HapticFeedback?.notificationOccurred?.('error');
+            resetBtn();
+        }
     },
 };
 
@@ -2646,7 +3393,7 @@ function initOverlay() {
 /* === Load Live Data from API === */
 
 /* API URL - relative when on same server, absolute for GitHub Pages */
-const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.location.hostname === '94.198.217.56')
+const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.location.hostname === '185.103.252.41')
     ? ''
     : 'https://bot.yanksweb.ru';
 
@@ -2655,7 +3402,11 @@ async function loadLiveData() {
 
     for (const key of endpoints) {
         try {
-            const res = await fetch(`${API_URL}/api/${key}`, {
+            const isPromos = key === 'promos';
+            const initDataParam = isPromos && tg?.initData
+                ? `?initData=${encodeURIComponent(tg.initData)}`
+                : '';
+            const res = await fetch(`${API_URL}/api/${key}${initDataParam}`, {
                 headers: { 'X-App-Key': 'yanksweb-miniapp' }
             });
             if (res.ok) {
@@ -2681,20 +3432,35 @@ async function loadLiveData() {
                             url: i.url || '',
                         }));
                     } else if (key === 'cases') {
-                        DATA.cases = json.items.map(i => ({
-                            id: i.id,
-                            title: i.title_ru || '',
-                            task: i.task_ru || '',
-                            solution: i.solution_ru || '',
-                            result: i.result_ru || '',
-                            url: i.url || '',
-                            image_before: i.before_media_id || '',
-                            image_after: i.after_media_id || '',
-                            client_name: i.client_name || '',
-                            niche: i.niche || '',
-                            stack: i.stack || '',
-                            timeline: i.timeline || '',
-                        }));
+                        const thumbUrl = (url) => {
+                            if (!url) return '';
+                            const ext = (url.split('.').pop() || '').toLowerCase();
+                            if (!['jpg','jpeg','png','webp'].includes(ext)) return '';
+                            const parts = url.split('/');
+                            const fname = parts.pop();
+                            parts.push('thumbs', fname.replace(/\.[^.]+$/, '.webp'));
+                            return parts.join('/') + '?v=2';
+                        };
+                        DATA.cases = json.items.map(i => {
+                            const imgBefore = i.before_media_id || '';
+                            const imgAfter = i.after_media_id || '';
+                            return {
+                                id: i.id,
+                                title: i.title_ru || '',
+                                task: i.task_ru || '',
+                                solution: i.solution_ru || '',
+                                result: i.result_ru || '',
+                                url: i.url || '',
+                                image_before: imgBefore,
+                                image_after: imgAfter,
+                                thumb_before: thumbUrl(imgBefore),
+                                thumb_after: thumbUrl(imgAfter),
+                                client_name: i.client_name || '',
+                                niche: i.niche || '',
+                                stack: i.stack || '',
+                                timeline: i.timeline || '',
+                            };
+                        });
                     } else if (key === 'faq') {
                         DATA.faq = json.items.map(i => ({
                             id: i.id,
@@ -2709,11 +3475,15 @@ async function loadLiveData() {
                             code: i.promo_code || '',
                             discount: i.discount_percent ? `-${i.discount_percent}%` : '',
                             deadline: i.deadline || '',
+                            is_eternal: Boolean(i.is_eternal),
+                            activation_duration_days: i.activation_duration_days || null,
+                            user_activation: i.user_activation || null,
                         }));
                     }
                 }
             }
         } catch (e) {
+            console.warn('[loadLiveData] fetch failed for', key, e);
         }
     }
 }
@@ -2739,7 +3509,7 @@ function refreshCurrentPageData() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        setBootStatus('Подготавливаю интерфейс...');
+        setBootStatus(text('miniapp_ui.loader_preparing', 'Подготавливаю интерфейс...'));
         applyStaticTexts();
         initTabBar();
         initMoreMenu();
@@ -2750,11 +3520,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         ContactPage.init();
         PortfolioPage.bootstrap();
 
-        const validIds = (Array.isArray(DATA.portfolio) ? DATA.portfolio : []).map(p => p.id);
-        AppState.favorites = AppState.favorites.filter(id => validIds.includes(id));
-        localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+        const portfolioList = Array.isArray(DATA.portfolio) ? DATA.portfolio : [];
+        if (portfolioList.length) {
+            const validIds = portfolioList.map(p => p.id);
+            AppState.favorites = AppState.favorites.filter(id => validIds.includes(id));
+            localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+        }
 
-        setBootStatus('Почти готово...');
+        setBootStatus(text('miniapp_ui.loader_almost', 'Почти готово...'));
 
         const hash = window.location.hash;
         const caseMatch = hash.match(/^#case-(\d+)$/);
@@ -2786,6 +3559,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     applyStaticTexts();
                     PortfolioPage.updateFavoritesCount();
                 } catch (e) {
+                    console.warn('[boot] warm content failed', e);
                 }
             });
         }

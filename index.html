@@ -15,8 +15,8 @@
             margin: 0;
             padding: 0;
             min-height: 100%;
-            background: #18222d;
-            color: #f4f7fb;
+            background: var(--tg-theme-bg-color, #18222d);
+            color: var(--tg-theme-text-color, #f4f7fb);
         }
 
         body.app-loading #app {
@@ -37,9 +37,7 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
-            background:
-                radial-gradient(circle at top, rgba(96, 165, 250, 0.12), transparent 42%),
-                linear-gradient(180deg, #1b2530 0%, #17212b 100%);
+            background: var(--tg-theme-bg-color, #17212b);
             transition: opacity 0.24s ease, visibility 0.24s ease;
         }
 
@@ -99,7 +97,7 @@
         }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css?v=1775171989">
+    <link rel="stylesheet" href="style.css?v=1775774930">
 </head>
 <body class="app-loading">
     <div id="app-loader" aria-live="polite">
@@ -148,7 +146,7 @@
 
                 <h2 class="section-title">Быстрый вопрос</h2>
                 <div class="quick-question">
-                    <label class="sr-only" for="quickQuestionInput">Ваш вопрос</label>
+                        <label class="sr-only" for="quickQuestionInput">Ваш вопрос</label>
                     <div class="quick-question__field">
                         <input class="quick-question__input" id="quickQuestionInput" type="text" placeholder="Напишите ваш вопрос..." aria-describedby="quickQuestionHint">
                         <button class="quick-question__send" id="quickQuestionSend" aria-label="Отправить">
@@ -185,6 +183,13 @@
                     <input class="input booking-form__input" id="bookingTask" type="text" placeholder="Например: интернет-магазин одежды">
 
                     <button class="btn btn--primary booking-form__submit" id="bookingSubmitBtn" disabled>Отправить бронь</button>
+                </div>
+
+                <div class="booking-form__done booking-form__done--hidden" id="bookingSuccess">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M20 6 9 17l-5-5"/></svg>
+                    <h3 id="bookingSuccessTitle"></h3>
+                    <p id="bookingSuccessBody"></p>
+                    <button class="btn btn--ghost booking-form__reset" id="bookingReset">Забронировать ещё</button>
                 </div>
             </section>
 
@@ -239,7 +244,7 @@
                                 <strong>Лендинг</strong>
                                 <small>Одностраничный сайт</small>
                             </span>
-                            <span class="option__price">от 10 000 ₽</span>
+                            <span class="option__price">от 25 000 ₽</span>
                         </button>
                         <button class="option" data-type="card" data-next="2">
                             <span class="option__icon">📇</span>
@@ -247,15 +252,15 @@
                                 <strong>Сайт-визитка</strong>
                                 <small>2-5 страниц</small>
                             </span>
-                            <span class="option__price">от 10 000 ₽</span>
+                            <span class="option__price">от 15 000 ₽</span>
                         </button>
                         <button class="option" data-type="corporate" data-next="2">
                             <span class="option__icon">🏢</span>
                             <span class="option__text">
-                                <strong>Корпоративный</strong>
+                                <strong>Корпоративный сайт</strong>
                                 <small>Полноценный сайт компании</small>
                             </span>
-                            <span class="option__price">от 25 000 ₽</span>
+                            <span class="option__price">от 55 000 ₽</span>
                         </button>
                         <button class="option" data-type="shop" data-next="2">
                             <span class="option__icon">🛒</span>
@@ -263,7 +268,7 @@
                                 <strong>Интернет-магазин</strong>
                                 <small>Каталог, корзина, оплата</small>
                             </span>
-                            <span class="option__price">от 25 000 ₽</span>
+                            <span class="option__price">от 70 000 ₽</span>
                         </button>
                     </div>
                 </div>
@@ -417,16 +422,21 @@
             <!-- Audit -->
             <section class="page" data-page="audit">
                 <header class="page__header">
-                    <h2 class="page__title">Экспресс-аудит сайта</h2>
+                    <h2 class="page__title">Аудит сайта</h2>
                 </header>
-                <p class="audit__desc">Укажите адрес вашего сайта, и я проведу быстрый анализ: скорость загрузки, SEO, мобильная версия, основные ошибки.</p>
-                <label class="sr-only" for="auditUrlInput">Адрес сайта для аудита</label>
-                <div class="audit__field">
-                    <input class="input" id="auditUrlInput" type="url" placeholder="https://example.com" aria-describedby="auditUrlHint">
+                <div class="audit-tabs" id="auditTabs">
+                    <button class="audit-tabs__btn audit-tabs__btn--active" data-audit-type="seo">SEO-аудит</button>
+                    <button class="audit-tabs__btn" data-audit-type="speed">Аудит скорости</button>
                 </div>
-                <span class="sr-only" id="auditUrlHint">Введите URL сайта для проверки скорости и технических метрик</span>
-                <button class="btn btn--primary audit__submit" id="auditSubmitBtn">Проверить</button>
-                <p class="audit__note">Результат придет в течение 5-10 минут в этот чат</p>
+                <div class="audit__body" id="auditBody">
+                    <p class="audit__desc" id="auditDesc">Проверю SEO-оптимизацию: мета-теги, индексация, безопасность, структура и юридические требования.</p>
+                    <label class="sr-only" for="auditUrlInput">Адрес сайта для аудита</label>
+                    <div class="audit__field">
+                        <input class="input" id="auditUrlInput" type="url" placeholder="https://example.com" aria-describedby="auditUrlHint">
+                    </div>
+                    <span class="sr-only" id="auditUrlHint">Введите URL сайта для проверки</span>
+                    <button class="btn btn--primary audit__submit" id="auditSubmitBtn">Проверить</button>
+                </div>
             </section>
 
             <!-- Contact -->
@@ -438,9 +448,9 @@
                     <div class="contact-card__avatar">
                         <i data-lucide="user"></i>
                     </div>
-                    <h2 class="contact-card__name">Даниил</h2>
+                    <h3 class="contact-card__name">Даниил</h3>
                     <p class="contact-card__desc">Fullstack-разработчик, 5+ лет опыта. Сделаю сайт под ключ - от дизайна до запуска и настройки хостинга.</p>
-                    <a class="btn btn--primary contact-card__link" id="contactLink" href="#" target="_blank">
+                    <a class="btn btn--primary contact-card__link" id="contactLink" href="https://t.me/yanks_21" target="_blank">
                         <i data-lucide="send"></i>
                         Написать в Telegram
                     </a>
@@ -544,6 +554,6 @@
     <script src="lucide.js?v=1774825514" defer></script>
     <script src="data.js?v=1775165451" defer></script>
     <script src="data-live.js?v=1775171664" defer></script>
-    <script src="app.js?v=1775171565" defer></script>
+    <script src="app.js?v=1775774930" defer></script>
 </body>
 </html>

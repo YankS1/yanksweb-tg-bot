@@ -193,7 +193,7 @@ const DATA_LIVE = {
       "sort_order": 0,
       "created_at": "2026-03-28 22:20:04",
       "is_published": 1,
-      "tg_file_id": null
+      "tg_file_id": "BAACAgQAAxkDAAIGFGnifyL3MIujdF6pphcFXE12SSzcAAJSCgACFwcUU6AUhxYF8QkcOwQ"
     },
     {
       "id": 15,
@@ -208,7 +208,7 @@ const DATA_LIVE = {
       "sort_order": 0,
       "created_at": "2026-03-28 22:23:30",
       "is_published": 1,
-      "tg_file_id": null
+      "tg_file_id": "BAACAgQAAxkDAAIGFWnifyjvb7PV1l8MZcaltfx0nJIUAAKFCgACUxYcUz4KodHhuykjOwQ"
     },
     {
       "id": 16,
@@ -343,7 +343,7 @@ const DATA_LIVE = {
       "sort_order": 0,
       "created_at": "2026-03-28 23:14:58",
       "is_published": 1,
-      "tg_file_id": null
+      "tg_file_id": "BAACAgQAAxkDAAIGGGnif3UByhQ1BDdTL6d3G-Rn3c_8AAIbCgACCPkVU9twvfclwyNbOwQ"
     },
     {
       "id": 25,

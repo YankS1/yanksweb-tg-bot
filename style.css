@@ -1216,11 +1216,18 @@ body.app-ready #app {
 
 .portfolio-item__media {
     width: 100%;
+    height: 180px;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     display: block;
     background: rgba(142, 142, 147, 0.1);
     background: color-mix(in srgb, var(--hint) 10%, var(--bg));
+}
+
+@supports (aspect-ratio: 16 / 9) {
+    .portfolio-item__media {
+        height: auto;
+    }
 }
 
 .portfolio-item__body {

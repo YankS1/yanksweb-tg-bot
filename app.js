@@ -2392,7 +2392,7 @@ const QuizPage = {
                 try {
                     const res = await fetch(`${API_URL}/api/promo-activate`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-App-Key': 'yanksweb-miniapp' },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ promo_id: parseInt(selected.value), initData: tg.initData }),
                     });
                     const json = await res.json();
@@ -2401,7 +2401,7 @@ const QuizPage = {
                         AppState.quiz.answers.promo_code = code;
                         AppState.quiz._promoApplied = true;
                     }
-                } catch (e) { console.warn('Promo activate error:', e); }
+                } catch (e) { /* network error - silent */ }
             }
             this.submit();
         });
@@ -2460,8 +2460,7 @@ const QuizPage = {
             AppState.quiz._promoAsked = true;
             try {
                 const res = await fetch(
-                    `${API_URL}/api/promo-activations?initData=${encodeURIComponent(tg.initData)}`,
-                    { headers: { 'X-App-Key': 'yanksweb-miniapp' } }
+                    `${API_URL}/api/promo-activations?initData=${encodeURIComponent(tg.initData)}`
                 );
                 const json = await res.json();
                 const items = (json?.items || json?.data?.items || [])
@@ -2470,13 +2469,12 @@ const QuizPage = {
                     this.renderPromoApplyPrompt(container, items);
                     return;
                 }
-            } catch (e) { console.warn('Promo fetch error:', e); }
+            } catch (e) { /* network error - silent */ }
 
             // No active activations - check if there are promos available to activate
             try {
                 const res = await fetch(
-                    `${API_URL}/api/promos?initData=${encodeURIComponent(tg.initData)}`,
-                    { headers: { 'X-App-Key': 'yanksweb-miniapp' } }
+                    `${API_URL}/api/promos?initData=${encodeURIComponent(tg.initData)}`
                 );
                 const json = await res.json();
                 const available = (json?.items || json?.data?.items || [])
@@ -2485,7 +2483,7 @@ const QuizPage = {
                     this.renderPromoActivatePrompt(container, available);
                     return;
                 }
-            } catch (e) { console.warn('Promo available error:', e); }
+            } catch (e) { /* network error - silent */ }
         }
 
         this.renderSubmitState(container, 'sending');
@@ -3061,7 +3059,7 @@ const PromosPage = {
         if (!tg?.initData) return;
         try {
             const url = `${API_URL}/api/promos?initData=${encodeURIComponent(tg.initData)}`;
-            const res = await fetch(url, { headers: { 'X-App-Key': 'yanksweb-miniapp' } });
+            const res = await fetch(url);
             if (!res.ok) return;
             const data = await res.json();
             const items = data?.items || data?.data?.items || [];
@@ -3075,7 +3073,7 @@ const PromosPage = {
                 }
             });
         } catch (e) {
-            console.warn('Failed to load activations', e);
+            /* network error - silent */
         }
     },
 
@@ -3408,9 +3406,7 @@ async function loadLiveData() {
             const initDataParam = isPromos && tg?.initData
                 ? `?initData=${encodeURIComponent(tg.initData)}`
                 : '';
-            const res = await fetch(`${API_URL}/api/${key}${initDataParam}`, {
-                headers: { 'X-App-Key': 'yanksweb-miniapp' }
-            });
+            const res = await fetch(`${API_URL}/api/${key}${initDataParam}`);
             if (res.ok) {
                 const json = await res.json();
                 if (json.success && json.items) {
@@ -3485,7 +3481,7 @@ async function loadLiveData() {
                 }
             }
         } catch (e) {
-            console.warn('[loadLiveData] fetch failed for', key, e);
+            /* live data unavailable, fallback to bundled DATA */
         }
     }
 }
@@ -3561,7 +3557,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     applyStaticTexts();
                     PortfolioPage.updateFavoritesCount();
                 } catch (e) {
-                    console.warn('[boot] warm content failed', e);
+                    /* warm content failed - non-critical */
                 }
             });
         }

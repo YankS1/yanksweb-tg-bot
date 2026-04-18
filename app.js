@@ -637,8 +637,8 @@ const HomePage = {
 
         document.getElementById('bookingOpenBtn').addEventListener('click', () => {
             haptic();
-            banner.style.display = 'none';
-            form.style.display = 'block';
+            banner.classList.add('fade-hidden');
+            form.classList.add('fade-visible');
         });
 
         const tgUser = tg?.initDataUnsafe?.user;
@@ -668,7 +668,7 @@ const HomePage = {
             nameInput.value = tgUser?.first_name || tgUser?.username || '';
             taskInput.value = '';
             successBox.classList.add('booking-form__done--hidden');
-            form.style.display = 'block';
+            form.classList.add('fade-visible');
             submitBtn.textContent = text('waitlist.webapp_submit', 'Отправить бронь');
             checkFormReady();
         }
@@ -699,7 +699,7 @@ const HomePage = {
             const success = leadSuccessCopy();
             successTitle.textContent = success.title;
             successBody.textContent = success.body;
-            form.style.display = 'none';
+            form.classList.remove('fade-visible');
             successBox.classList.remove('booking-form__done--hidden');
         });
     },
@@ -974,11 +974,11 @@ const PortfolioPage = {
 
         if (!items.length) {
             feed.innerHTML = '';
-            empty.style.display = 'flex';
+            empty.classList.add('empty-state--visible');
             return;
         }
 
-        empty.style.display = 'none';
+        empty.classList.remove('empty-state--visible');
         feed.innerHTML = items.map(item => {
             const isFav = AppState.favorites.includes(item.id);
             const media = this.renderMedia(item);
@@ -1096,7 +1096,7 @@ const PortfolioPage = {
         if (!badge) return;
         const count = AppState.favorites.length;
         badge.textContent = count ? `❤️ ${count}` : '';
-        badge.style.display = count ? 'inline-flex' : 'none';
+        badge.classList.toggle('page__badge--visible', !!count);
     },
 
     initFilters() {
@@ -1264,7 +1264,7 @@ const CalculatorPage = {
 
     init() {
         const backBtn = document.getElementById('calcBackBtn');
-        backBtn.style.display = AppState.calculator.history.length <= 1 ? 'none' : 'flex';
+        backBtn.classList.toggle('calc-back--visible', AppState.calculator.history.length > 1);
 
         const progress = document.getElementById('calcProgressBar');
         const currentStep = AppState.calculator.history[AppState.calculator.history.length - 1];
@@ -1280,7 +1280,7 @@ const CalculatorPage = {
         if (target) target.classList.add('calc-step--active');
 
         const backBtn = document.getElementById('calcBackBtn');
-        backBtn.style.display = stepNum === 1 ? 'none' : 'flex';
+        backBtn.classList.toggle('calc-back--visible', stepNum !== 1);
 
         if (stepNum !== 'result') {
             const progress = (stepNum / this.TOTAL_STEPS) * 100;
@@ -1304,7 +1304,7 @@ const CalculatorPage = {
         if (target) target.classList.add('calc-step--active');
 
         const backBtn = document.getElementById('calcBackBtn');
-        backBtn.style.display = prev === 1 ? 'none' : 'flex';
+        backBtn.classList.toggle('calc-back--visible', prev !== 1);
 
         const progress = (prev / this.TOTAL_STEPS) * 100;
         document.getElementById('calcProgressBar').style.width = progress + '%';
@@ -1497,11 +1497,11 @@ const ReviewsPage = {
 
         if (!DATA.reviews.length) {
             list.innerHTML = '';
-            empty.style.display = 'flex';
+            empty.classList.add('empty-state--visible');
             return;
         }
 
-        empty.style.display = 'none';
+        empty.classList.remove('empty-state--visible');
         list.innerHTML = DATA.reviews.map(r => `
             <div class="review-card animate-in">
                 <div class="review-card__header">
@@ -1567,16 +1567,16 @@ const CasesPage = {
         const empty = document.getElementById('casesEmpty');
         const title = document.getElementById('casesTitle');
 
-        detail.style.display = 'none';
-        list.style.display = '';
+        detail.classList.remove('fade-visible');
+        list.classList.remove('fade-hidden');
         if (title) title.textContent = text('cases.title', 'Кейсы');
 
         if (!DATA.cases.length) {
             list.innerHTML = '';
-            empty.style.display = 'flex';
+            empty.classList.add('empty-state--visible');
             return;
         }
-        empty.style.display = 'none';
+        empty.classList.remove('empty-state--visible');
 
         const nicheEmoji = (niche, title) => {
             const t = ((niche || '') + ' ' + (title || '')).toLowerCase();
@@ -1638,8 +1638,8 @@ const CasesPage = {
         const c = DATA.cases[this._activeIndex];
         if (!c) return;
 
-        list.style.display = 'none';
-        detail.style.display = 'block';
+        list.classList.add('fade-hidden');
+        detail.classList.add('fade-visible');
         if (title) title.textContent = (c.title || '').split(' - ')[0].split(' — ')[0].trim();
 
         const hasBefore = !!c.image_before;
@@ -1873,11 +1873,11 @@ const FaqPage = {
 
         if (!DATA.faq.length) {
             list.innerHTML = '';
-            empty.style.display = 'flex';
+            empty.classList.add('empty-state--visible');
             return;
         }
 
-        empty.style.display = 'none';
+        empty.classList.remove('empty-state--visible');
         list.innerHTML = `<div class="accordion">${DATA.faq.map((item, i) => `
             <div class="accordion__item animate-in" data-faq-index="${i}">
                 <button class="accordion__header">
@@ -3506,11 +3506,11 @@ const PromosPage = {
 
         if (!DATA.promos.length) {
             list.innerHTML = '';
-            empty.style.display = 'flex';
+            empty.classList.add('empty-state--visible');
             return;
         }
 
-        empty.style.display = 'none';
+        empty.classList.remove('empty-state--visible');
         list.innerHTML = DATA.promos.map(promo => this.renderCard(promo)).join('');
 
         list.querySelectorAll('[data-activate]').forEach(btn => {

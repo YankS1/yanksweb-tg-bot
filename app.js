@@ -2740,11 +2740,13 @@ const StatusPage = {
         const breached = !!s.sla_breached;
         const code = s.discount_promo_code;
 
+        const hideAt = (breached && deadline) ? (deadline + 24 * 3600) : null;
+
         if (answeredAt) {
-            return { kind: 'answered', answeredAt, code: breached ? code : null };
+            return { kind: 'answered', answeredAt, code: breached ? code : null, hideAt };
         }
         if (breached && code) {
-            return { kind: 'breached', code };
+            return { kind: 'breached', code, hideAt };
         }
         if (!deadline) {
             return { kind: 'off_hours' };
@@ -2789,7 +2791,7 @@ const StatusPage = {
                     </div>
                     <span class="sla-status__badge sla-status__badge--success">${escapeHtml(text('sla.status_read', 'Прочитано, ответ скоро'))}</span>
                     <p class="sla-status__message">${escapeHtml(text('sla.already_answered_at', 'Ответ получен в {time}').replace('{time}', time))}</p>
-                    ${view.code ? this._renderCodeBox(view.code) : ''}
+                    ${view.code ? this._renderCodeBox(view.code, view.hideAt) : ''}
                     ${this._renderActions()}
                 </div>
             `;
@@ -2806,7 +2808,7 @@ const StatusPage = {
                         </div>
                     </div>
                     <span class="sla-status__badge sla-status__badge--breached">${escapeHtml(text('sla.status_breached', 'Превышен срок'))}</span>
-                    ${this._renderCodeBox(view.code)}
+                    ${this._renderCodeBox(view.code, view.hideAt)}
                     ${this._renderActions()}
                 </div>
             `;
@@ -2860,15 +2862,68 @@ const StatusPage = {
                 if (target) Router.navigate(target);
             });
         });
+
+        container.querySelectorAll('[data-sla-copy]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const code = btn.getAttribute('data-sla-copy');
+                if (!code) return;
+                haptic();
+                let ok = false;
+                try {
+                    await navigator.clipboard.writeText(code);
+                    ok = true;
+                } catch (e) {
+                    try {
+                        const ta = document.createElement('textarea');
+                        ta.value = code;
+                        ta.setAttribute('readonly', '');
+                        ta.style.position = 'absolute';
+                        ta.style.left = '-9999px';
+                        document.body.appendChild(ta);
+                        ta.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(ta);
+                        ok = true;
+                    } catch (_) { /* fallthrough */ }
+                }
+                btn.classList.toggle('sla-status__code-box--copied', ok);
+                setTimeout(() => btn.classList.remove('sla-status__code-box--copied'), 1600);
+                if (ok) {
+                    try { tg?.HapticFeedback?.notificationOccurred('success'); } catch (e) {}
+                }
+            });
+        });
     },
 
-    _renderCodeBox(code) {
+    _renderCodeBox(code, hideAt) {
+        const copyHint = text('sla.copy_hint', 'Нажмите чтобы скопировать');
+        const hideLine = hideAt
+            ? `<div class="sla-status__code-box-hide" data-sla-hide-at="${hideAt}">${escapeHtml(this._formatHideLeft(hideAt))}</div>`
+            : '';
         return `
-            <div class="sla-status__code-box">
+            <button type="button" class="sla-status__code-box" data-sla-copy="${escapeHtml(code)}" aria-label="${escapeHtml(copyHint)}">
                 <div class="sla-status__code-box-label">${escapeHtml(text('promo.your_code', 'Ваш промокод'))}</div>
                 <div class="sla-status__code">${escapeHtml(code)}</div>
-            </div>
+                <div class="sla-status__code-box-hint">${escapeHtml(copyHint)}</div>
+                ${hideLine}
+            </button>
         `;
+    },
+
+    _formatHideLeft(hideAt) {
+        const now = this._now();
+        const left = Math.max(0, Math.floor(hideAt - now));
+        if (left <= 0) return text('sla.hide_soon', 'Скроется скоро');
+        const hours = Math.floor(left / 3600);
+        const minutes = Math.floor((left % 3600) / 60);
+        const template = text('sla.hide_timer', 'Меню закроется через {time}');
+        let timeStr;
+        if (hours >= 1) {
+            timeStr = minutes > 0 ? `${hours} ч ${minutes} мин` : `${hours} ч`;
+        } else {
+            timeStr = `${Math.max(1, minutes)} мин`;
+        }
+        return template.replace('{time}', timeStr);
     },
 
     _renderActions() {
@@ -2907,6 +2962,10 @@ const StatusPage = {
 
     _tick() {
         if (!this._state) return;
+        document.querySelectorAll('[data-sla-hide-at]').forEach(el => {
+            const hideAt = parseFloat(el.getAttribute('data-sla-hide-at'));
+            if (hideAt) el.textContent = this._formatHideLeft(hideAt);
+        });
         const view = this._computeView();
         if (view.kind !== 'countdown' && view.kind !== 'expired') return;
         const timeEl = document.getElementById('slaTimeValue');

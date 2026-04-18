@@ -3784,6 +3784,28 @@ body.app-ready #app {
     border-radius: 16px;
     border: 1px solid rgba(36, 129, 204, 0.25);
     text-align: center;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sla-status__code-box:hover {
+    border-color: rgba(36, 129, 204, 0.45);
+}
+
+.sla-status__code-box:active {
+    transform: scale(0.98);
+}
+
+.sla-status__code-box--copied {
+    border-color: rgba(36, 180, 120, 0.6);
+    background: rgba(36, 180, 120, 0.08);
+}
+
+.sla-status__code-box--copied .sla-status__code-box-hint::after {
+    content: attr(data-copied);
 }
 
 .sla-status__code-box-label {
@@ -3801,6 +3823,23 @@ body.app-ready #app {
     color: var(--tg-theme-text-color, inherit);
     letter-spacing: 0.04em;
     user-select: all;
+}
+
+.sla-status__code-box-hint {
+    margin-top: 10px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--tg-theme-hint-color, rgba(125, 125, 125, 0.75));
+}
+
+.sla-status__code-box--copied .sla-status__code-box-hint {
+    color: rgba(36, 180, 120, 0.95);
+}
+
+.sla-status__code-box-hide {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--tg-theme-hint-color, rgba(125, 125, 125, 0.6));
 }
 
 .sla-status__actions {

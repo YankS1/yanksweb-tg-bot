@@ -558,6 +558,7 @@ function closeOverlay() {
 
 const HomePage = {
     _inited: false,
+    _bannerPollInterval: null,
     init() {
         if (HomePage._inited) return;
         HomePage._inited = true;
@@ -572,6 +573,10 @@ const HomePage = {
                 Router.navigate(page);
             });
         });
+
+        HomePage.refreshActiveRequestBanner();
+        if (HomePage._bannerPollInterval) clearInterval(HomePage._bannerPollInterval);
+        HomePage._bannerPollInterval = setInterval(() => HomePage.refreshActiveRequestBanner(), 30000);
 
         document.getElementById('quickQuestionSend').addEventListener('click', async () => {
             haptic();
@@ -697,6 +702,61 @@ const HomePage = {
             form.style.display = 'none';
             successBox.classList.remove('booking-form__done--hidden');
         });
+    },
+
+    async refreshActiveRequestBanner() {
+        const banner = document.getElementById('activeRequestBanner');
+        if (!banner) return;
+        try {
+            const initData = tg?.initData || '';
+            if (!initData) { banner.classList.add('active-request-banner--hidden'); return; }
+            const resp = await fetch(`/api/my-active-request?initData=${encodeURIComponent(initData)}`, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+            });
+            if (!resp.ok) { banner.classList.add('active-request-banner--hidden'); return; }
+            const body = await resp.json();
+            const data = body.data || body;
+            const req = data.request;
+            if (!req) { banner.classList.add('active-request-banner--hidden'); return; }
+
+            const answered = !!req.answered_at;
+            const breached = !!req.sla_breached;
+            let icon = '⏱';
+            let title = text('sla.status_waiting', 'Ожидает прочтения');
+            let subtitle = text('sla.timer_hint', 'Отвечу за час');
+            if (answered) {
+                icon = '✅';
+                title = text('sla.status_read', 'Прочитано, ответ скоро');
+                subtitle = text('sla.title', 'Статус обращения');
+            } else if (breached) {
+                icon = '🎁';
+                title = text('sla.status_breached', 'Превышен срок');
+                subtitle = text('sla.compensated_code', 'Вам выдан промокод');
+            } else if (req.sla_deadline) {
+                const now = (data.server_time || Date.now() / 1000);
+                const remaining = Math.max(0, req.sla_deadline - now);
+                const mins = Math.ceil(remaining / 60);
+                subtitle = mins > 0 ? `~${mins} мин` : text('sla.guarantee_hint', '-5% если не отвечу');
+            }
+
+            banner.innerHTML = `
+                <div class="active-request-banner__icon">${icon}</div>
+                <div class="active-request-banner__body">
+                    <div class="active-request-banner__title">${escapeHtml(title)}</div>
+                    <div class="active-request-banner__subtitle">${escapeHtml(subtitle)}</div>
+                </div>
+                <div class="active-request-banner__arrow">→</div>
+            `;
+            banner.classList.remove('active-request-banner--hidden');
+            banner.onclick = () => {
+                haptic();
+                Router.navigate('status');
+                StatusPage.load(req.id);
+            };
+        } catch (e) {
+            banner.classList.add('active-request-banner--hidden');
+        }
     },
 };
 

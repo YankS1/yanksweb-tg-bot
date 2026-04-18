@@ -3817,15 +3817,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         setBootStatus(text('miniapp_ui.loader_almost', 'Почти готово...'));
 
+        function resolveStatusRequestId() {
+            try {
+                const qs = new URLSearchParams(window.location.search);
+                const q = qs.get('status') || qs.get('request_id');
+                if (q) {
+                    const n = parseInt(q, 10);
+                    if (!isNaN(n)) return n;
+                }
+            } catch (e) {}
+            const m = window.location.hash.match(/^#status-(\d+)$/);
+            if (m) {
+                const n = parseInt(m[1], 10);
+                if (!isNaN(n)) return n;
+            }
+            try {
+                const sp = tg?.initDataUnsafe?.start_param || '';
+                const m2 = sp.match(/^status[-_](\d+)$/);
+                if (m2) {
+                    const n = parseInt(m2[1], 10);
+                    if (!isNaN(n)) return n;
+                }
+            } catch (e) {}
+            return null;
+        }
+
         const hash = window.location.hash;
         const caseMatch = hash.match(/^#case-(\d+)$/);
-        const statusMatch = hash.match(/^#status-(\d+)$/);
-        if (statusMatch) {
+        const statusReqId = resolveStatusRequestId();
+        if (statusReqId !== null) {
             Router.navigate('status');
-            const requestId = parseInt(statusMatch[1], 10);
-            if (!isNaN(requestId)) {
-                StatusPage.load(requestId);
-            }
+            StatusPage.load(statusReqId);
         } else if (caseMatch && DATA.cases.length) {
             const caseId = parseInt(caseMatch[1], 10);
             const idx = DATA.cases.findIndex(c => c.id === caseId);
@@ -3839,11 +3861,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         window.addEventListener('hashchange', () => {
-            const newHash = window.location.hash;
-            const m = newHash.match(/^#status-(\d+)$/);
-            if (m) {
-                const rid = parseInt(m[1], 10);
-                if (!isNaN(rid)) {
+            const rid = resolveStatusRequestId();
+            if (rid !== null) {
+                Router.navigate('status');
+                StatusPage.load(rid);
+            }
+        });
+
+        // Telegram Desktop may reopen Mini App without reload - re-check on visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                const rid = resolveStatusRequestId();
+                if (rid !== null && StatusPage._requestId !== rid) {
                     Router.navigate('status');
                     StatusPage.load(rid);
                 }

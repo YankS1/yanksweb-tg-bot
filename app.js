@@ -2806,6 +2806,8 @@ const AuditPage = {
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(reportUrl).then(() => {
                     showToast(text('miniapp_ui.toast_link_copied', 'Ссылка скопирована'), { type: 'success', duration: 2000 });
+                }).catch(() => {
+                    showToast(text('miniapp_ui.toast_copy_failed', 'Не удалось скопировать'), { type: 'error', duration: 2000 });
                 });
             }
         });

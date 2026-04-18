@@ -471,6 +471,9 @@ const Router = {
         if (AppState.currentPage === 'status' && pageId !== 'status' && typeof StatusPage !== 'undefined') {
             StatusPage.cleanup();
         }
+        if (AppState.currentPage === 'home' && pageId !== 'home') {
+            HomePage.cleanup();
+        }
 
         AppState.currentPage = pageId;
         updateTabBar(pageId);
@@ -559,6 +562,13 @@ function closeOverlay() {
 const HomePage = {
     _inited: false,
     _bannerPollInterval: null,
+    cleanup() {
+        if (HomePage._bannerPollInterval) {
+            clearInterval(HomePage._bannerPollInterval);
+            HomePage._bannerPollInterval = null;
+        }
+        HomePage._inited = false;
+    },
     init() {
         if (HomePage._inited) return;
         HomePage._inited = true;
@@ -2464,7 +2474,13 @@ const QuizPage = {
                         AppState.quiz.answers.promo_code = code;
                         AppState.quiz._promoApplied = true;
                     }
-                } catch (e) { /* network error - silent */ }
+                } catch (e) {
+                    tg?.HapticFeedback?.notificationOccurred?.('error');
+                    const msg = (typeof text === 'function')
+                        ? text('miniapp_ui.promo_connection_error', 'Нет связи, попробуйте ещё раз')
+                        : 'Нет связи, попробуйте ещё раз';
+                    showToast(msg, { type: 'error' });
+                }
             }
             this.submit();
         });

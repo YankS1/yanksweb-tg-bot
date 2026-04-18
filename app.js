@@ -468,6 +468,9 @@ const Router = {
         PromosPage.timers.forEach(t => clearInterval(t));
         PromosPage.timers = [];
         if (typeof CasesPage !== 'undefined' && CasesPage._cleanupSlider) CasesPage._cleanupSlider();
+        if (AppState.currentPage === 'status' && pageId !== 'status' && typeof StatusPage !== 'undefined') {
+            StatusPage.cleanup();
+        }
 
         AppState.currentPage = pageId;
         updateTabBar(pageId);
@@ -2578,6 +2581,293 @@ const FavoritesPage = {
     },
 };
 
+/* === Status Page (SLA timer) === */
+
+const StatusPage = {
+    _requestId: null,
+    _tickInterval: null,
+    _pollInterval: null,
+    _state: null,
+    _clockSkew: 0,
+
+    cleanup() {
+        if (this._tickInterval) clearInterval(this._tickInterval);
+        if (this._pollInterval) clearInterval(this._pollInterval);
+        this._tickInterval = null;
+        this._pollInterval = null;
+    },
+
+    async load(requestId) {
+        this.cleanup();
+        this._requestId = requestId;
+        this._state = null;
+        this._renderLoading();
+        await this._fetch();
+        if (!this._state) return;
+        this._renderStatus();
+        this._startTick();
+        this._startPolling();
+    },
+
+    async _fetch() {
+        try {
+            const initData = tg?.initData || '';
+            const resp = await fetch(`/api/request-status/${this._requestId}?initData=${encodeURIComponent(initData)}`, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' },
+            });
+            if (!resp.ok) {
+                this._renderError(resp.status);
+                return;
+            }
+            const body = await resp.json();
+            this._state = body.data || body;
+            if (typeof this._state.server_time === 'number') {
+                this._clockSkew = this._state.server_time - (Date.now() / 1000);
+            }
+        } catch (e) {
+            this._renderError(0);
+        }
+    },
+
+    _now() {
+        return (Date.now() / 1000) + this._clockSkew;
+    },
+
+    _renderLoading() {
+        const container = document.getElementById('statusContent');
+        if (!container) return;
+        container.innerHTML = `
+            <div class="sla-status">
+                <div class="sla-status__ring">
+                    <svg class="sla-status__svg" viewBox="0 0 220 220">
+                        <circle class="sla-status__track" cx="110" cy="110" r="100"/>
+                    </svg>
+                    <div class="sla-status__center">
+                        <div class="sla-status__icon">⏳</div>
+                    </div>
+                </div>
+                <p class="sla-status__message">${escapeHtml(text('miniapp_ui.loader_almost', 'Загружаю статус...'))}</p>
+            </div>
+        `;
+    },
+
+    _renderError(code) {
+        const container = document.getElementById('statusContent');
+        if (!container) return;
+        const msg = code === 404
+            ? text('sla.request_not_found', 'Заявка не найдена.')
+            : text('miniapp_ui.error_generic', 'Не удалось загрузить данные');
+        container.innerHTML = `
+            <div class="sla-status">
+                <div class="sla-status__icon">⚠️</div>
+                <p class="sla-status__message">${escapeHtml(msg)}</p>
+                <div class="sla-status__actions">
+                    <button class="sla-status__action-btn" data-navigate="home">${escapeHtml(text('menu.home', 'Главная'))}</button>
+                </div>
+            </div>
+        `;
+        container.querySelector('[data-navigate="home"]')?.addEventListener('click', () => {
+            haptic();
+            Router.navigate('home');
+        });
+    },
+
+    _computeView() {
+        const s = this._state;
+        const deadline = s.sla_deadline;
+        const answeredAt = s.answered_at;
+        const breached = !!s.sla_breached;
+        const code = s.discount_promo_code;
+
+        if (answeredAt) {
+            return { kind: 'answered', answeredAt, code: breached ? code : null };
+        }
+        if (breached && code) {
+            return { kind: 'breached', code };
+        }
+        if (!deadline) {
+            return { kind: 'off_hours' };
+        }
+        const now = this._now();
+        const remaining = deadline - now;
+        const total = 3600;
+        const elapsed = Math.max(0, total - remaining);
+        const progress = Math.min(1, Math.max(0, elapsed / total));
+        if (remaining <= 0) {
+            return { kind: 'expired', progress: 1 };
+        }
+        return { kind: 'countdown', remaining, progress };
+    },
+
+    _formatTime(seconds) {
+        const safe = Math.max(0, Math.floor(seconds));
+        const mm = String(Math.floor(safe / 60)).padStart(2, '0');
+        const ss = String(safe % 60).padStart(2, '0');
+        return `${mm}:${ss}`;
+    },
+
+    _renderStatus() {
+        const container = document.getElementById('statusContent');
+        if (!container) return;
+        const view = this._computeView();
+        const CIRC = 628.32;
+
+        if (view.kind === 'answered') {
+            const dt = new Date(view.answeredAt * 1000);
+            const time = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            container.innerHTML = `
+                <div class="sla-status">
+                    <div class="sla-status__ring">
+                        <svg class="sla-status__svg" viewBox="0 0 220 220">
+                            <circle class="sla-status__track" cx="110" cy="110" r="100"/>
+                            <circle class="sla-status__progress sla-status__progress--answered" cx="110" cy="110" r="100" stroke-dashoffset="0"/>
+                        </svg>
+                        <div class="sla-status__center">
+                            <div class="sla-status__icon">✅</div>
+                        </div>
+                    </div>
+                    <span class="sla-status__badge sla-status__badge--success">${escapeHtml(text('sla.status_read', 'Прочитано, ответ скоро'))}</span>
+                    <p class="sla-status__message">${escapeHtml(text('sla.already_answered_at', 'Ответ получен в {time}').replace('{time}', time))}</p>
+                    ${view.code ? this._renderCodeBox(view.code) : ''}
+                    ${this._renderActions()}
+                </div>
+            `;
+        } else if (view.kind === 'breached') {
+            container.innerHTML = `
+                <div class="sla-status">
+                    <div class="sla-status__ring">
+                        <svg class="sla-status__svg" viewBox="0 0 220 220">
+                            <circle class="sla-status__track" cx="110" cy="110" r="100"/>
+                            <circle class="sla-status__progress sla-status__progress--breached" cx="110" cy="110" r="100" stroke-dashoffset="0"/>
+                        </svg>
+                        <div class="sla-status__center">
+                            <div class="sla-status__icon">🎁</div>
+                        </div>
+                    </div>
+                    <span class="sla-status__badge sla-status__badge--breached">${escapeHtml(text('sla.status_breached', 'Превышен срок'))}</span>
+                    <p class="sla-status__message">${escapeHtml(text('sla.compensated_code', 'Извините - не успели. Ваш промокод на скидку 5%:'))}</p>
+                    ${this._renderCodeBox(view.code)}
+                    ${this._renderActions()}
+                </div>
+            `;
+        } else if (view.kind === 'off_hours') {
+            container.innerHTML = `
+                <div class="sla-status">
+                    <div class="sla-status__ring">
+                        <svg class="sla-status__svg" viewBox="0 0 220 220">
+                            <circle class="sla-status__track" cx="110" cy="110" r="100"/>
+                        </svg>
+                        <div class="sla-status__center">
+                            <div class="sla-status__icon">🌙</div>
+                            <div class="sla-status__label">${escapeHtml(text('sla.status_waiting', 'Ожидает прочтения'))}</div>
+                        </div>
+                    </div>
+                    <p class="sla-status__message">${escapeHtml(text('sla.timer_off_hours', 'Сейчас вне рабочих часов. Таймер стартует в 9:00 МСК.'))}</p>
+                    ${this._renderActions()}
+                </div>
+            `;
+        } else {
+            // countdown or expired (waiting for server to issue compensation)
+            const dashOffset = (CIRC * view.progress).toFixed(1);
+            const remainingSec = view.kind === 'expired' ? 0 : view.remaining;
+            const warning = view.kind !== 'expired' && remainingSec < 15 * 60;
+            const timeLabel = this._formatTime(remainingSec);
+            container.innerHTML = `
+                <div class="sla-status">
+                    <div class="sla-status__ring">
+                        <svg class="sla-status__svg" viewBox="0 0 220 220">
+                            <circle class="sla-status__track" cx="110" cy="110" r="100"/>
+                            <circle class="sla-status__progress ${warning ? 'sla-status__progress--warning' : ''}"
+                                    cx="110" cy="110" r="100"
+                                    stroke-dashoffset="${dashOffset}"
+                                    id="slaProgressCircle"/>
+                        </svg>
+                        <div class="sla-status__center">
+                            <div class="sla-status__time" id="slaTimeValue">${timeLabel}</div>
+                            <div class="sla-status__label">${escapeHtml(text('sla.status_waiting', 'Ожидает прочтения'))}</div>
+                        </div>
+                    </div>
+                    <p class="sla-status__hint">${escapeHtml(text('sla.guarantee_hint', 'Гарантия: −5% промокод если не отвечу за час.'))}</p>
+                    ${this._renderActions()}
+                </div>
+            `;
+        }
+
+        container.querySelectorAll('[data-navigate]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                const target = btn.getAttribute('data-navigate');
+                if (target) Router.navigate(target);
+            });
+        });
+    },
+
+    _renderCodeBox(code) {
+        return `
+            <div class="sla-status__code-box">
+                <div class="sla-status__code-box-label">${escapeHtml(text('promo.your_code', 'Ваш промокод'))}</div>
+                <div class="sla-status__code">${escapeHtml(code)}</div>
+            </div>
+        `;
+    },
+
+    _renderActions() {
+        const homeLabel = text('menu.home', 'Главная');
+        const portfolioLabel = text('menu.portfolio', 'Портфолио');
+        return `
+            <div class="sla-status__actions">
+                <button class="sla-status__action-btn sla-status__action-btn--secondary" data-navigate="portfolio">${escapeHtml(portfolioLabel)}</button>
+                <button class="sla-status__action-btn" data-navigate="home">${escapeHtml(homeLabel)}</button>
+            </div>
+        `;
+    },
+
+    _startTick() {
+        if (this._tickInterval) clearInterval(this._tickInterval);
+        this._tickInterval = setInterval(() => this._tick(), 1000);
+    },
+
+    _startPolling() {
+        if (this._pollInterval) clearInterval(this._pollInterval);
+        this._pollInterval = setInterval(async () => {
+            const prevAnswered = this._state?.answered_at;
+            const prevBreached = this._state?.sla_breached;
+            await this._fetch();
+            if (!this._state) return;
+            const changed = this._state.answered_at !== prevAnswered || this._state.sla_breached !== prevBreached;
+            if (changed) {
+                this._renderStatus();
+                if (this._state.answered_at || this._state.sla_breached) {
+                    this.cleanup();
+                    try { tg?.HapticFeedback?.notificationOccurred('success'); } catch (e) {}
+                }
+            }
+        }, 10000);
+    },
+
+    _tick() {
+        if (!this._state) return;
+        const view = this._computeView();
+        if (view.kind !== 'countdown' && view.kind !== 'expired') return;
+        const timeEl = document.getElementById('slaTimeValue');
+        const progressEl = document.getElementById('slaProgressCircle');
+        if (!timeEl || !progressEl) return;
+        const CIRC = 628.32;
+        const remaining = view.kind === 'expired' ? 0 : view.remaining;
+        timeEl.textContent = this._formatTime(remaining);
+        progressEl.setAttribute('stroke-dashoffset', (CIRC * view.progress).toFixed(1));
+        if (view.kind !== 'expired' && remaining < 15 * 60) {
+            progressEl.classList.add('sla-status__progress--warning');
+        }
+        if (view.kind === 'expired') {
+            // Ждём polling который через API подтянет sla_breached=1 + code
+            progressEl.classList.remove('sla-status__progress--warning');
+            progressEl.classList.add('sla-status__progress--breached');
+        }
+    },
+};
+
 /* === Audit Page === */
 
 const SEO_CHECK_NAMES = {
@@ -3529,7 +3819,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const hash = window.location.hash;
         const caseMatch = hash.match(/^#case-(\d+)$/);
-        if (caseMatch && DATA.cases.length) {
+        const statusMatch = hash.match(/^#status-(\d+)$/);
+        if (statusMatch) {
+            Router.navigate('status');
+            const requestId = parseInt(statusMatch[1], 10);
+            if (!isNaN(requestId)) {
+                StatusPage.load(requestId);
+            }
+        } else if (caseMatch && DATA.cases.length) {
             const caseId = parseInt(caseMatch[1], 10);
             const idx = DATA.cases.findIndex(c => c.id === caseId);
             if (idx !== -1) {
@@ -3540,6 +3837,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             Router.navigate('home');
         }
+
+        window.addEventListener('hashchange', () => {
+            const newHash = window.location.hash;
+            const m = newHash.match(/^#status-(\d+)$/);
+            if (m) {
+                const rid = parseInt(m[1], 10);
+                if (!isNaN(rid)) {
+                    Router.navigate('status');
+                    StatusPage.load(rid);
+                }
+            }
+        });
 
         await nextFrame();
         await nextFrame();

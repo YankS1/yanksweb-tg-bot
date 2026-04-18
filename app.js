@@ -2806,7 +2806,6 @@ const StatusPage = {
                         </div>
                     </div>
                     <span class="sla-status__badge sla-status__badge--breached">${escapeHtml(text('sla.status_breached', 'Превышен срок'))}</span>
-                    <p class="sla-status__message">${escapeHtml(text('sla.compensated_code', 'Извините - не успели. Ваш промокод на скидку 5%:'))}</p>
                     ${this._renderCodeBox(view.code)}
                     ${this._renderActions()}
                 </div>

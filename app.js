@@ -71,8 +71,14 @@ if (tg) {
     });
 }
 
-function haptic() {
-    tg?.HapticFeedback?.impactOccurred('light');
+function haptic(type = 'light') {
+    try {
+        if (type === 'success' || type === 'error' || type === 'warning') {
+            tg?.HapticFeedback?.notificationOccurred?.(type);
+        } else {
+            tg?.HapticFeedback?.impactOccurred?.(type);
+        }
+    } catch (e) { /* noop */ }
 }
 
 function setBootStatus(message) {
@@ -1857,7 +1863,16 @@ const CasesPage = {
             }
         };
 
-        window.addEventListener('scroll', updateCircleSticky, { passive: true });
+        let _scrollTick = false;
+        const updateCircleStickyThrottled = () => {
+            if (_scrollTick) return;
+            _scrollTick = true;
+            requestAnimationFrame(() => {
+                updateCircleSticky();
+                _scrollTick = false;
+            });
+        };
+        window.addEventListener('scroll', updateCircleStickyThrottled, { passive: true });
         updateCircleSticky();
 
         this._sliderCleanup = () => {
@@ -1866,7 +1881,7 @@ const CasesPage = {
             document.removeEventListener('mouseup', onEnd);
             document.removeEventListener('touchend', onEnd);
             window.removeEventListener('resize', onResize);
-            window.removeEventListener('scroll', updateCircleSticky);
+            window.removeEventListener('scroll', updateCircleStickyThrottled);
             clearTimeout(resizeTimer);
         };
     },
@@ -2475,7 +2490,7 @@ const QuizPage = {
                         AppState.quiz._promoApplied = true;
                     }
                 } catch (e) {
-                    tg?.HapticFeedback?.notificationOccurred?.('error');
+                    haptic('error');
                     const msg = (typeof text === 'function')
                         ? text('miniapp_ui.promo_connection_error', 'Нет связи, попробуйте ещё раз')
                         : 'Нет связи, попробуйте ещё раз';
@@ -3740,16 +3755,16 @@ const PromosPage = {
                     };
                 }
                 showToast(text('miniapp_ui.promo_activated_toast', 'Промокод активирован!'), { type: 'success' });
-                tg?.HapticFeedback?.notificationOccurred?.('success');
+                haptic('success');
                 this._paint(document.getElementById('promos-list'), document.getElementById('promosEmpty'));
             } else {
                 showToast(data?.error || text('miniapp_ui.promo_activation_error', 'Ошибка активации'), { type: 'error' });
-                tg?.HapticFeedback?.notificationOccurred?.('error');
+                haptic('error');
                 resetBtn();
             }
         } catch (e) {
             showToast(text('miniapp_ui.promo_connection_error', 'Ошибка соединения'), { type: 'error' });
-            tg?.HapticFeedback?.notificationOccurred?.('error');
+            haptic('error');
             resetBtn();
         }
     },

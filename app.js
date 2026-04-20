@@ -627,19 +627,67 @@ const ChatPage = {
             if (this.els.scroll) this.els.scroll.scrollTop = this.els.scroll.scrollHeight;
         });
     },
+    _userAvatarContent() {
+        const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || {};
+        if (user.photo_url) {
+            return `<img src="${escapeHtml(user.photo_url)}" alt="" loading="lazy">`;
+        }
+        const first = (user.first_name || '').trim();
+        const letter = first ? first.charAt(0).toUpperCase() : 'Я';
+        return escapeHtml(letter);
+    },
+    _aiAvatarContent() {
+        return '<i data-lucide="sparkles"></i>';
+    },
     addMessage(role, body, opts = {}) {
+        // Предыдущая msg того же автора получает invisible-аватар, чтобы в серии
+        // отображался только один (у ближайшего к composer).
+        const lastSameRole = this.els.scroll.querySelector(
+            `:scope > .msg--${role}:last-child:not([data-typing="1"]) > .msg__avatar`
+        );
+        if (lastSameRole) lastSameRole.classList.add('msg__avatar--hidden');
+
         const wrap = document.createElement('div');
-        wrap.className = 'msg msg--' + role + (opts.error ? ' msg--error' : '');
+        let cls = 'msg msg--' + role;
+        if (opts.error) cls += ' msg--error';
+        if (opts.success) cls += ' msg--success';
+        wrap.className = cls;
+
+        const avatar = document.createElement('div');
+        avatar.className = 'msg__avatar';
+        avatar.innerHTML = role === 'ai' ? this._aiAvatarContent() : this._userAvatarContent();
+
         const bubble = document.createElement('div');
         bubble.className = 'msg__bubble';
         if (opts.typing) {
             bubble.innerHTML = '<div class="msg__typing"><span></span><span></span><span></span></div>';
             wrap.dataset.typing = '1';
         } else {
-            bubble.textContent = body;
+            const textSpan = document.createElement('span');
+            textSpan.className = 'msg__bubble-text';
+            textSpan.textContent = body;
+            if (opts.icon) {
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'msg__bubble-icon';
+                iconSpan.innerHTML = `<i data-lucide="${escapeHtml(opts.icon)}"></i>`;
+                bubble.appendChild(iconSpan);
+            }
+            bubble.appendChild(textSpan);
         }
-        wrap.appendChild(bubble);
+
+        // У AI аватар слева от пузырька, у user - справа.
+        if (role === 'user') {
+            wrap.appendChild(bubble);
+            wrap.appendChild(avatar);
+        } else {
+            wrap.appendChild(avatar);
+            wrap.appendChild(bubble);
+        }
+
         this.els.scroll.appendChild(wrap);
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            try { lucide.createIcons(); } catch (e) {}
+        }
         this._scrollBottom();
         if (!opts.typing) {
             AppState.chat.messages.push({ role, body, ready: !!opts.ready });
@@ -696,7 +744,7 @@ const ChatPage = {
                 key = 'ai.rate_limit';
                 fallback = 'Слишком много вопросов. Продолжим позже или напишите напрямую.';
             }
-            this.addMessage('ai', text(key, fallback), { error: true });
+            this.addMessage('ai', text(key, fallback), { error: true, icon: 'triangle-alert' });
         }
 
         AppState.chat.sending = false;
@@ -714,7 +762,8 @@ const ChatPage = {
         if (result.ok) {
             this.els.cta.hidden = true;
             this.addMessage('ai', text('chat.quote_sent',
-                'Заявка передана. Свяжусь с вами в ближайшее время.'));
+                'Заявка передана. Свяжусь с вами в ближайшее время.'),
+                { success: true, icon: 'check-circle-2' });
         } else {
             this.els.ctaBtn.disabled = false;
             showToast(text('common.error', 'Не удалось отправить'), { type: 'error' });
@@ -898,6 +947,29 @@ const HomePage = {
 
             const answered = !!req.answered_at;
             const breached = !!req.sla_breached;
+            const nowServer = data.server_time || (Date.now() / 1000);
+
+            // Автоскрытие: после answered прошло 30+ минут - баннер больше не актуален.
+            // Клиент уже увидел ответ в чате бота.
+            const AUTO_HIDE_AFTER_ANSWERED = 30 * 60; // 30 минут
+            if (answered && req.answered_at && (nowServer - req.answered_at) > AUTO_HIDE_AFTER_ANSWERED) {
+                banner.classList.add('active-request-banner--hidden');
+                return;
+            }
+
+            // Ручное скрытие - клиент нажал крестик. Храним в localStorage TTL на 30 мин.
+            const HIDE_TTL_MS = 30 * 60 * 1000;
+            const hideKey = `banner_hidden_${req.id}`;
+            try {
+                const hidden = parseInt(localStorage.getItem(hideKey) || '0', 10);
+                if (hidden && (Date.now() - hidden) < HIDE_TTL_MS) {
+                    banner.classList.add('active-request-banner--hidden');
+                    return;
+                } else if (hidden) {
+                    localStorage.removeItem(hideKey);
+                }
+            } catch (e) {}
+
             let icon = '⏱';
             let title = text('sla.status_waiting', 'Ожидает прочтения');
             let subtitle = text('sla.timer_hint', 'Отвечу за час');
@@ -910,11 +982,14 @@ const HomePage = {
                 title = text('sla.status_breached', 'Превышен срок');
                 subtitle = text('sla.compensated_code', 'Вам выдан промокод');
             } else if (req.sla_deadline) {
-                const now = (data.server_time || Date.now() / 1000);
-                const remaining = Math.max(0, req.sla_deadline - now);
+                const remaining = Math.max(0, req.sla_deadline - nowServer);
                 const mins = Math.ceil(remaining / 60);
                 subtitle = mins > 0 ? `~${mins} мин` : text('sla.guarantee_hint', '-5% если не отвечу');
             }
+
+            // Кнопку "Скрыть" показываем только после того как Даниил ответил -
+            // до этого момента баннер-таймер полезен и не стоит его прятать.
+            const showCloseBtn = answered;
 
             banner.innerHTML = `
                 <div class="active-request-banner__icon">${icon}</div>
@@ -922,10 +997,24 @@ const HomePage = {
                     <div class="active-request-banner__title">${escapeHtml(title)}</div>
                     <div class="active-request-banner__subtitle">${escapeHtml(subtitle)}</div>
                 </div>
-                <div class="active-request-banner__arrow">→</div>
+                ${showCloseBtn
+                    ? `<button class="active-request-banner__close" type="button" aria-label="${escapeHtml(text('sla.hide_banner', 'Скрыть'))}"><i data-lucide="x"></i></button>`
+                    : `<div class="active-request-banner__arrow">→</div>`}
             `;
             banner.classList.remove('active-request-banner--hidden');
-            banner.onclick = () => {
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                try { lucide.createIcons(); } catch (e) {}
+            }
+
+            banner.onclick = (ev) => {
+                // Клик на крестик - скрываем баннер на 30 мин, не переходим на Status.
+                if (ev.target && ev.target.closest('.active-request-banner__close')) {
+                    ev.stopPropagation();
+                    haptic();
+                    try { localStorage.setItem(hideKey, String(Date.now())); } catch (e) {}
+                    banner.classList.add('active-request-banner--hidden');
+                    return;
+                }
                 haptic();
                 Router.navigate('status');
                 StatusPage.load(req.id);

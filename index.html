@@ -152,6 +152,11 @@
                         <span class="quick-actions__icon quick-actions__icon--orange"><i data-lucide="search"></i></span>
                         <span class="quick-actions__label">Аудит сайта</span>
                     </button>
+                    <button class="quick-actions__btn quick-actions__btn--wide animate-in" data-navigate="chat">
+                        <span class="quick-actions__icon quick-actions__icon--pink"><i data-lucide="sparkles"></i></span>
+                        <span class="quick-actions__label">Спросить AI</span>
+                        <span class="quick-actions__badge">новое</span>
+                    </button>
                 </div>
 
                 <h2 class="section-title">Быстрый вопрос</h2>
@@ -492,6 +497,35 @@
                     <h2 class="page__title" data-i18n="sla.title">Статус обращения</h2>
                 </header>
                 <div id="statusContent"></div>
+            </section>
+
+            <!-- Chat (AI assistant) -->
+            <section class="page chat-page" data-page="chat">
+                <div class="chat">
+                    <header class="chat__header">
+                        <div class="chat__avatar"><i data-lucide="sparkles"></i></div>
+                        <div class="chat__meta">
+                            <div class="chat__title" data-i18n="chat.title">AI-помощник</div>
+                            <div class="chat__status" data-i18n="chat.status">обычно отвечает за 1-2 сек</div>
+                        </div>
+                    </header>
+                    <div class="chat__scroll" id="chatScroll" role="log" aria-live="polite"></div>
+                    <div class="chat__quote-cta" id="chatQuoteCta" hidden>
+                        <button class="btn btn--primary" id="chatQuoteBtn">
+                            <i data-lucide="send"></i>
+                            <span data-i18n="chat.submit_quote">Отправить на точный расчёт</span>
+                        </button>
+                    </div>
+                    <form class="chat__composer" id="chatComposer" autocomplete="off">
+                        <label class="sr-only" for="chatInput">Сообщение</label>
+                        <textarea class="chat__input" id="chatInput" rows="1"
+                                  placeholder="Опишите задачу..." maxlength="4000"
+                                  data-i18n-placeholder="chat.placeholder"></textarea>
+                        <button class="chat__send" id="chatSend" type="submit" aria-label="Отправить">
+                            <i data-lucide="arrow-up"></i>
+                        </button>
+                    </form>
+                </div>
             </section>
 
         </main>

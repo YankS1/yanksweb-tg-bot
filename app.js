@@ -446,6 +446,12 @@ const AppState = {
         filter: 'all',
     },
     favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+    chat: {
+        messages: [],
+        session_id: null,
+        sending: false,
+        rendered: false,
+    },
 };
 
 /* === Router === */
@@ -509,6 +515,7 @@ const Router = {
         if (pageId === 'portfolio') { PortfolioPage.render(AppState.portfolio?.filter); PortfolioPage.updateFavoritesCount(); }
         if (pageId === 'favorites') FavoritesPage.render();
         if (pageId === 'audit' && !AuditPage._running) AuditPage.renderForm(document.getElementById('auditBody'));
+        if (pageId === 'chat') ChatPage.render();
 
         lucide.createIcons();
 
@@ -562,6 +569,159 @@ function closeOverlay() {
     overlay.classList.remove('overlay--open');
     document.body.style.overflow = '';
 }
+
+/* === Chat (AI assistant) Page === */
+
+const ChatPage = {
+    els: {},
+    _inited: false,
+    init() {
+        if (this._inited) return;
+        const page = document.querySelector('[data-page="chat"]');
+        if (!page) return;
+        this.els = {
+            scroll: page.querySelector('#chatScroll'),
+            input: page.querySelector('#chatInput'),
+            send: page.querySelector('#chatSend'),
+            form: page.querySelector('#chatComposer'),
+            cta: page.querySelector('#chatQuoteCta'),
+            ctaBtn: page.querySelector('#chatQuoteBtn'),
+        };
+        if (!this.els.scroll || !this.els.input) return;
+
+        this.els.form.addEventListener('submit', e => {
+            e.preventDefault();
+            this.send();
+        });
+        this.els.input.addEventListener('input', () => this._autoresize());
+        this.els.input.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+                e.preventDefault();
+                this.send();
+            }
+        });
+        this.els.ctaBtn.addEventListener('click', () => this.submitQuote());
+        this._inited = true;
+    },
+    render() {
+        if (!this._inited) this.init();
+        if (!AppState.chat.rendered) {
+            this.addMessage('ai', text('chat.greeting',
+                'Привет! Я AI-помощник YankSWeb. Опишите задачу - какой сайт нужен, для какого бизнеса, какие есть референсы. Задам уточняющие вопросы и помогу прикинуть бюджет.'
+            ));
+            AppState.chat.rendered = true;
+        }
+        this._syncQuoteCta();
+        setTimeout(() => {
+            if (this.els.input) this.els.input.focus();
+        }, 300);
+    },
+    _autoresize() {
+        const i = this.els.input;
+        if (!i) return;
+        i.style.height = 'auto';
+        i.style.height = Math.min(i.scrollHeight, 120) + 'px';
+    },
+    _scrollBottom() {
+        requestAnimationFrame(() => {
+            if (this.els.scroll) this.els.scroll.scrollTop = this.els.scroll.scrollHeight;
+        });
+    },
+    addMessage(role, body, opts = {}) {
+        const wrap = document.createElement('div');
+        wrap.className = 'msg msg--' + role + (opts.error ? ' msg--error' : '');
+        const bubble = document.createElement('div');
+        bubble.className = 'msg__bubble';
+        if (opts.typing) {
+            bubble.innerHTML = '<div class="msg__typing"><span></span><span></span><span></span></div>';
+            wrap.dataset.typing = '1';
+        } else {
+            bubble.textContent = body;
+        }
+        wrap.appendChild(bubble);
+        this.els.scroll.appendChild(wrap);
+        this._scrollBottom();
+        if (!opts.typing) {
+            AppState.chat.messages.push({ role, body, ready: !!opts.ready });
+        }
+        return wrap;
+    },
+    _removeTyping() {
+        const t = this.els.scroll && this.els.scroll.querySelector('[data-typing="1"]');
+        if (t) t.remove();
+    },
+    _syncQuoteCta() {
+        if (!this.els.cta) return;
+        const hasReady = AppState.chat.messages.some(m => m.role === 'ai' && m.ready);
+        this.els.cta.hidden = !hasReady || !AppState.chat.session_id;
+    },
+    async send() {
+        if (AppState.chat.sending) return;
+        const msg = (this.els.input.value || '').trim();
+        if (!msg) return;
+        haptic();
+        AppState.chat.sending = true;
+        this.els.send.disabled = true;
+        this.els.input.disabled = true;
+        this.addMessage('user', msg);
+        this.els.input.value = '';
+        this._autoresize();
+        this.addMessage('ai', '', { typing: true });
+
+        const result = await submitToApi('ai-chat', {
+            text: msg,
+            session_id: AppState.chat.session_id,
+            lang: (typeof userLang !== 'undefined' && userLang) || (DATA && DATA.lang) || 'ru',
+        });
+        this._removeTyping();
+
+        if (result.ok) {
+            const d = result.data || {};
+            AppState.chat.session_id = d.session_id || AppState.chat.session_id;
+            this.addMessage('ai', d.text || '', { ready: !!d.ready_for_quote });
+            if (d.ready_for_quote) this._syncQuoteCta();
+        } else {
+            let key = 'common.error';
+            let fallback = 'Что-то пошло не так. Попробуйте ещё раз.';
+            if (result.error === 'blocked_injection') {
+                key = 'ai.blocked_injection';
+                fallback = 'Запрос не распознан. Опишите задачу обычными словами.';
+            } else if (result.error === 'retry_later') {
+                key = 'ai.retry_later';
+                fallback = 'AI временно перегружен, попробуйте через 5-15 минут.';
+            } else if (result.error === 'ai_disabled') {
+                key = 'ai.disabled';
+                fallback = 'AI сейчас недоступен, напишите напрямую.';
+            } else if (result.error && String(result.error).startsWith('rate_limit:')) {
+                key = 'ai.rate_limit';
+                fallback = 'Слишком много вопросов. Продолжим позже или напишите напрямую.';
+            }
+            this.addMessage('ai', text(key, fallback), { error: true });
+        }
+
+        AppState.chat.sending = false;
+        this.els.send.disabled = false;
+        this.els.input.disabled = false;
+        this.els.input.focus();
+    },
+    async submitQuote() {
+        if (!AppState.chat.session_id || this.els.ctaBtn.disabled) return;
+        haptic('success');
+        this.els.ctaBtn.disabled = true;
+        const result = await submitToApi('ai-chat-submit-quote', {
+            session_id: AppState.chat.session_id,
+        });
+        if (result.ok) {
+            this.els.cta.hidden = true;
+            this.addMessage('ai', text('chat.quote_sent',
+                'Заявка передана. Свяжусь с вами в ближайшее время.'));
+        } else {
+            this.els.ctaBtn.disabled = false;
+            showToast(text('common.error', 'Не удалось отправить'), { type: 'error' });
+        }
+    },
+};
+
 
 /* === Home Page === */
 
@@ -1681,9 +1841,9 @@ const CasesPage = {
                     <span class="ba-slider__label ba-slider__label--after">${escapeHtml(text('cases.after', 'После'))}</span>
                 </div>`;
         } else if (hasAfter) {
-            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_after)}" alt="${escapeHtml(c.title || '')}" loading="lazy"></div>`;
+            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_after)}" alt="${escapeHtml(c.title || '')}" width="800" height="450" loading="lazy"></div>`;
         } else if (hasBefore) {
-            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_before)}" alt="${escapeHtml(c.title || '')}" loading="lazy"></div>`;
+            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_before)}" alt="${escapeHtml(c.title || '')}" width="800" height="450" loading="lazy"></div>`;
         }
 
         const metaParts = [];
@@ -3952,6 +4112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         initMoreMenu();
         initOverlay();
         HomePage.init();
+        ChatPage.init();
         CalculatorPage.initEvents();
         AuditPage.init();
         ContactPage.init();

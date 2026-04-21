@@ -691,6 +691,15 @@ const ChatPage = {
         this._scrollBottom();
         if (!opts.typing) {
             AppState.chat.messages.push({ role, body, ready: !!opts.ready });
+            // Обрезаем историю в памяти + DOM чтобы при long-session не тормозил слабый Android.
+            const MAX_CHAT_MESSAGES = 200;
+            if (AppState.chat.messages.length > MAX_CHAT_MESSAGES) {
+                const extra = AppState.chat.messages.length - MAX_CHAT_MESSAGES;
+                AppState.chat.messages.splice(0, extra);
+                while (this.els.scroll.children.length > MAX_CHAT_MESSAGES && this.els.scroll.firstChild) {
+                    this.els.scroll.removeChild(this.els.scroll.firstChild);
+                }
+            }
         }
         return wrap;
     },
@@ -716,10 +725,11 @@ const ChatPage = {
         this._autoresize();
         this.addMessage('ai', '', { typing: true });
 
+        const chatLang = tg?.initDataUnsafe?.user?.language_code === 'en' ? 'en' : 'ru';
         const result = await submitToApi('ai-chat', {
             text: msg,
             session_id: AppState.chat.session_id,
-            lang: (typeof userLang !== 'undefined' && userLang) || (DATA && DATA.lang) || 'ru',
+            lang: chatLang,
         });
         this._removeTyping();
 
@@ -834,7 +844,7 @@ const HomePage = {
                 return;
             }
 
-            showRequestError('Не удалось отправить вопрос. Напишите мне напрямую, чтобы не потерять обращение.');
+            showRequestError(text('miniapp_ui.request_error_quick', 'Не удалось отправить вопрос. Напишите мне напрямую, чтобы не потерять обращение.'));
         });
 
         document.getElementById('quickQuestionInput').addEventListener('keydown', e => {
@@ -917,7 +927,7 @@ const HomePage = {
             if (!result.ok) {
                 submitBtn.textContent = text('waitlist.webapp_submit', 'Отправить бронь');
                 checkFormReady();
-                showRequestError('Не удалось отправить бронь. Напишите мне напрямую, и я сам зафиксирую дату.');
+                showRequestError(text('miniapp_ui.request_error_waitlist', 'Не удалось отправить бронь. Напишите мне напрямую, и я сам зафиксирую дату.'));
                 return;
             }
 
@@ -2323,7 +2333,7 @@ const QuizPage = {
             case 'contact':
                 content = this.renderTextStep(
                     text('quiz.q_contact', 'Как с вами связаться?'),
-                    'Имя, Telegram или телефон',
+                    text('quiz.placeholder_contact', 'Имя, Telegram или телефон'),
                     'contact'
                 );
                 break;
@@ -2331,7 +2341,7 @@ const QuizPage = {
             case 'about':
                 content = this.renderTextStep(
                     text('quiz.q_about', 'Расскажите о проекте'),
-                    'Чем занимается компания, для чего сайт...',
+                    text('quiz.placeholder_about', 'Чем занимается компания, для чего сайт...'),
                     'about'
                 );
                 break;
@@ -2350,7 +2360,7 @@ const QuizPage = {
             case 'examples':
                 content = this.renderTextStep(
                     text('quiz.q_examples', 'Есть сайты, которые нравятся? Пришлите ссылки или нажмите «Пропустить»:'),
-                    'Ссылки или описание (можно пропустить)',
+                    text('quiz.placeholder_examples', 'Ссылки или описание (можно пропустить)'),
                     'examples',
                     true
                 );
@@ -2359,7 +2369,7 @@ const QuizPage = {
             case 'budget_timeline':
                 content = this.renderTextStep(
                     text('quiz.q_budget_timeline', 'Бюджет и сроки'),
-                    'Примерный бюджет и когда нужен сайт',
+                    text('quiz.placeholder_budget_timeline', 'Примерный бюджет и когда нужен сайт'),
                     'budget_timeline'
                 );
                 break;
@@ -3604,7 +3614,7 @@ const AuditPage = {
                 </div>
                 <div class="audit-ssl ${sslOk ? 'audit-ssl--ok' : 'audit-ssl--bad'}">
                     <span class="audit-ssl__icon">${sslOk ? '\ud83d\udd12' : '\u26a0\ufe0f'}</span>
-                    <span class="audit-ssl__text">SSL: ${sslOk ? (ssl.days_left ? ssl.days_left + ' дн.' : 'OK') : 'Отсутствует'}</span>
+                    <span class="audit-ssl__text">SSL: ${sslOk ? (ssl.days_left ? interpolateText(text('audit_report.ssl_days_left', '{days} дн.'), { days: ssl.days_left }) : text('audit_report.ssl_installed', 'OK')) : text('audit_report.ssl_missing', 'Отсутствует')}</span>
                 </div>
                 ${issues.length ? `
                 <div class="audit-issues">
@@ -3634,7 +3644,7 @@ const AuditPage = {
                 <p class="audit-result__url">${escapeHtml(r.url || r.domain)}</p>
                 <div class="audit-ssl ${sslOk ? 'audit-ssl--ok' : 'audit-ssl--bad'}">
                     <span class="audit-ssl__icon">${sslOk ? '\ud83d\udd12' : '\u26a0\ufe0f'}</span>
-                    <span class="audit-ssl__text">SSL: ${sslOk ? 'OK' : 'Отсутствует'}</span>
+                    <span class="audit-ssl__text">SSL: ${sslOk ? text('audit_report.ssl_installed', 'OK') : text('audit_report.ssl_missing', 'Отсутствует')}</span>
                 </div>
                 <div class="audit-verdict audit-verdict--bad">
                     <div class="audit-verdict__icon">\u26a0\ufe0f</div>

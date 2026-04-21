@@ -285,6 +285,47 @@ function interpolateText(template, values = {}) {
     return result;
 }
 
+/* Язык пользователя Telegram (ru по умолчанию). */
+function getUserLang() {
+    try {
+        const lc = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe
+            && Telegram.WebApp.initDataUnsafe.user && Telegram.WebApp.initDataUnsafe.user.language_code) || '';
+        return String(lc).toLowerCase().startsWith('en') ? 'en' : 'ru';
+    } catch (e) { return 'ru'; }
+}
+
+/* Словоформа по числу: в EN - one/other, в RU - one/few/many.
+   text(key, fb) ищет ключ в текущем языке. Если ключа нет - fb.
+   Вызов: pickPlural(n, 'promo.days_one', 'promo.days_few', 'promo.days_many',
+                     { one: 'день', few: 'дня', many: 'дней', en: 'day', enMany: 'days' }) */
+function pickPlural(n, keyOne, keyFew, keyMany, fallbacks) {
+    n = Math.abs(Math.floor(n));
+    const fb = fallbacks || {};
+    if (getUserLang() === 'en') {
+        return n === 1 ? text(keyOne, fb.en || '') : text(keyMany, fb.enMany || fb.en || '');
+    }
+    const mod10 = n % 10;
+    const mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return text(keyOne, fb.one || '');
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return text(keyFew, fb.few || '');
+    return text(keyMany, fb.many || '');
+}
+
+/* "2h 30m" / "2 ч 30 мин" / "30m" / "30 мин" - формат времени.
+   hourFmt/minFmt - шаблоны, interpolated {h}/{m}. */
+function formatHourMin(seconds) {
+    const total = Math.max(0, Math.floor(seconds || 0));
+    const hours = Math.floor(total / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    if (hours > 0 && minutes > 0) {
+        return interpolateText(text('common.time_hm', '{h} ч {m} мин'), { h: hours, m: minutes });
+    }
+    if (hours > 0) {
+        return interpolateText(text('common.time_h', '{h} ч'), { h: hours });
+    }
+    return interpolateText(text('common.time_m', '{m} мин'), { m: Math.max(1, minutes) });
+}
+
 function leadSuccessCopy() {
     const title = text('miniapp_ui.lead_thank_title', 'Спасибо, ваша заявка принята!');
     const body = text('miniapp_ui.lead_thank_body', 'Я свяжусь с вами в течение 15 минут для уточнения деталей.');
@@ -633,7 +674,7 @@ const ChatPage = {
             return `<img src="${escapeHtml(user.photo_url)}" alt="" loading="lazy">`;
         }
         const first = (user.first_name || '').trim();
-        const letter = first ? first.charAt(0).toUpperCase() : 'Я';
+        const letter = first ? first.charAt(0).toUpperCase() : (getUserLang() === 'en' ? 'U' : 'Я');
         return escapeHtml(letter);
     },
     _aiAvatarContent() {
@@ -739,20 +780,21 @@ const ChatPage = {
             this.addMessage('ai', d.text || '', { ready: !!d.ready_for_quote });
             if (d.ready_for_quote) this._syncQuoteCta();
         } else {
+            const isEn = getUserLang() === 'en';
             let key = 'common.error';
-            let fallback = 'Что-то пошло не так. Попробуйте ещё раз.';
+            let fallback = isEn ? 'Something went wrong. Please try again.' : 'Что-то пошло не так. Попробуйте ещё раз.';
             if (result.error === 'blocked_injection') {
                 key = 'ai.blocked_injection';
-                fallback = 'Запрос не распознан. Опишите задачу обычными словами.';
+                fallback = isEn ? "Request not recognized. Describe the task in plain words." : 'Запрос не распознан. Опишите задачу обычными словами.';
             } else if (result.error === 'retry_later') {
                 key = 'ai.retry_later';
-                fallback = 'AI временно перегружен, попробуйте через 5-15 минут.';
+                fallback = isEn ? 'AI is temporarily overloaded, try again in 5-15 minutes.' : 'AI временно перегружен, попробуйте через 5-15 минут.';
             } else if (result.error === 'ai_disabled') {
                 key = 'ai.disabled';
-                fallback = 'AI сейчас недоступен, напишите напрямую.';
+                fallback = isEn ? 'AI is unavailable right now, message me directly.' : 'AI сейчас недоступен, напишите напрямую.';
             } else if (result.error && String(result.error).startsWith('rate_limit:')) {
                 key = 'ai.rate_limit';
-                fallback = 'Слишком много вопросов. Продолжим позже или напишите напрямую.';
+                fallback = isEn ? "Too many questions. Let's continue later or message me directly." : 'Слишком много вопросов. Продолжим позже или напишите напрямую.';
             }
             this.addMessage('ai', text(key, fallback), { error: true, icon: 'triangle-alert' });
         }
@@ -1201,9 +1243,13 @@ const ServicesPage = {
     },
 
     tariffsWord(n) {
-        if (n === 1) return 'тариф';
-        if (n >= 2 && n <= 4) return 'тарифа';
-        return 'тарифов';
+        return pickPlural(
+            n,
+            'miniapp_ui.plural_tariff_one',
+            'miniapp_ui.plural_tariff_few',
+            'miniapp_ui.plural_tariff_many',
+            { one: 'тариф', few: 'тарифа', many: 'тарифов', en: 'tariff', enMany: 'tariffs' }
+        );
     },
 };
 
@@ -1484,14 +1530,14 @@ const CalculatorPage = {
         setCalcText('[data-calc-step="5"] .calc-step__subtitle', text('calculator.step5_subtitle', 'Насколько срочно?'));
 
         const typeFallbacks = {
-            landing: ['Лендинг', 'Одностраничный сайт'],
-            card: ['Сайт-визитка', '2-5 страниц'],
-            corporate: ['Корпоративный сайт', 'Полноценный сайт компании'],
-            shop: ['Интернет-магазин', 'Каталог, корзина, оплата'],
+            landing: { title: 'Лендинг', hint: 'Одностраничный сайт', titleKey: 'calculator.type_landing', hintKey: 'calculator.type_landing_hint' },
+            card: { title: 'Сайт-визитка', hint: '2-5 страниц', titleKey: 'calculator.type_card', hintKey: 'calculator.type_card_hint' },
+            corporate: { title: 'Корпоративный сайт', hint: 'Полноценный сайт компании', titleKey: 'calculator.type_corporate', hintKey: 'calculator.type_corporate_hint' },
+            shop: { title: 'Интернет-магазин', hint: 'Каталог, корзина, оплата', titleKey: 'calculator.type_shop', hintKey: 'calculator.type_shop_hint' },
         };
-        Object.entries(typeFallbacks).forEach(([type, [titleFallback, hintFallback]]) => {
-            setCalcText(`[data-type="${type}"] .option__text strong`, this.getTypeLabel(type) || titleFallback);
-            setCalcText(`[data-type="${type}"] .option__text small`, text(this.TYPE_HINT_KEYS[type], hintFallback));
+        Object.entries(typeFallbacks).forEach(([type, cfg]) => {
+            setCalcText(`[data-type="${type}"] .option__text strong`, this.getTypeLabel(type) || text(cfg.titleKey, cfg.title));
+            setCalcText(`[data-type="${type}"] .option__text small`, text(this.TYPE_HINT_KEYS[type] || cfg.hintKey, cfg.hint));
             setCalcText(
                 `[data-type="${type}"] .option__price`,
                 `${text('calculator.from_prefix', 'от')} ${formatCompactRub(this.getTypeBasePrice(type))}`,
@@ -1499,22 +1545,22 @@ const CalculatorPage = {
         });
 
         const pageFallbacks = {
-            '1_3': '1-3 страницы',
-            '4_7': '4-7 страниц',
-            '8_15': '8-15 страниц',
-            '15plus': '15+ страниц',
+            '1_3': { key: 'calculator.pages_1_3', fb: '1-3 страницы' },
+            '4_7': { key: 'calculator.pages_4_7', fb: '4-7 страниц' },
+            '8_15': { key: 'calculator.pages_8_15', fb: '8-15 страниц' },
+            '15plus': { key: 'calculator.pages_15plus', fb: '15+ страниц' },
         };
-        Object.entries(pageFallbacks).forEach(([value, fallback]) => {
-            setCalcText(`[data-pages="${value}"] .option__text strong`, this.getPagesLabel(value) || fallback);
+        Object.entries(pageFallbacks).forEach(([value, cfg]) => {
+            setCalcText(`[data-pages="${value}"] .option__text strong`, this.getPagesLabel(value) || text(cfg.key, cfg.fb));
         });
 
         const designFallbacks = {
-            ready: 'Есть готовый макет',
-            examples: 'Есть примеры / референсы',
-            needed: 'Нужен дизайн с нуля',
+            ready: { key: 'calculator.design_ready', fb: 'Есть готовый макет' },
+            examples: { key: 'calculator.design_examples', fb: 'Есть примеры / референсы' },
+            needed: { key: 'calculator.design_needed', fb: 'Нужен дизайн с нуля' },
         };
-        Object.entries(designFallbacks).forEach(([value, fallback]) => {
-            setCalcText(`[data-design="${value}"] .option__text strong`, this.getDesignLabel(value) || fallback);
+        Object.entries(designFallbacks).forEach(([value, cfg]) => {
+            setCalcText(`[data-design="${value}"] .option__text strong`, this.getDesignLabel(value) || text(cfg.key, cfg.fb));
         });
 
         Object.entries(this.FEATURE_TEXT_KEYS).forEach(([value, key]) => {
@@ -1523,8 +1569,8 @@ const CalculatorPage = {
 
         setCalcText('.calc-step__next[data-next]', text('common.next_label', 'Далее'));
 
-        setCalcText('[data-timeline="standard"] .option__text strong', this.getTimelineLabel('standard') || 'Стандартные сроки');
-        setCalcText('[data-timeline="urgent"] .option__text strong', this.getTimelineLabel('urgent') || 'Срочно (1-2 недели)');
+        setCalcText('[data-timeline="standard"] .option__text strong', this.getTimelineLabel('standard') || text('calculator.timeline_standard', 'Стандартные сроки'));
+        setCalcText('[data-timeline="urgent"] .option__text strong', this.getTimelineLabel('urgent') || text('calculator.timeline_urgent', 'Срочно (1-2 недели)'));
         const urgentMultiplier = DATA.calculator?.urgencyMultiplier?.urgent || 1.5;
         setCalcText(
             '[data-timeline="urgent"] .option__text small',
@@ -2750,9 +2796,11 @@ const QuizPage = {
                     }
                 } catch (e) {
                     haptic('error');
+                    const isEn = (typeof getUserLang === 'function') && getUserLang() === 'en';
+                    const fb = isEn ? 'Connection lost, please try again' : 'Нет связи, попробуйте ещё раз';
                     const msg = (typeof text === 'function')
-                        ? text('miniapp_ui.promo_connection_error', 'Нет связи, попробуйте ещё раз')
-                        : 'Нет связи, попробуйте ещё раз';
+                        ? text('miniapp_ui.promo_connection_error', fb)
+                        : fb;
                     showToast(msg, { type: 'error' });
                 }
             }
@@ -2888,7 +2936,7 @@ const FavoritesPage = {
 
         const items = DATA.portfolio.filter(p => favIds.includes(p.id));
         if (!items.length) {
-            container.innerHTML = `<div class="empty-state"><p>Работы были удалены из портфолио</p></div>`;
+            container.innerHTML = `<div class="empty-state"><p>${escapeHtml(text('miniapp_ui.fav_deleted', 'Работы были удалены из портфолио'))}</p></div>`;
             return;
         }
 
@@ -3204,16 +3252,8 @@ const StatusPage = {
         const now = this._now();
         const left = Math.max(0, Math.floor(hideAt - now));
         if (left <= 0) return text('sla.hide_soon', 'Скроется скоро');
-        const hours = Math.floor(left / 3600);
-        const minutes = Math.floor((left % 3600) / 60);
         const template = text('sla.hide_timer', 'Меню закроется через {time}');
-        let timeStr;
-        if (hours >= 1) {
-            timeStr = minutes > 0 ? `${hours} ч ${minutes} мин` : `${hours} ч`;
-        } else {
-            timeStr = `${Math.max(1, minutes)} мин`;
-        }
-        return template.replace('{time}', timeStr);
+        return template.replace('{time}', formatHourMin(left));
     },
 
     _renderActions() {
@@ -3278,7 +3318,9 @@ const StatusPage = {
 
 /* === Audit Page === */
 
-const SEO_CHECK_NAMES = {
+/* Fallback-словарь SEO-меток. В проде приходят через text() из БД
+   (ключи seo_report.check_name_*). Эти значения - на случай если БД недоступна. */
+const SEO_CHECK_FALLBACKS = {
     title: 'Title страницы',
     meta_description: 'Meta Description',
     h1: 'Заголовок H1',
@@ -3303,7 +3345,11 @@ const SEO_CHECK_NAMES = {
     lang_charset: 'Lang и Charset',
 };
 
-const SEO_CATEGORIES = {
+function seoCheckName(id) {
+    return text(`seo_report.check_name_${id}`, SEO_CHECK_FALLBACKS[id] || id);
+}
+
+const SEO_CATEGORY_FALLBACKS = {
     meta: 'Мета-теги',
     security: 'Безопасность',
     indexing: 'Индексация',
@@ -3311,6 +3357,10 @@ const SEO_CATEGORIES = {
     performance: 'Производительность',
     legal: 'Юридическое',
 };
+
+function seoCategoryName(cat) {
+    return text(`seo_report.category_${cat}`, SEO_CATEGORY_FALLBACKS[cat] || cat);
+}
 
 const AuditPage = {
     _running: false,
@@ -3379,7 +3429,7 @@ const AuditPage = {
         if (result.ok && result.checks) {
             this.renderSeoResult(body, result);
         } else {
-            this._renderError(body, result.error || 'Ошибка, попробуйте позже');
+            this._renderError(body, result.error || text('common.error_try_later', 'Ошибка, попробуйте позже'));
         }
     },
 
@@ -3415,7 +3465,7 @@ const AuditPage = {
                 <div class="seo-check">
                     <span class="seo-check__dot seo-check__dot--${c.status}"></span>
                     <div class="seo-check__info">
-                        <div class="seo-check__name">${escapeHtml(SEO_CHECK_NAMES[c.id] || c.id)}</div>
+                        <div class="seo-check__name">${escapeHtml(seoCheckName(c.id))}</div>
                         ${c.detail ? `<div class="seo-check__detail">${escapeHtml(c.detail)}</div>` : ''}
                     </div>
                 </div>
@@ -3472,7 +3522,7 @@ const AuditPage = {
                     </svg>
                     <div class="seo-score__value seo-score__value--${color}">${passed}/${total}</div>
                 </div>
-                <div class="seo-score__label">${data.pages_crawled ? `Проверено страниц: ${data.pages_crawled}` : 'SEO-оценка'}</div>
+                <div class="seo-score__label">${data.pages_crawled ? escapeHtml(interpolateText(text('miniapp_ui.seo_pages_checked_count', 'Проверено страниц: {n}'), { n: data.pages_crawled })) : escapeHtml(text('miniapp_ui.seo_score_label', 'SEO-оценка'))}</div>
                 <div class="seo-score__url">${escapeHtml(data.url || data.domain || '')}</div>
             </div>
             ${categoriesHtml}
@@ -3556,6 +3606,8 @@ const AuditPage = {
     scoreColor(s) { return s >= 90 ? 'green' : s >= 50 ? 'yellow' : 'red'; },
 
     issueText(key) {
+        /* Fallback-значения если ключей нет в БД. В проде tесты приходят через text().
+           Ключи в audit_report.* должны быть в bot_texts на ru + en. */
         const m = {
             issue_render_blocking: 'Блокирующие ресурсы',
             issue_optimized_images: 'Изображения не оптимизированы',
@@ -3576,7 +3628,7 @@ const AuditPage = {
             issue_image_alt: 'Нет alt у изображений',
             issue_viewport: 'Нет viewport meta',
         };
-        return m[key] || key;
+        return text(`audit_report.${key}`, m[key] || key);
     },
 
     renderScoreCard(score, label) {
@@ -3687,7 +3739,7 @@ const AuditPage = {
     renderForm(container) {
         if (!container) container = document.getElementById('auditBody');
         const descText = this._mode === 'seo'
-            ? 'Проверю SEO-оптимизацию: мета-теги, индексация, безопасность, структура и юридические требования.'
+            ? text('seo_audit.desc', 'Проверю SEO-оптимизацию: мета-теги, индексация, безопасность, структура и юридические требования.')
             : text('audit.desc', 'Укажите адрес сайта - проанализирую скорость, SEO, SSL и мобильность.');
         container.innerHTML = `
             <p class="audit__desc" id="auditDesc">${escapeHtml(descText)}</p>
@@ -3715,31 +3767,31 @@ const ContactPage = {
 /* === Promos Page === */
 
 function pluralDays(n) {
-    if (n % 10 === 1 && n % 100 !== 11) return 'день';
-    if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'дня';
-    return 'дней';
+    return pickPlural(
+        n,
+        'common.days_one', 'common.days_few', 'common.days_many',
+        { one: 'день', few: 'дня', many: 'дней', en: 'day', enMany: 'days' }
+    );
 }
 
 function formatExpiresDate(isoString) {
     if (!isoString) return '';
     const d = new Date(isoString);
     if (isNaN(d.getTime())) return '';
-    return d.toLocaleString('ru-RU', {
+    const locale = getUserLang() === 'en' ? 'en-US' : 'ru-RU';
+    return d.toLocaleString(locale, {
         day: '2-digit', month: '2-digit', year: 'numeric',
         hour: '2-digit', minute: '2-digit'
     });
 }
 
 function formatTimeLeft(seconds) {
-    if (!seconds || seconds <= 0) return 'Истекло';
+    if (!seconds || seconds <= 0) return text('common.expired', 'Истекло');
     if (seconds >= 86400) {
         const days = Math.floor(seconds / 86400);
         return `${days} ${pluralDays(days)}`;
     }
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    if (hours > 0) return `${hours} ч ${minutes} мин`;
-    return `${minutes} мин`;
+    return formatHourMin(seconds);
 }
 
 function getPromoState(promo) {

@@ -385,10 +385,10 @@ const DATA = {
   calculator: {
     usdRate: 85,
     basePrices: {
-      landing: 10000,
-      corporate: 25000,
-      shop: 25000,
-      card: 10000
+      landing: 25000,
+      corporate: 55000,
+      shop: 70000,
+      card: 15000
     },
     pageMultipliers: {
       "1_3": 1.0,
@@ -402,12 +402,12 @@ const DATA = {
       examples: 1.2
     },
     featureCosts: {
-      forms: 2000,
-      crm: 5000,
-      catalog: 8000,
-      payment: 5000,
-      i18n: 5000,
-      seo: 3000
+      forms: 3000,
+      crm: 8000,
+      catalog: 12000,
+      payment: 8000,
+      i18n: 8000,
+      seo: 5000
     },
     urgencyMultiplier: {
       standard: 1.0,

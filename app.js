@@ -486,7 +486,13 @@ const AppState = {
     portfolio: {
         filter: 'all',
     },
-    favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
+    favorites: (() => {
+        try {
+            return JSON.parse(localStorage.getItem('favorites') || '[]');
+        } catch (e) {
+            return [];
+        }
+    })(),
     chat: {
         messages: [],
         session_id: null,
@@ -642,6 +648,17 @@ const ChatPage = {
             }
         });
         this.els.ctaBtn.addEventListener('click', () => this.submitQuote());
+
+        // iOS: при открытии клавиатуры viewport меняется - обновляем CSS-переменную
+        // через viewportStableHeight чтобы composer не уезжал за клавиатуру (M12 fix).
+        const updateChatHeight = () => {
+            const h = window.Telegram?.WebApp?.viewportStableHeight || window.innerHeight;
+            document.documentElement.style.setProperty('--chat-viewport-height', h + 'px');
+        };
+        updateChatHeight();
+        try { window.Telegram?.WebApp?.onEvent?.('viewportChanged', updateChatHeight); } catch (e) {}
+        window.addEventListener('resize', updateChatHeight);
+
         this._inited = true;
     },
     render() {
@@ -987,7 +1004,7 @@ const HomePage = {
         try {
             const initData = tg?.initData || '';
             if (!initData) { banner.classList.add('active-request-banner--hidden'); return; }
-            const resp = await fetch(`/api/my-active-request?initData=${encodeURIComponent(initData)}`, {
+            const resp = await fetch(`${API_URL}/api/my-active-request?initData=${encodeURIComponent(initData)}`, {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' },
             });
@@ -1270,7 +1287,7 @@ function toggleFavorite(id) {
     } else {
         AppState.favorites.push(id);
     }
-    localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+    try { localStorage.setItem('favorites', JSON.stringify(AppState.favorites)); } catch (e) {}
     PortfolioPage.updateFavoritesCount();
 }
 
@@ -2966,7 +2983,7 @@ const FavoritesPage = {
                 const id = parseInt(btn.dataset.removeFav, 10);
                 if (isNaN(id)) return;
                 AppState.favorites = AppState.favorites.filter(f => f !== id);
-                localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+                try { localStorage.setItem('favorites', JSON.stringify(AppState.favorites)); } catch (e) {}
                 PortfolioPage?.updateFavoritesCount?.();
                 this.render();
             });
@@ -3010,7 +3027,7 @@ const StatusPage = {
     async _fetch() {
         try {
             const initData = tg?.initData || '';
-            const resp = await fetch(`/api/request-status/${this._requestId}?initData=${encodeURIComponent(initData)}`, {
+            const resp = await fetch(`${API_URL}/api/request-status/${this._requestId}?initData=${encodeURIComponent(initData)}`, {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' },
             });
@@ -3457,9 +3474,9 @@ const AuditPage = {
             const warnCount = checks.filter(c => c.status === 'warn').length;
 
             let badgeHtml = '';
-            if (failCount) badgeHtml += `<span style="color:var(--destructive)">${failCount}</span>`;
-            if (warnCount) badgeHtml += `<span style="color:#eab308">${warnCount}</span>`;
-            badgeHtml += `<span style="color:#22c55e">${passCount}</span>`;
+            if (failCount) badgeHtml += `<span class="seo-badge seo-badge--fail">${failCount}</span>`;
+            if (warnCount) badgeHtml += `<span class="seo-badge seo-badge--warn">${warnCount}</span>`;
+            badgeHtml += `<span class="seo-badge seo-badge--pass">${passCount}</span>`;
 
             const checksHtml = checks.map(c => `
                 <div class="seo-check">
@@ -4273,7 +4290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (portfolioList.length) {
             const validIds = portfolioList.map(p => p.id);
             AppState.favorites = AppState.favorites.filter(id => validIds.includes(id));
-            localStorage.setItem('favorites', JSON.stringify(AppState.favorites));
+            try { localStorage.setItem('favorites', JSON.stringify(AppState.favorites)); } catch (e) {}
         }
 
         setBootStatus(text('miniapp_ui.loader_almost', 'Почти готово...'));

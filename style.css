@@ -3672,12 +3672,29 @@ body.app-ready #app {
 
 /* === DESKTOP CONSTRAINT === */
 
-@media (min-width: 600px) {
+#app {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+@media (max-width: 599px) {
     #app {
-        max-width: 480px;
-        margin: 0 auto;
+        max-width: none;
+        margin: 0;
     }
 }
+
+/* === SEO AUDIT BADGES === */
+
+.seo-badge {
+    display: inline-block;
+    margin-left: 4px;
+    font-weight: 600;
+}
+
+.seo-badge--fail { color: var(--destructive); }
+.seo-badge--warn { color: #eab308; }
+.seo-badge--pass { color: #22c55e; }
 
 /* === ACTIVE REQUEST BANNER (home) === */
 
@@ -4011,6 +4028,9 @@ body.app-ready #app {
     position: fixed;
     top: 0; right: 0; bottom: 0; left: 0;
     inset: 0;
+    /* На iOS при открытии клавиатуры viewport меняется.
+       Telegram даёт viewportStableHeight - JS подставляет её в CSS-переменную. */
+    height: var(--chat-viewport-height, 100vh);
     padding-bottom: calc(var(--tab-height) + var(--safe-bottom));
 }
 

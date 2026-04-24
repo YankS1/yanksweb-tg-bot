@@ -328,7 +328,7 @@ function formatHourMin(seconds) {
 
 function leadSuccessCopy() {
     const title = text('miniapp_ui.lead_thank_title', 'Спасибо, ваша заявка принята!');
-    const body = text('miniapp_ui.lead_thank_body', 'Я свяжусь с вами в течение 15 минут для уточнения деталей.');
+    const body = text('miniapp_ui.lead_thank_body', 'Свяжусь с вами в ближайшее время для уточнения деталей.');
     return {
         title,
         body,
@@ -3204,7 +3204,7 @@ const StatusPage = {
                             <div class="sla-status__label">${escapeHtml(text('sla.status_waiting', 'Ожидает прочтения'))}</div>
                         </div>
                     </div>
-                    <p class="sla-status__hint">${escapeHtml(text('sla.guarantee_hint', 'Гарантия: −5% промокод если не отвечу за час.'))}</p>
+                    <p class="sla-status__hint">${escapeHtml(text('sla.guarantee_hint', 'Гарантия: -5% промокод если не отвечу за час.'))}</p>
                     ${this._renderActions()}
                 </div>
             `;

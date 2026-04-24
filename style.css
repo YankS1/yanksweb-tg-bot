@@ -510,13 +510,17 @@ body.app-ready #app {
     background: var(--secondary-bg);
     border: 1.5px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius);
-    outline: none;
-    transition: border-color 0.3s ease, background 0.3s ease;
+    transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .quick-question__input:focus {
+    outline: none;
     border-color: var(--accent);
     background: var(--bg);
+}
+
+.quick-question__input:focus-visible {
+    box-shadow: 0 0 0 2px rgba(36, 129, 204, 0.35);
 }
 
 .quick-question__input::placeholder {
@@ -685,12 +689,16 @@ body.app-ready #app {
     border-radius: var(--radius);
     font-size: 15px;
     color: var(--text);
-    outline: none;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .booking-form__input:focus {
+    outline: none;
     border-color: var(--accent);
+}
+
+.booking-form__input:focus-visible {
+    box-shadow: 0 0 0 2px rgba(36, 129, 204, 0.35);
 }
 
 .booking-form__input::placeholder {
@@ -3714,14 +3722,26 @@ body.app-ready #app {
     background: linear-gradient(135deg, rgba(36, 129, 204, 0.12), rgba(36, 129, 204, 0.04));
     border: 1px solid rgba(36, 129, 204, 0.28);
     cursor: pointer;
-    transition: transform 0.15s ease, opacity 0.2s ease, background 0.2s ease;
+    transition: transform 0.15s ease, opacity 0.25s ease, visibility 0.25s ease, background 0.2s ease, max-height 0.25s ease, margin 0.25s ease, padding 0.25s ease;
     color: var(--tg-theme-text-color, inherit);
     text-align: left;
     width: 100%;
     font: inherit;
+    opacity: 1;
+    visibility: visible;
+    max-height: 120px;
+    overflow: hidden;
 }
 
-.active-request-banner--hidden { display: none; }
+.active-request-banner--hidden {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    pointer-events: none;
+}
 .active-request-banner:active { transform: scale(0.98); }
 .active-request-banner:hover { background: linear-gradient(135deg, rgba(36, 129, 204, 0.18), rgba(36, 129, 204, 0.06)); }
 

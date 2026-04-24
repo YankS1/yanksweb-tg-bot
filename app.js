@@ -3796,13 +3796,13 @@ const STACK_GROUPS = [
     },
     {
         icon: 'layout', color: 'purple',
-        titleRu: 'Frontend-фреймворки', titleEn: 'Frontend frameworks',
-        items: ['React', 'Vue', 'Next.js', 'Nuxt', 'Vite'],
+        titleRu: 'Frontend', titleEn: 'Frontend',
+        items: ['React', 'Vue', 'Next.js', 'Nuxt', 'Vite', 'Redux'],
     },
     {
         icon: 'palette', color: 'pink',
         titleRu: 'Стили и UI', titleEn: 'Styles & UI',
-        items: ['Tailwind', 'SCSS / Sass', 'styled-components', 'CSS Modules', 'Redux'],
+        items: ['Tailwind', 'SCSS / Sass', 'styled-components', 'CSS Modules'],
     },
     {
         icon: 'server', color: 'green',
@@ -3812,12 +3812,12 @@ const STACK_GROUPS = [
     {
         icon: 'database', color: 'orange',
         titleRu: 'Базы данных', titleEn: 'Databases',
-        items: ['MySQL', 'PostgreSQL', 'SQLite'],
+        items: ['MySQL', 'SQLite'],
     },
     {
         icon: 'package', color: 'cyan',
         titleRu: 'CMS', titleEn: 'CMS',
-        items: ['WordPress', 'WooCommerce', 'Bitrix', 'ModX', 'Webflow', 'OpenCart', 'Joomla', 'Drupal'],
+        items: ['WordPress', 'WooCommerce', 'Bitrix', 'MODX', 'Webflow', 'OpenCart', 'Joomla', 'Drupal'],
     },
     {
         icon: 'terminal', color: 'red',
@@ -3827,7 +3827,7 @@ const STACK_GROUPS = [
     {
         icon: 'cloud', color: 'blue',
         titleRu: 'Хостинг', titleEn: 'Hosting',
-        items: ['Vercel', 'Netlify', 'VPS под ключ'],
+        items: ['Vercel', 'Netlify'],
     },
 ];
 

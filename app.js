@@ -396,6 +396,10 @@ function applyStaticTexts() {
     setText('[data-page="audit"] .page__title', text('audit.title', 'Аудит сайта'));
     setText('[data-page="contact"] .page__title', labelText('contact.title', 'Написать напрямую'));
     setText('[data-page="promos"] .page__title', text('promo.title', 'Акции'));
+    const _isEnStack = getUserLang() === 'en';
+    setText('[data-page="stack"] .page__title', text('stack.title', _isEnStack ? 'Tech stack' : 'Стек технологий'));
+    setText('[data-page="stack"] .stack__intro', text('stack.intro', _isEnStack ? "What I work with on projects. Don't see your stack? Just ask - I've probably used it too." : 'С чем работаю и что использую в проектах. Если не нашли свой вариант - напишите, скорее всего тоже знаком.'));
+    setText('[data-navigate="stack"] .quick-actions__label', text('miniapp.tab.stack', _isEnStack ? 'Technologies' : 'Технологии'));
 
     setText('[data-navigate="services"] .quick-actions__label', text('miniapp.qa.services', 'Услуги'));
     setText('[data-navigate="calculator"] .quick-actions__label', text('miniapp.qa.calculator', 'Расчет'));
@@ -559,6 +563,7 @@ const Router = {
         if (pageId === 'cases') CasesPage.render();
         if (pageId === 'faq') FaqPage.render();
         if (pageId === 'promos') PromosPage.render();
+        if (pageId === 'stack') StackPage.render();
         if (pageId === 'portfolio') { PortfolioPage.render(AppState.portfolio?.filter); PortfolioPage.updateFavoritesCount(); }
         if (pageId === 'favorites') FavoritesPage.render();
         if (pageId === 'audit' && !AuditPage._running) AuditPage.renderForm(document.getElementById('auditBody'));
@@ -3781,6 +3786,86 @@ const ContactPage = {
     },
 };
 
+/* === Stack Page === */
+
+const STACK_GROUPS = [
+    {
+        icon: 'code-2', color: 'blue',
+        titleRu: 'Языки программирования', titleEn: 'Languages',
+        items: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'PHP', 'Python'],
+    },
+    {
+        icon: 'layout', color: 'purple',
+        titleRu: 'Frontend-фреймворки', titleEn: 'Frontend frameworks',
+        items: ['React', 'Vue', 'Next.js', 'Nuxt', 'Vite'],
+    },
+    {
+        icon: 'palette', color: 'pink',
+        titleRu: 'Стили и UI', titleEn: 'Styles & UI',
+        items: ['Tailwind', 'SCSS / Sass', 'styled-components', 'CSS Modules', 'Redux'],
+    },
+    {
+        icon: 'server', color: 'green',
+        titleRu: 'Backend', titleEn: 'Backend',
+        items: ['Laravel (PHP)', 'aiogram (Python)', 'aiohttp', 'REST API', 'GraphQL'],
+    },
+    {
+        icon: 'database', color: 'orange',
+        titleRu: 'Базы данных', titleEn: 'Databases',
+        items: ['MySQL', 'PostgreSQL', 'SQLite'],
+    },
+    {
+        icon: 'package', color: 'cyan',
+        titleRu: 'CMS', titleEn: 'CMS',
+        items: ['WordPress', 'WooCommerce', 'Bitrix', 'ModX', 'Webflow', 'OpenCart', 'Joomla', 'Drupal'],
+    },
+    {
+        icon: 'terminal', color: 'red',
+        titleRu: 'DevOps и инфраструктура', titleEn: 'DevOps & infrastructure',
+        items: ['Git', 'GitHub Actions', 'GitLab CI/CD', 'Docker', 'Nginx', 'systemd', 'VPS / Linux'],
+    },
+    {
+        icon: 'cloud', color: 'blue',
+        titleRu: 'Хостинг', titleEn: 'Hosting',
+        items: ['Vercel', 'Netlify', 'VPS под ключ'],
+    },
+];
+
+const StackPage = {
+    _rendered: false,
+
+    render() {
+        const container = document.getElementById('stack-content');
+        if (!container) return;
+        if (this._rendered) return;
+
+        const isEn = getUserLang() === 'en';
+        const html = STACK_GROUPS.map(g => {
+            const title = escapeHtml(isEn ? g.titleEn : g.titleRu);
+            const chips = g.items.map(item => `<span class="stack-chip">${escapeHtml(item)}</span>`).join('');
+            return `
+                <div class="stack-group">
+                    <div class="stack-group__header">
+                        <span class="stack-group__icon stack-group__icon--${g.color}"><i data-lucide="${g.icon}"></i></span>
+                        <h3 class="stack-group__title">${title}</h3>
+                    </div>
+                    <div class="stack-group__chips">${chips}</div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = html;
+        if (window.lucide?.createIcons) {
+            window.lucide.createIcons({ nodes: [container] });
+        }
+        this._rendered = true;
+    },
+
+    reset() {
+        this._rendered = false;
+    },
+};
+
 /* === Promos Page === */
 
 function pluralDays(n) {
@@ -4268,6 +4353,10 @@ function refreshCurrentPageData() {
     if (AppState.currentPage === 'cases') CasesPage.render();
     if (AppState.currentPage === 'faq') FaqPage.render();
     if (AppState.currentPage === 'promos') PromosPage.render();
+    if (AppState.currentPage === 'stack') {
+        StackPage.reset();
+        StackPage.render();
+    }
 }
 
 /* === Init === */

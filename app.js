@@ -3802,22 +3802,22 @@ const STACK_GROUPS = [
     {
         icon: 'palette', color: 'pink',
         titleRu: 'Стили и UI', titleEn: 'Styles & UI',
-        items: ['Tailwind', 'SCSS / Sass', 'styled-components', 'CSS Modules'],
+        items: ['Tailwind', 'SCSS / Sass', 'Less', 'styled-components', 'CSS Modules', 'shadcn/ui', 'Radix UI', 'Headless UI', 'Bootstrap'],
     },
     {
         icon: 'server', color: 'green',
         titleRu: 'Backend', titleEn: 'Backend',
-        items: ['Laravel (PHP)', 'aiogram (Python)', 'aiohttp', 'REST API', 'GraphQL'],
+        items: ['Laravel (PHP)', 'Yii (PHP)', 'Node.js', 'Express', 'Next.js API', 'aiogram (Python)', 'aiohttp', 'FastAPI', 'Flask', 'REST API', 'GraphQL'],
     },
     {
         icon: 'database', color: 'orange',
-        titleRu: 'Базы данных', titleEn: 'Databases',
-        items: ['MySQL', 'SQLite'],
+        titleRu: 'Базы данных и BaaS', titleEn: 'Databases & BaaS',
+        items: ['MySQL', 'PostgreSQL', 'SQLite', 'Supabase', 'Firebase'],
     },
     {
         icon: 'package', color: 'cyan',
         titleRu: 'CMS', titleEn: 'CMS',
-        items: ['WordPress', 'WooCommerce', 'Bitrix', 'MODX', 'Webflow', 'OpenCart', 'Joomla', 'Drupal'],
+        items: ['WordPress', 'WooCommerce', 'Shopify', 'Bitrix', 'InSales', 'CS-Cart', 'MODX', 'OpenCart', 'Webflow', 'Joomla', 'Drupal'],
     },
     {
         icon: 'terminal', color: 'red',
@@ -3827,7 +3827,7 @@ const STACK_GROUPS = [
     {
         icon: 'cloud', color: 'blue',
         titleRu: 'Хостинг', titleEn: 'Hosting',
-        items: ['Vercel', 'Netlify'],
+        items: ['Beget', 'Timeweb', 'Reg.ru', 'Sprinthost', 'SpaceWeb', 'Vercel', 'Netlify'],
     },
 ];
 

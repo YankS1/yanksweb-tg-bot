@@ -390,7 +390,9 @@ function applyStaticTexts() {
 
     setText('[data-page="services"] .page__title', text('services.title', 'Услуги и цены'));
     setText('[data-page="portfolio"] .page__title', labelText('portfolio.title', 'Мои работы'));
-    setText('[data-page="reviews"] .page__title', text('reviews.title', 'Отзывы клиентов'));
+    setText('[data-page="reviews"] .page__title', text('reviews.title', 'Отзывы'));
+    const _reviewsAllBtn = document.querySelector('[data-page="reviews"] .reviews-header-link');
+    if (_reviewsAllBtn) _reviewsAllBtn.setAttribute('aria-label', text('miniapp_ui.reviews_all', 'Все отзывы'));
     setText('[data-page="cases"] .page__title', text('reviews.cases_title', 'Кейсы'));
     setText('[data-page="faq"] .page__title', text('faq.title', 'Частые вопросы'));
     setText('[data-page="audit"] .page__title', text('audit.title', 'Аудит сайта'));
@@ -1834,7 +1836,26 @@ const CalculatorPage = {
 /* === Reviews Page === */
 
 const ReviewsPage = {
+    _headerInited: false,
+
+    _initHeader() {
+        if (this._headerInited) return;
+        const headerBtn = document.getElementById('reviewsAllHeaderBtn');
+        if (!headerBtn) return;
+        const textSpan = headerBtn.querySelector('.reviews-header-link__text');
+        if (textSpan) textSpan.textContent = text('miniapp_ui.reviews_all', 'Все отзывы');
+        headerBtn.addEventListener('click', () => {
+            haptic();
+            const url = REVIEWS_CHANNEL_URL;
+            if (tg?.openTelegramLink) { tg.openTelegramLink(url); }
+            else if (tg?.openLink) { tg.openLink(url); }
+            else { window.open(url, '_blank', 'noopener,noreferrer'); }
+        });
+        this._headerInited = true;
+    },
+
     render() {
+        this._initHeader();
         const list = document.getElementById('reviews-list');
         const empty = document.getElementById('reviewsEmpty');
 
@@ -1845,16 +1866,28 @@ const ReviewsPage = {
         }
 
         empty.classList.remove('empty-state--visible');
-        list.innerHTML = DATA.reviews.map(r => `
+        const gotoLabel = escapeHtml(text('miniapp_ui.review_goto', 'Перейти к отзыву'));
+        const orderLabel = escapeHtml(text('miniapp_ui.review_order', 'Заказать проект'));
+        const viewSiteLabel = escapeHtml(text('miniapp_ui.portfolio_view_site', 'Посмотреть сайт'));
+
+        list.innerHTML = DATA.reviews.map(r => {
+            const hasChannelPost = Boolean(r.channel_post_url);
+            const hasSite = Boolean(r.url);
+            return `
             <div class="review-card animate-in">
                 <div class="review-card__header">
                     <strong class="review-card__name">${escapeHtml(r.name || '')}</strong>
                     ${r.company ? `<span class="review-card__company">${escapeHtml(r.company)}</span>` : ''}
                 </div>
                 <p class="review-card__text">${nl2br(escapeHtml(r.text || ''))}</p>
-                ${r.url ? `<button class="btn btn--ghost review-card__link" data-open-url="${escapeHtml(r.url)}"><i data-lucide="external-link"></i> ${escapeHtml(text('miniapp_ui.portfolio_view_site', 'Посмотреть сайт'))}</button>` : ''}
+                ${hasSite ? `<button class="btn btn--ghost review-card__link" data-open-url="${escapeHtml(r.url)}"><i data-lucide="external-link"></i> ${viewSiteLabel}</button>` : ''}
+                <div class="review-card__actions">
+                    ${hasChannelPost ? `<button class="review-card__mini-btn" data-open-tg="${escapeHtml(r.channel_post_url)}"><i data-lucide="message-square"></i> ${gotoLabel}</button>` : ''}
+                    <button class="review-card__mini-btn review-card__mini-btn--accent" data-review-order><i data-lucide="send"></i> ${orderLabel}</button>
+                </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
 
         list.querySelectorAll('[data-open-url]').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1865,17 +1898,22 @@ const ReviewsPage = {
             });
         });
 
-        const allBtn = document.createElement('button');
-        allBtn.className = 'btn btn--secondary reviews-all-btn';
-        allBtn.innerHTML = `<i data-lucide="star"></i> ${escapeHtml(text('miniapp_ui.reviews_all', 'Все отзывы'))}`;
-        allBtn.addEventListener('click', () => {
-            haptic();
-            const url = REVIEWS_CHANNEL_URL;
-            if (tg?.openTelegramLink) { tg.openTelegramLink(url); }
-            else if (tg?.openLink) { tg.openLink(url); }
-            else { window.open(url, '_blank', 'noopener,noreferrer'); }
+        list.querySelectorAll('[data-open-tg]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                const url = btn.dataset.openTg;
+                if (tg?.openTelegramLink) { tg.openTelegramLink(url); }
+                else if (tg?.openLink) { tg.openLink(url); }
+                else { window.open(url, '_blank', 'noopener,noreferrer'); }
+            });
         });
-        list.appendChild(allBtn);
+
+        list.querySelectorAll('[data-review-order]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                Router.navigate('quiz');
+            });
+        });
 
         lucide.createIcons();
         animateIn(list);
@@ -4280,6 +4318,7 @@ async function loadLiveData() {
                             text: i.text_ru || '',
                             image: i.media_file_id || '',
                             url: i.url || '',
+                            channel_post_url: i.channel_post_url || '',
                         }));
                     } else if (key === 'cases') {
                         const thumbUrl = (url) => {

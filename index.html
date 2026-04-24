@@ -398,8 +398,12 @@
 
             <!-- Reviews -->
             <section class="page" data-page="reviews">
-                <header class="page__header">
-                    <h2 class="page__title">Отзывы клиентов</h2>
+                <header class="page__header page__header--row">
+                    <h2 class="page__title">Отзывы</h2>
+                    <button class="reviews-header-link" id="reviewsAllHeaderBtn" aria-label="Все отзывы">
+                        <span class="reviews-header-link__text">Все отзывы</span>
+                        <i data-lucide="arrow-up-right"></i>
+                    </button>
                 </header>
                 <div id="reviews-list"></div>
                 <div class="empty-state" id="reviewsEmpty">

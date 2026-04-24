@@ -3099,11 +3099,13 @@ body.app-ready #app {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: rgba(36, 129, 204, 0.15);
+    background: #000;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(36, 129, 204, 0.28), 0 0 0 2px rgba(36, 129, 204, 0.25);
 }
 
 .contact-card__avatar svg {
@@ -3111,6 +3113,13 @@ body.app-ready #app {
     height: 32px;
     color: var(--accent);
     stroke-width: 1.5;
+}
+
+.contact-card__avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .contact-card__name {

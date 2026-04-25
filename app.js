@@ -1807,14 +1807,13 @@ const CalculatorPage = {
     },
 
     pickNoPromo() {
+        // "Без промокода" - сразу к результату, не показываем SLA-стэкинг.
+        // SLA уже была одним из пунктов списка - если юзер не выбрал,
+        // повторно не навязываем.
         const st = AppState.calculator;
         st.appliedPromo = null;
-
-        if (st.offeredSla) {
-            this.showSlaStack();
-        } else {
-            this._showResultStep();
-        }
+        st.appliedSla = null;
+        this._showResultStep();
     },
 
     showSlaStack() {

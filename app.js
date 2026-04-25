@@ -483,6 +483,10 @@ const AppState = {
         features: [],
         timeline: null,
         history: [1],
+        availablePromos: [],
+        offeredSla: null,
+        appliedPromo: null,
+        appliedSla: null,
     },
     services: {
         level: 'categories',
@@ -1604,6 +1608,8 @@ const CalculatorPage = {
         setCalcText('.calc-result__title', text('calculator.webapp_title', 'Предварительный расчет'));
         setCalcText('.calc-result__note', text('calculator.webapp_result_note', 'Это ориентировочная оценка. Точную цену назову после короткого разговора о деталях.'));
         setCalcText('#calcSubmitBtn', labelText('calculator.to_quiz', 'Обсудить проект'));
+        setCalcText('#calcPdfBtn', text('calculator.pdf_btn', 'Скачать PDF'));
+        setCalcText('#calcShareBtn', text('calculator.share_btn', 'Поделиться'));
         setCalcText('#calcRestartBtn', text('calculator.restart', 'Пересчитать'));
     },
 
@@ -1619,6 +1625,12 @@ const CalculatorPage = {
     },
 
     goToStep(stepNum) {
+        if (stepNum === 'result') {
+            document.getElementById('calcProgressBar').style.width = '100%';
+            this.loadPromosAndProceed();
+            return;
+        }
+
         document.querySelectorAll('.calc-step').forEach(s => s.classList.remove('calc-step--active'));
 
         const target = document.querySelector(`[data-calc-step="${stepNum}"]`);
@@ -1627,13 +1639,8 @@ const CalculatorPage = {
         const backBtn = document.getElementById('calcBackBtn');
         backBtn.classList.toggle('calc-back--visible', stepNum !== 1);
 
-        if (stepNum !== 'result') {
-            const progress = (stepNum / this.TOTAL_STEPS) * 100;
-            document.getElementById('calcProgressBar').style.width = progress + '%';
-        } else {
-            document.getElementById('calcProgressBar').style.width = '100%';
-            this.showResult();
-        }
+        const progress = (stepNum / this.TOTAL_STEPS) * 100;
+        document.getElementById('calcProgressBar').style.width = progress + '%';
 
         if (typeof stepNum === 'number') {
             AppState.calculator.history.push(stepNum);
@@ -1651,8 +1658,12 @@ const CalculatorPage = {
         const backBtn = document.getElementById('calcBackBtn');
         backBtn.classList.toggle('calc-back--visible', prev !== 1);
 
-        const progress = (prev / this.TOTAL_STEPS) * 100;
-        document.getElementById('calcProgressBar').style.width = progress + '%';
+        if (typeof prev === 'number') {
+            const progress = (prev / this.TOTAL_STEPS) * 100;
+            document.getElementById('calcProgressBar').style.width = progress + '%';
+        } else {
+            document.getElementById('calcProgressBar').style.width = '100%';
+        }
     },
 
     calculatePrice() {
@@ -1681,13 +1692,278 @@ const CalculatorPage = {
         return `${rub} (~$${usd})`;
     },
 
+    applyPromoInflation(baseMin, baseMax, discount) {
+        if (!discount || discount <= 0 || discount >= 100) {
+            return { inflMin: baseMin, inflMax: baseMax, finMin: baseMin, finMax: baseMax };
+        }
+        const factor = 100 / (100 - discount);
+        const inflMin = Math.round(baseMin * factor / 100) * 100;
+        const inflMax = Math.round(baseMax * factor / 100) * 100;
+        const finMin = Math.round(inflMin * (100 - discount) / 100 / 100) * 100;
+        const finMax = Math.round(inflMax * (100 - discount) / 100 / 100) * 100;
+        return { inflMin, inflMax, finMin, finMax };
+    },
+
+    async loadPromosAndProceed() {
+        const st = AppState.calculator;
+        st.appliedPromo = null;
+        st.appliedSla = null;
+        st.availablePromos = [];
+        st.offeredSla = null;
+
+        const initData = tg?.initData;
+        if (initData) {
+            try {
+                const resp = await fetch(
+                    `${API_URL}/api/calc-available-promos?initData=${encodeURIComponent(initData)}`
+                );
+                if (resp.ok) {
+                    const json = await resp.json();
+                    const data = json.data || json;
+                    st.availablePromos = (data.items || []).filter(p => !p.is_sla);
+                    st.offeredSla = data.sla || null;
+                }
+            } catch (e) { /* network error - proceed without promos */ }
+        }
+
+        if (st.availablePromos.length > 0 || st.offeredSla) {
+            this.showPromoPick();
+        } else {
+            this._showResultStep();
+        }
+    },
+
+    showPromoPick() {
+        const st = AppState.calculator;
+        const promos = st.availablePromos;
+        const sla = st.offeredSla;
+
+        const container = document.querySelector('[data-calc-step="promo"]');
+        if (!container) return this._showResultStep();
+
+        let html = `<div class="calc-promo-pick">
+            <h2 class="calc-promo-pick__title">${escapeHtml(text('calculator.promo_pick_title', 'Применить промокод?'))}</h2>
+            <p class="calc-promo-pick__body">${escapeHtml(text('calculator.promo_pick_body', 'Выберите промокод или продолжите без него.'))}</p>
+            <div class="calc-promo-pick__list">`;
+
+        promos.forEach(p => {
+            const label = interpolateText(
+                text('calculator.promo_apply_btn', '-{discount}% ({code})'),
+                { discount: p.discount_percent, code: p.promo_code }
+            );
+            html += `<button class="calc-promo-pick__item" data-promo-id="${p.promo_id}" data-from-activation="${p.from_activation}">
+                <span class="calc-promo-pick__icon">🎁</span>
+                <span class="calc-promo-pick__label">${escapeHtml(label)}</span>
+            </button>`;
+        });
+
+        html += `</div>
+            <button class="btn btn--secondary calc-promo-pick__skip">${escapeHtml(text('calculator.promo_skip_btn', 'Без промокода'))}</button>
+        </div>`;
+
+        container.innerHTML = html;
+
+        container.querySelectorAll('[data-promo-id]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                haptic();
+                this.pickPromo(parseInt(btn.dataset.promoId), btn.dataset.fromActivation === 'true');
+            });
+        });
+
+        container.querySelector('.calc-promo-pick__skip')?.addEventListener('click', () => {
+            haptic();
+            this.pickNoPromo();
+        });
+
+        document.querySelectorAll('.calc-step').forEach(s => s.classList.remove('calc-step--active'));
+        container.classList.add('calc-step--active');
+        st.history.push('promo');
+
+        const backBtn = document.getElementById('calcBackBtn');
+        backBtn.classList.toggle('calc-back--visible', true);
+    },
+
+    async pickPromo(promoId, fromActivation) {
+        const st = AppState.calculator;
+        const promo = st.availablePromos.find(p => p.promo_id === promoId);
+        if (!promo) return this._showResultStep();
+
+        if (!fromActivation && tg?.initData) {
+            try {
+                await fetch(`${API_URL}/api/promo-activate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ promo_id: promoId, initData: tg.initData }),
+                });
+            } catch (e) { /* silent */ }
+        }
+
+        st.appliedPromo = {
+            code: promo.promo_code,
+            discount: promo.discount_percent,
+            promo_id: promo.promo_id,
+        };
+
+        if (st.offeredSla && !promo.is_sla) {
+            this.showSlaStack();
+        } else {
+            this._showResultStep();
+        }
+    },
+
+    pickNoPromo() {
+        const st = AppState.calculator;
+        st.appliedPromo = null;
+
+        if (st.offeredSla) {
+            this.showSlaStack();
+        } else {
+            this._showResultStep();
+        }
+    },
+
+    showSlaStack() {
+        const st = AppState.calculator;
+        const sla = st.offeredSla;
+        if (!sla) return this._showResultStep();
+
+        const container = document.querySelector('[data-calc-step="sla-stack"]');
+        if (!container) return this._showResultStep();
+
+        const hasPromo = st.appliedPromo && st.appliedPromo.discount > 0;
+        const PROMO_MAX = 20;
+
+        let bodyText, yesLabel;
+        if (hasPromo) {
+            const total = Math.min(st.appliedPromo.discount + sla.discount_percent, PROMO_MAX);
+            bodyText = interpolateText(
+                text('calculator.sla_stack_body_with_promo',
+                    'У вас также активен промокод {sla_code} -{sla_discount}% за долгий ответ. Применить вместе с {code}? Итого -{total}%.'),
+                {
+                    sla_code: sla.promo_code,
+                    sla_discount: sla.discount_percent,
+                    code: st.appliedPromo.code,
+                    discount: st.appliedPromo.discount,
+                    total: total,
+                }
+            );
+            yesLabel = interpolateText(
+                text('calculator.sla_stack_yes_btn', 'Да, итого -{total}%'),
+                { total: total }
+            );
+        } else {
+            bodyText = interpolateText(
+                text('calculator.sla_stack_body_only_sla', 'У вас активен промокод -{sla_discount}% за долгий ответ. Применить?'),
+                { sla_discount: sla.discount_percent }
+            );
+            yesLabel = interpolateText(
+                text('calculator.sla_stack_yes_btn', 'Да, итого -{total}%'),
+                { total: sla.discount_percent }
+            );
+        }
+
+        container.innerHTML = `<div class="calc-promo-pick">
+            <h2 class="calc-promo-pick__title">${escapeHtml(text('calculator.sla_stack_title', 'Суммировать промокоды?'))}</h2>
+            <p class="calc-promo-pick__body">${bodyText}</p>
+            <button class="btn btn--primary calc-sla-yes">${escapeHtml(yesLabel)}</button>
+            <button class="btn btn--secondary calc-sla-no">${escapeHtml(text('calculator.sla_stack_no_btn', 'Нет, оставить как есть'))}</button>
+        </div>`;
+
+        container.querySelector('.calc-sla-yes')?.addEventListener('click', () => {
+            haptic();
+            st.appliedSla = {
+                code: sla.promo_code,
+                discount: sla.discount_percent,
+            };
+            this._showResultStep();
+        });
+
+        container.querySelector('.calc-sla-no')?.addEventListener('click', () => {
+            haptic();
+            st.appliedSla = null;
+            this._showResultStep();
+        });
+
+        document.querySelectorAll('.calc-step').forEach(s => s.classList.remove('calc-step--active'));
+        container.classList.add('calc-step--active');
+        st.history.push('sla-stack');
+
+        const backBtn = document.getElementById('calcBackBtn');
+        backBtn.classList.toggle('calc-back--visible', true);
+    },
+
+    _showResultStep() {
+        document.querySelectorAll('.calc-step').forEach(s => s.classList.remove('calc-step--active'));
+        const target = document.querySelector('[data-calc-step="result"]');
+        if (target) target.classList.add('calc-step--active');
+
+        const backBtn = document.getElementById('calcBackBtn');
+        backBtn.classList.toggle('calc-back--visible', true);
+
+        document.getElementById('calcProgressBar').style.width = '100%';
+        AppState.calculator.history.push('result');
+        this.showResult();
+    },
+
     showResult() {
         const { min, max } = this.calculatePrice();
-
-        document.getElementById('calcResultPrice').textContent =
-            this.formatPrice(min) + ' - ' + this.formatPrice(max);
-
         const st = AppState.calculator;
+        const PROMO_MAX = 20;
+
+        let totalDiscount = 0;
+        if (st.appliedPromo) totalDiscount += st.appliedPromo.discount;
+        if (st.appliedSla) totalDiscount += st.appliedSla.discount;
+        totalDiscount = Math.min(totalDiscount, PROMO_MAX);
+
+        const priceEl = document.getElementById('calcResultPrice');
+        const promoLineEl = document.getElementById('calcPromoLine');
+        const oldPriceEl = document.getElementById('calcOldPrice');
+
+        if (totalDiscount > 0) {
+            const { inflMin, inflMax, finMin, finMax } = this.applyPromoInflation(min, max, totalDiscount);
+            const oldStr = this.formatPrice(inflMin) + ' - ' + this.formatPrice(inflMax);
+            const newStr = this.formatPrice(finMin) + ' - ' + this.formatPrice(finMax);
+
+            if (oldPriceEl) {
+                oldPriceEl.textContent = oldStr;
+                oldPriceEl.style.display = '';
+            }
+
+            let promoText;
+            if (st.appliedPromo && st.appliedSla) {
+                promoText = interpolateText(
+                    text('calculator.promo_stacked', '{code} (-{discount}%) + {sla_code} (-{sla_discount}%) = -{total}%'),
+                    {
+                        code: st.appliedPromo.code,
+                        discount: st.appliedPromo.discount,
+                        sla_code: st.appliedSla.code,
+                        sla_discount: st.appliedSla.discount,
+                        total: totalDiscount,
+                    }
+                );
+            } else if (st.appliedPromo) {
+                promoText = interpolateText(
+                    text('calculator.promo_applied', 'Промокод {code} (-{discount}%)'),
+                    { code: st.appliedPromo.code, discount: st.appliedPromo.discount }
+                );
+            } else if (st.appliedSla) {
+                promoText = interpolateText(
+                    text('calculator.promo_applied', 'Промокод {code} (-{discount}%)'),
+                    { code: st.appliedSla.code, discount: st.appliedSla.discount }
+                );
+            }
+
+            if (promoLineEl) {
+                promoLineEl.textContent = promoText;
+                promoLineEl.style.display = '';
+            }
+            priceEl.textContent = newStr;
+        } else {
+            if (oldPriceEl) oldPriceEl.style.display = 'none';
+            if (promoLineEl) promoLineEl.style.display = 'none';
+            priceEl.textContent = this.formatPrice(min) + ' - ' + this.formatPrice(max);
+        }
+
         const features = st.features.length
             ? st.features.map(f => this.getFeatureLabel(f)).join(', ')
             : text('calculator.empty_features', 'Не выбран');
@@ -1698,6 +1974,87 @@ const CalculatorPage = {
             `<span>${escapeHtml(text('calculator.webapp_design', 'Дизайн:'))}</span> ${escapeHtml(this.getDesignLabel(st.design) || '-')}<br>` +
             `<span>${escapeHtml(text('calculator.webapp_features', 'Функции:'))}</span> ${escapeHtml(features)}<br>` +
             `<span>${escapeHtml(text('calculator.webapp_timeline', 'Сроки:'))}</span> ${escapeHtml(this.getTimelineLabel(st.timeline) || '-')}`;
+    },
+
+    async sendPdf() {
+        const st = AppState.calculator;
+        const initData = tg?.initData;
+        if (!initData) return;
+
+        const lang = tg?.initDataUnsafe?.user?.language_code === 'en' ? 'en' : 'ru';
+
+        const payload = {
+            initData,
+            site_type: st.type,
+            pages: st.pages,
+            design: st.design,
+            features: st.features,
+            timeline: st.timeline,
+            lang,
+        };
+
+        if (st.appliedPromo) {
+            payload.applied_promo_code = st.appliedPromo.code;
+            payload.applied_discount_percent = st.appliedPromo.discount;
+        }
+        if (st.appliedSla) {
+            payload.applied_sla_code = st.appliedSla.code;
+            payload.applied_sla_discount = st.appliedSla.discount;
+        }
+
+        const pdfBtn = document.getElementById('calcPdfBtn');
+        if (pdfBtn) {
+            pdfBtn.disabled = true;
+            pdfBtn.textContent = text('calculator.pdf_sending', 'Отправляю PDF...');
+        }
+
+        try {
+            const resp = await fetch(`${API_URL}/api/calc-pdf-send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            if (resp.ok) {
+                if (tg?.showAlert) {
+                    tg.showAlert(text('calculator.pdf_sent_alert', 'PDF отправлен в чат с ботом'), () => {
+                        tg.close();
+                    });
+                } else {
+                    alert(text('calculator.pdf_sent_alert', 'PDF отправлен в чат с ботом'));
+                }
+            } else {
+                if (tg?.showAlert) {
+                    tg.showAlert(text('calculator.pdf_send_error', 'Не удалось отправить PDF.'));
+                }
+            }
+        } catch (e) {
+            if (tg?.showAlert) {
+                tg.showAlert(text('calculator.pdf_send_error', 'Не удалось отправить PDF.'));
+            }
+        } finally {
+            if (pdfBtn) {
+                pdfBtn.disabled = false;
+                pdfBtn.textContent = text('calculator.pdf_btn', 'Скачать PDF');
+            }
+        }
+    },
+
+    shareResult() {
+        const lang = tg?.initDataUnsafe?.user?.language_code === 'en' ? 'en' : 'ru';
+        const shareText = text(
+            'calculator.share_text',
+            lang === 'en'
+                ? 'Website cost calculator in @yanksweb_bot. Get your quote in 1 minute.'
+                : 'Калькулятор стоимости сайта в @yanksweb_bot. Получите расчет за 1 минуту.'
+        );
+        const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/yanksweb_bot')}&text=${encodeURIComponent(shareText)}`;
+        if (tg?.openTelegramLink) {
+            tg.openTelegramLink(shareUrl);
+        } else if (tg?.openLink) {
+            tg.openLink(shareUrl);
+        } else {
+            window.open(shareUrl, '_blank', 'noopener,noreferrer');
+        }
     },
 
     toQuiz() {
@@ -1722,13 +2079,24 @@ const CalculatorPage = {
             examples: 'examples',
         };
 
+        const st = AppState.calculator;
+        let promoCode = null;
+        if (st.appliedPromo && st.appliedSla) {
+            promoCode = `${st.appliedPromo.code} + ${st.appliedSla.code}`;
+        } else if (st.appliedPromo) {
+            promoCode = st.appliedPromo.code;
+        } else if (st.appliedSla) {
+            promoCode = st.appliedSla.code;
+        }
+
         AppState.quiz.prefill = {
-            site_type: AppState.calculator.type,
-            has_design: designMap[AppState.calculator.design] || null,
+            site_type: st.type,
+            has_design: designMap[st.design] || null,
             budget,
-            features: AppState.calculator.features
+            features: st.features
                 .map(feature => featureMap[feature])
                 .filter(Boolean),
+            promo_code: promoCode,
         };
 
         Router.navigate('quiz');
@@ -1743,6 +2111,10 @@ const CalculatorPage = {
             features: [],
             timeline: null,
             history: [1],
+            availablePromos: [],
+            offeredSla: null,
+            appliedPromo: null,
+            appliedSla: null,
         };
 
         document.querySelectorAll('.calc-step .option--selected, .calc-step .chip--selected').forEach(el => {
@@ -1829,6 +2201,16 @@ const CalculatorPage = {
         document.getElementById('calcSubmitBtn').addEventListener('click', () => {
             haptic();
             this.toQuiz();
+        });
+
+        document.getElementById('calcPdfBtn')?.addEventListener('click', () => {
+            haptic();
+            this.sendPdf();
+        });
+
+        document.getElementById('calcShareBtn')?.addEventListener('click', () => {
+            haptic();
+            this.shareResult();
         });
     },
 };

@@ -1788,20 +1788,14 @@ const CalculatorPage = {
         const promo = st.availablePromos.find(p => p.promo_id === promoId);
         if (!promo) return this._showResultStep();
 
-        if (!fromActivation && tg?.initData) {
-            try {
-                await fetch(`${API_URL}/api/promo-activate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ promo_id: promoId, initData: tg.initData }),
-                });
-            } catch (e) { /* silent */ }
-        }
-
+        // Активацию делаем только при отправке заявки (toQuiz),
+        // не при выборе - чтобы клиент не "примерял" разные промо на расчёт.
         st.appliedPromo = {
             code: promo.promo_code,
             discount: promo.discount_percent,
             promo_id: promo.promo_id,
+            from_activation: fromActivation,
+            is_sla: !!promo.is_sla,
         };
 
         if (st.offeredSla && !promo.is_sla) {
@@ -1897,11 +1891,14 @@ const CalculatorPage = {
         const target = document.querySelector('[data-calc-step="result"]');
         if (target) target.classList.add('calc-step--active');
 
+        // На экране результата кнопка "Назад" не показывается:
+        // нельзя возвращаться к выбору промо и менять цену.
         const backBtn = document.getElementById('calcBackBtn');
-        backBtn.classList.toggle('calc-back--visible', true);
+        backBtn.classList.toggle('calc-back--visible', false);
 
         document.getElementById('calcProgressBar').style.width = '100%';
-        AppState.calculator.history.push('result');
+        // history сбрасываем чтобы Telegram BackButton тоже не вернул на promo-pick.
+        AppState.calculator.history = ['result'];
         this.showResult();
     },
 
@@ -2057,7 +2054,7 @@ const CalculatorPage = {
         }
     },
 
-    toQuiz() {
+    async toQuiz() {
         const { max } = this.calculatePrice();
         const budget = max <= 25000 ? '25'
             : max <= 45000 ? '45'
@@ -2080,6 +2077,20 @@ const CalculatorPage = {
         };
 
         const st = AppState.calculator;
+
+        // Активация выбранного промо в момент перехода в квиз. До этого
+        // юзер мог выбрать любой промо для просмотра расчёта - но запись
+        // в БД создаётся только сейчас, когда клиент идёт оформлять заявку.
+        if (st.appliedPromo && !st.appliedPromo.from_activation && tg?.initData) {
+            try {
+                await fetch(`${API_URL}/api/promo-activate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ promo_id: st.appliedPromo.promo_id, initData: tg.initData }),
+                });
+            } catch (e) { /* silent */ }
+        }
+
         let promoCode = null;
         if (st.appliedPromo && st.appliedSla) {
             promoCode = `${st.appliedPromo.code} + ${st.appliedSla.code}`;

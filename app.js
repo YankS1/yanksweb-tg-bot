@@ -1611,6 +1611,7 @@ const CalculatorPage = {
         setCalcText('#calcPdfBtn', text('calculator.pdf_btn', 'Скачать PDF'));
         setCalcText('#calcShareBtn', text('calculator.share_btn', 'Поделиться'));
         setCalcText('#calcRestartBtn', text('calculator.restart', 'Пересчитать'));
+        setCalcText('.calc-attach-check__label', text('calculator.attach_check_label', 'Прикрепить расчёт и PDF к заявке'));
     },
 
     init() {
@@ -2100,6 +2101,9 @@ const CalculatorPage = {
             promoCode = st.appliedSla.code;
         }
 
+        const attachCheck = document.getElementById('calcAttachCheck');
+        const attachCalc = attachCheck ? attachCheck.checked : false;
+
         AppState.quiz.prefill = {
             site_type: st.type,
             has_design: designMap[st.design] || null,
@@ -2108,10 +2112,41 @@ const CalculatorPage = {
                 .map(feature => featureMap[feature])
                 .filter(Boolean),
             promo_code: promoCode,
+            attach_calc: attachCalc,
         };
+
+        if (attachCalc) {
+            AppState.quiz.prefill.calc_data = {
+                site_type: st.type,
+                pages: st.pages,
+                design: st.design,
+                features: st.features,
+                timeline: st.timeline,
+                base_min: this.calculatePrice().min,
+                base_max: this.calculatePrice().max,
+                site_type_label: this._resolveLabel('type', st.type),
+                pages_label: this._resolveLabel('pages', st.pages),
+                design_label: this._resolveLabel('design', st.design),
+                features_labels: st.features.map(f => this._resolveLabel('feature', f)).filter(Boolean),
+                timeline_label: this._resolveLabel('timeline', st.timeline),
+                promo_code: promoCode,
+                discount_percent: st.appliedPromo?.discount || null,
+            };
+        }
 
         Router.navigate('quiz');
         QuizPage.startQuiz('quick');
+    },
+
+    _resolveLabel(category, value) {
+        switch (category) {
+            case 'type': return this.getTypeLabel(value) || value;
+            case 'pages': return this.getPagesLabel(value) || value;
+            case 'design': return this.getDesignLabel(value) || value;
+            case 'feature': return this.getFeatureLabel(value) || value;
+            case 'timeline': return this.getTimelineLabel(value) || value;
+            default: return value;
+        }
     },
 
     reset() {
@@ -3349,6 +3384,13 @@ const QuizPage = {
         if (AppState.quiz._attachFav !== false && AppState.favorites.length) {
             const favItems = DATA.portfolio.filter(p => AppState.favorites.includes(p.id));
             payload.favorites = favItems.map(p => p.title).join(', ');
+        }
+
+        // Attach calculator data if user opted in
+        const prefill = AppState.quiz.prefill || {};
+        if (prefill.attach_calc && prefill.calc_data) {
+            payload.attach_calc = true;
+            payload.calc_data = prefill.calc_data;
         }
 
         const result = await submitToApi('quiz-submit', payload);

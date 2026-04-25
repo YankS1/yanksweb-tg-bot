@@ -1797,6 +1797,71 @@ body.app-ready #app {
     flex: 1;
 }
 
+/* === CALC ATTACH CHECK === */
+
+.calc-attach-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    margin: 12px 0 4px;
+    background: var(--secondary-bg, rgba(255, 255, 255, 0.06));
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.calc-attach-check:active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.calc-attach-check input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.calc-attach-check__box {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--hint, #999);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.calc-attach-check__box::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--button-color, #3b82f6);
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.calc-attach-check input:checked ~ .calc-attach-check__box {
+    border-color: var(--button-color, #3b82f6);
+}
+
+.calc-attach-check input:checked ~ .calc-attach-check__box::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.calc-attach-check__label {
+    font-size: 13px;
+    color: var(--text, #fff);
+    line-height: 1.4;
+}
+
 /* === CALCULATOR PROMO PICK === */
 
 .calc-promo-pick {

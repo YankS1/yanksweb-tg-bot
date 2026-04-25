@@ -1795,6 +1795,13 @@ body.app-ready #app {
 
 .calc-result__actions .btn {
     flex: 1;
+    min-width: 0;
+    width: auto;
+    margin: 0;
+}
+
+.calc-result__actions .btn + .btn {
+    margin-top: 0;
 }
 
 /* === CALC ATTACH CHECK === */
@@ -1830,18 +1837,20 @@ body.app-ready #app {
     height: 22px;
     border-radius: 6px;
     border: 2px solid var(--hint, #999);
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
     transition: border-color 0.3s ease, background 0.3s ease;
 }
 
 .calc-attach-check__box::after {
-    content: '';
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    background: var(--button-color, #3b82f6);
+    content: '✓';
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
     opacity: 0;
     transform: scale(0);
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -1849,6 +1858,7 @@ body.app-ready #app {
 
 .calc-attach-check input:checked ~ .calc-attach-check__box {
     border-color: var(--button-color, #3b82f6);
+    background: var(--button-color, #3b82f6);
 }
 
 .calc-attach-check input:checked ~ .calc-attach-check__box::after {

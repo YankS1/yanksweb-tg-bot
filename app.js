@@ -1720,13 +1720,13 @@ const CalculatorPage = {
                 if (resp.ok) {
                     const json = await resp.json();
                     const data = json.data || json;
-                    st.availablePromos = (data.items || []).filter(p => !p.is_sla);
+                    st.availablePromos = data.items || [];
                     st.offeredSla = data.sla || null;
                 }
             } catch (e) { /* network error - proceed without promos */ }
         }
 
-        if (st.availablePromos.length > 0 || st.offeredSla) {
+        if (st.availablePromos.length > 0) {
             this.showPromoPick();
         } else {
             this._showResultStep();

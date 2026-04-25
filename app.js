@@ -381,6 +381,11 @@ function applyStaticTexts() {
         if (el && value) el.setAttribute('placeholder', value);
     };
 
+    const setAriaLabel = (selector, value) => {
+        const el = document.querySelector(selector);
+        if (el && value) el.setAttribute('aria-label', value);
+    };
+
     setText('.hero__tagline', text('home.tagline', 'Сайты под ключ - от дизайна до запуска'));
 
     const homeSectionTitles = document.querySelectorAll('[data-page="home"] .section-title');
@@ -450,6 +455,11 @@ function applyStaticTexts() {
     setText('#more-menu [data-navigate="audit"] span:last-child', text('miniapp.more.audit', 'Аудит сайта'));
     setText('#more-menu [data-navigate="contact"] span:last-child', text('miniapp.more.contact', 'Контакт'));
     setText('#more-menu [data-navigate="promos"] span:last-child', text('miniapp.more.promos', 'Акции'));
+
+    setAriaLabel('#quickQuestionSend', text('miniapp_ui.aria_send', 'Отправить'));
+    setAriaLabel('#chatSend', text('miniapp_ui.aria_send', 'Отправить'));
+    setAriaLabel('#calcBackBtn', text('miniapp_ui.aria_back', 'Назад'));
+    setAriaLabel('#overlayClose', text('miniapp_ui.aria_close', 'Закрыть'));
 
     if (typeof CalculatorPage !== 'undefined' && CalculatorPage?.syncTexts) {
         CalculatorPage.syncTexts();

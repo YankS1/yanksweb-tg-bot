@@ -605,6 +605,43 @@ function updateTabBar(pageId) {
     }
 }
 
+/* === Focus Trap === */
+
+const FOCUSABLE_SELECTOR = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+let _activeFocusTrap = null;
+
+function _trapFocusHandler(e) {
+    if (e.key !== 'Tab' || !_activeFocusTrap) return;
+    const focusable = Array.from(_activeFocusTrap.querySelectorAll(FOCUSABLE_SELECTOR)).filter(el => !el.disabled && el.offsetParent !== null);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+}
+
+let _focusBeforeTrap = null;
+
+function activateFocusTrap(container) {
+    _focusBeforeTrap = document.activeElement;
+    _activeFocusTrap = container;
+    document.addEventListener('keydown', _trapFocusHandler);
+    const target = container.querySelector('.overlay__close') || container.querySelector(FOCUSABLE_SELECTOR);
+    if (target) { target.focus(); } else { container.setAttribute('tabindex', '-1'); container.focus(); }
+}
+
+function deactivateFocusTrap() {
+    _activeFocusTrap = null;
+    document.removeEventListener('keydown', _trapFocusHandler);
+    if (_focusBeforeTrap && _focusBeforeTrap.focus) {
+        try { _focusBeforeTrap.focus(); } catch (e) {}
+    }
+    _focusBeforeTrap = null;
+}
+
 /* === More Menu === */
 
 function toggleMoreMenu() {
@@ -612,6 +649,12 @@ function toggleMoreMenu() {
     const isOpen = menu.classList.toggle('more-menu--open');
     menu.setAttribute('aria-hidden', String(!isOpen));
     document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (isOpen) {
+        const sheet = menu.querySelector('.more-menu__sheet');
+        activateFocusTrap(sheet);
+    } else {
+        deactivateFocusTrap();
+    }
 }
 
 function closeMoreMenu() {
@@ -619,6 +662,7 @@ function closeMoreMenu() {
     menu.classList.remove('more-menu--open');
     menu.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    deactivateFocusTrap();
 }
 
 /* === Detail Overlay === */
@@ -630,12 +674,14 @@ function openOverlay(html) {
     overlay.classList.add('overlay--open');
     document.body.style.overflow = 'hidden';
     lucide.createIcons();
+    activateFocusTrap(overlay);
 }
 
 function closeOverlay() {
     const overlay = document.getElementById('detail-overlay');
     overlay.classList.remove('overlay--open');
     document.body.style.overflow = '';
+    deactivateFocusTrap();
 }
 
 /* === Chat (AI assistant) Page === */
@@ -1933,7 +1979,7 @@ const CalculatorPage = {
 
             if (oldPriceEl) {
                 oldPriceEl.textContent = oldStr;
-                oldPriceEl.style.display = '';
+                oldPriceEl.classList.add('calc-result__old-price--visible');
             }
 
             let promoText;
@@ -1962,12 +2008,12 @@ const CalculatorPage = {
 
             if (promoLineEl) {
                 promoLineEl.textContent = promoText;
-                promoLineEl.style.display = '';
+                promoLineEl.classList.add('calc-result__promo-line--visible');
             }
             priceEl.textContent = newStr;
         } else {
-            if (oldPriceEl) oldPriceEl.style.display = 'none';
-            if (promoLineEl) promoLineEl.style.display = 'none';
+            if (oldPriceEl) oldPriceEl.classList.remove('calc-result__old-price--visible');
+            if (promoLineEl) promoLineEl.classList.remove('calc-result__promo-line--visible');
             priceEl.textContent = this.formatPrice(min) + ' - ' + this.formatPrice(max);
         }
 
@@ -3427,7 +3473,7 @@ const FavoritesPage = {
         const favIds = AppState.favorites;
         if (!favIds.length) {
             container.innerHTML = `
-                <div class="empty-state" style="display:flex">
+                <div class="empty-state empty-state--inline">
                     <div class="empty-state__icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></div>
                     <p class="empty-state__title">${escapeHtml(text('miniapp_ui.fav_empty_title', 'Избранное пусто'))}</p>
                     <p>${escapeHtml(text('miniapp_ui.fav_empty_body', 'Здесь вы сможете сохранять понравившиеся работы из портфолио и прикрепить их к заявке. Нажмите ❤️ на любом проекте в разделе «Работы».'))}</p>
@@ -4951,6 +4997,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (e) {
         console.error('Mini App boot failed', e);
+        if (typeof tg !== 'undefined' && tg && tg.showAlert) {
+            tg.showAlert('Ошибка загрузки. Попробуйте перезапустить Mini App.');
+        }
         await revealApp();
     }
 });

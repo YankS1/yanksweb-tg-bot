@@ -4840,12 +4840,27 @@ const API_URL = IS_SAME_ORIGIN_API
     : 'https://bot.yanksweb.ru';
 
 const IS_GITHUB_PAGES = window.location.hostname.endsWith('github.io');
-const USE_TUNNEL_BYPASS = IS_GITHUB_PAGES && Boolean(
+let USE_TUNNEL_BYPASS = IS_GITHUB_PAGES && Boolean(
     LOCAL_API_TUNNEL && LOCAL_API_TUNNEL.includes('loca.lt')
 );
+let TUNNEL_ALIVE = true;
 
 function needsTunnelBlob(url) {
-    return USE_TUNNEL_BYPASS && Boolean(url && url.includes('loca.lt'));
+    return USE_TUNNEL_BYPASS && TUNNEL_ALIVE && Boolean(url && url.includes('loca.lt'));
+}
+
+async function probeTunnelHealth() {
+    if (!USE_TUNNEL_BYPASS || !LOCAL_API_TUNNEL) return;
+    try {
+        const res = await fetchWithTimeout(LOCAL_API_TUNNEL + '/api/health', {
+            headers: { 'Bypass-Tunnel-Reminder': 'true' }
+        }, 4000);
+        if (!res.ok) throw new Error(String(res.status));
+        TUNNEL_ALIVE = true;
+    } catch (e) {
+        console.warn('Tunnel dead, disabling blob bypass');
+        TUNNEL_ALIVE = false;
+    }
 }
 
 function tunnelImgTag(url, className, alt, extraAttrs = '') {
@@ -4873,6 +4888,7 @@ const TG_FILE_ID_RE = /^[A-Za-z0-9_-]{20,200}$/;
 
 function apiBaseUrl() {
     if (IS_SAME_ORIGIN_API || IS_TUNNEL_HOST) return '';
+    if (!TUNNEL_ALIVE && IS_GITHUB_PAGES) return '';
     return (API_URL || LOCAL_API_TUNNEL || '').replace(/\/$/, '');
 }
 
@@ -4965,7 +4981,10 @@ async function loadTunnelBlobMedia(el) {
         el.dataset.mediaLoaded = '1';
         if (el.tagName === 'VIDEO') await el.play().catch(() => {});
     } catch (e) {
-        console.warn('Tunnel media load failed', url, e);
+        console.warn('Tunnel media load failed, direct src fallback', url);
+        el.src = url;
+        el.dataset.mediaLoaded = '1';
+        if (el.tagName === 'VIDEO') el.play().catch(() => {});
     }
 }
 
@@ -4989,7 +5008,7 @@ function hydrateTunnelMedia(root) {
 }
 
 async function loadLiveData() {
-    if (!API_URL) return;
+    if (!API_URL || (IS_GITHUB_PAGES && !TUNNEL_ALIVE)) return;
     const endpoints = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];
 
     const applyKey = (key, json) => {
@@ -5125,6 +5144,7 @@ function refreshCurrentPageData() {
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         setBootStatus(text('miniapp_ui.loader_preparing', 'Подготавливаю интерфейс...'));
+        await probeTunnelHealth();
         applyStaticTexts();
         initTabBar();
         initMoreMenu();

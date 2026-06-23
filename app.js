@@ -1477,7 +1477,8 @@ const PortfolioPage = {
     renderMedia(item) {
         if (!item.image) return '';
 
-        const mediaUrl = resolveMediaUrl(item.image, item.tgFileId || item.tg_file_id);
+        const liveItem = window.DATA_LIVE?.portfolio?.find((p) => p.id === item.id);
+        const mediaUrl = resolveMediaUrl(item.image, liveItem?.tg_file_id || item.tgFileId || item.tg_file_id);
         const mediaType = item.mediaType || item.media_type || '';
         if (isVideoUrl(mediaUrl, mediaType)) {
             return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" muted loop playsinline preload="metadata"></video>`;
@@ -4855,14 +4856,17 @@ function resolveMediaUrl(url, tgFileId) {
 }
 
 function normalizeEmbeddedMedia() {
-    if (!apiBaseUrl()) return;
+    const base = apiBaseUrl();
+    if (!base) return;
+    const livePortfolio = window.DATA_LIVE?.portfolio || [];
     if (Array.isArray(DATA.portfolio)) {
         DATA.portfolio = DATA.portfolio.map((item) => {
-            const tgId = item.tgFileId || item.tg_file_id;
+            const liveItem = livePortfolio.find((p) => p.id === item.id);
+            const tgId = liveItem?.tg_file_id || item.tgFileId || item.tg_file_id;
             return {
                 ...item,
                 image: resolveMediaUrl(item.image, tgId),
-                mediaType: item.mediaType || item.media_type || 'photo',
+                mediaType: item.mediaType || liveItem?.media_type || item.media_type || 'photo',
             };
         });
     }

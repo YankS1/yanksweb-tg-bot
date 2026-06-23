@@ -4880,7 +4880,7 @@ function apiBaseUrl() {
 function resolveMediaUrl(url, tgFileId) {
     const base = apiBaseUrl();
     const tgId = tgFileId || (url && !String(url).startsWith('http') && TG_FILE_ID_RE.test(url) ? url : '');
-    if (base && tgId && TG_FILE_ID_RE.test(tgId)) {
+    if (tgId && TG_FILE_ID_RE.test(tgId)) {
         return `${base}/api/tg-file/${encodeURIComponent(tgId)}`;
     }
     if (!url) return '';
@@ -4902,8 +4902,6 @@ function resolveMediaUrl(url, tgFileId) {
 }
 
 function normalizeEmbeddedMedia() {
-    const base = apiBaseUrl();
-    if (!base) return;
     const livePortfolio = window.DATA_LIVE?.portfolio || [];
     if (Array.isArray(DATA.portfolio)) {
         DATA.portfolio = DATA.portfolio.map((item) => {

@@ -4773,12 +4773,20 @@ function initOverlay() {
 /* === Load Live Data from API === */
 
 /* API URL - relative on prod, tunnel for GitHub Pages */
-const LOCAL_API_TUNNEL = 'https://summaries-injuries-stephanie-going.trycloudflare.com';
+const LOCAL_API_TUNNEL = 'https://few-ants-sit.loca.lt';
 const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.location.hostname === '185.103.252.41')
     ? ''
     : (window.location.hostname.endsWith('github.io'))
     ? LOCAL_API_TUNNEL
     : 'https://bot.yanksweb.ru';
+
+if (API_URL.includes('loca.lt')) {
+    const _fetch = window.fetch.bind(window);
+    window.fetch = (url, opts = {}) => {
+        const headers = { ...(opts.headers || {}), 'Bypass-Tunnel-Reminder': 'true' };
+        return _fetch(url, { ...opts, headers });
+    };
+}
 
 async function loadLiveData() {
     const endpoints = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];

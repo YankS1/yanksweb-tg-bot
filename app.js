@@ -1445,6 +1445,7 @@ const PortfolioPage = {
         lucide.createIcons();
         animateIn(feed);
         this.observeVideos();
+        hydrateTunnelMedia(feed);
     },
 
     observeVideos() {
@@ -1481,6 +1482,10 @@ const PortfolioPage = {
         const mediaType = item.mediaType || item.media_type || '';
         if (isVideoUrl(mediaUrl, mediaType)) {
             return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" muted loop playsinline preload="metadata"></video>`;
+        }
+
+        if (NEEDS_TUNNEL_MEDIA_FETCH && isTunnelMediaUrl(mediaUrl)) {
+            return `<img class="portfolio-item__media" data-media-src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
         }
 
         return `<img class="portfolio-item__media" src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
@@ -2500,9 +2505,12 @@ const CasesPage = {
             const timeline = escapeHtml(c.timeline || '');
             const emoji = nicheEmoji(c.niche, c.title);
             const thumb = c.thumb_after || c.thumb_before || c.image_after || c.image_before || '';
+            const thumbAttr = thumb && NEEDS_TUNNEL_MEDIA_FETCH && isTunnelMediaUrl(thumb)
+                ? `data-media-src="${escapeHtml(thumb)}"`
+                : (thumb ? `src="${escapeHtml(thumb)}"` : '');
             return `<button class="cases-item animate-in" data-case-idx="${i}">
                 ${thumb
-                    ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`
+                    ? `<div class="cases-item__thumb"><img ${thumbAttr} alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`
                     : `<div class="cases-item__emoji">${emoji}</div>`
                 }
                 <div class="cases-item__info">
@@ -2525,6 +2533,7 @@ const CasesPage = {
 
         lucide?.createIcons?.();
         animateIn(list);
+        hydrateTunnelMedia(list);
     },
 
     _renderDetail() {
@@ -4824,19 +4833,6 @@ const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.locati
     ? ''
     : 'https://bot.yanksweb.ru';
 
-const NEEDS_TUNNEL_BYPASS = Boolean(
-    (API_URL && API_URL.includes('loca.lt'))
-    || (LOCAL_API_TUNNEL && LOCAL_API_TUNNEL.includes('loca.lt') && window.location.hostname.endsWith('github.io'))
-);
-
-if (NEEDS_TUNNEL_BYPASS) {
-    const _fetch = window.fetch.bind(window);
-    window.fetch = (url, opts = {}) => {
-        const headers = { ...(opts.headers || {}), 'Bypass-Tunnel-Reminder': 'true' };
-        return _fetch(url, { ...opts, headers });
-    };
-}
-
 function resolveMediaUrl(url) {
     if (!url) return '';
     const apiBase = (API_URL || (IS_TUNNEL_HOST ? '' : LOCAL_API_TUNNEL) || '').replace(/\/$/, '');
@@ -4857,24 +4853,53 @@ function resolveMediaUrl(url) {
     return url;
 }
 
+const IS_GITHUB_PAGES = window.location.hostname.endsWith('github.io');
+const NEEDS_TUNNEL_MEDIA_FETCH = IS_GITHUB_PAGES && Boolean(
+    (LOCAL_API_TUNNEL && LOCAL_API_TUNNEL.includes('loca.lt'))
+    || (API_URL && API_URL.includes('loca.lt'))
+);
+
+function isTunnelMediaUrl(url) {
+    return Boolean(url && (url.includes('loca.lt') || url.includes('trycloudflare.com')));
+}
+
+async function loadTunnelMedia(el) {
+    const url = el.dataset.mediaSrc || el.dataset.src;
+    if (!url || el.dataset.mediaLoaded) return;
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('media fetch failed');
+        const blob = await res.blob();
+        el.src = URL.createObjectURL(blob);
+        el.dataset.mediaLoaded = '1';
+        if (el.tagName === 'VIDEO') {
+            await el.play().catch(() => {});
+        }
+    } catch (e) {
+        el.src = url;
+        if (el.tagName === 'VIDEO') {
+            el.play().catch(() => {});
+        }
+    }
+}
+
 async function loadVideoSource(video) {
+    if (NEEDS_TUNNEL_MEDIA_FETCH && isTunnelMediaUrl(video.dataset.src)) {
+        return loadTunnelMedia(video);
+    }
     const url = video.dataset.src;
     if (!url || video.src) return;
-    const needsFetch = window.location.hostname.endsWith('github.io') && url.includes('loca.lt');
-    try {
-        if (needsFetch) {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error('video fetch failed');
-            const blob = await res.blob();
-            video.src = URL.createObjectURL(blob);
-        } else {
-            video.src = url;
+    video.src = url;
+    video.play().catch(() => {});
+}
+
+function hydrateTunnelMedia(root) {
+    if (!NEEDS_TUNNEL_MEDIA_FETCH || !root) return;
+    root.querySelectorAll('img[data-media-src], video[data-src]').forEach((el) => {
+        if (isTunnelMediaUrl(el.dataset.mediaSrc || el.dataset.src)) {
+            loadTunnelMedia(el);
         }
-        await video.play().catch(() => {});
-    } catch (e) {
-        video.src = url;
-        video.play().catch(() => {});
-    }
+    });
 }
 
 async function loadLiveData() {

@@ -4938,13 +4938,29 @@ function fetchWithTimeout(url, opts = {}, ms = 3500) {
     });
 }
 
+function fetchTunnelBlob(url) {
+    return fetch(url).then((res) => {
+        if (!res.ok) throw new Error(String(res.status));
+        return res.blob();
+    }).catch(() => new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.setRequestHeader('Bypass-Tunnel-Reminder', 'true');
+        xhr.responseType = 'blob';
+        xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve(xhr.response);
+            else reject(new Error(String(xhr.status)));
+        };
+        xhr.onerror = () => reject(new Error('xhr'));
+        xhr.send();
+    }));
+}
+
 async function loadTunnelBlobMedia(el) {
     const url = el.dataset.src || el.dataset.mediaSrc;
     if (!url || el.dataset.mediaLoaded) return;
     try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(String(res.status));
-        const blob = await res.blob();
+        const blob = await fetchTunnelBlob(url);
         el.src = URL.createObjectURL(blob);
         el.dataset.mediaLoaded = '1';
         if (el.tagName === 'VIDEO') await el.play().catch(() => {});

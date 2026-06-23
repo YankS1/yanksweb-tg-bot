@@ -4827,7 +4827,11 @@ const LOCAL_API_TUNNEL = (typeof window.YANKSWEB_API_BASE === 'string' && window
     : '';
 const IS_TUNNEL_HOST = window.location.hostname.endsWith('loca.lt')
     || window.location.hostname.includes('trycloudflare.com');
-const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.location.hostname === '185.103.252.41')
+const IS_SAME_ORIGIN_API = window.location.hostname === 'bot.yanksweb.ru'
+    || window.location.hostname === '185.103.252.41'
+    || window.location.hostname === '127.0.0.1'
+    || window.location.hostname === 'localhost';
+const API_URL = IS_SAME_ORIGIN_API
     ? ''
     : (window.location.hostname.endsWith('github.io'))
     ? LOCAL_API_TUNNEL
@@ -4869,7 +4873,8 @@ if (USE_TUNNEL_BYPASS) {
 const TG_FILE_ID_RE = /^[A-Za-z0-9_-]{20,200}$/;
 
 function apiBaseUrl() {
-    return (API_URL || (IS_TUNNEL_HOST ? '' : LOCAL_API_TUNNEL) || '').replace(/\/$/, '');
+    if (IS_SAME_ORIGIN_API || IS_TUNNEL_HOST) return '';
+    return (API_URL || LOCAL_API_TUNNEL || '').replace(/\/$/, '');
 }
 
 function resolveMediaUrl(url, tgFileId) {

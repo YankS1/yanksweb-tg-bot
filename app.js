@@ -1482,7 +1482,7 @@ const PortfolioPage = {
         const mediaUrl = resolveMediaUrl(item.image, liveItem?.tg_file_id || item.tgFileId || item.tg_file_id);
         const mediaType = item.mediaType || item.media_type || '';
         if (isVideoUrl(mediaUrl, mediaType)) {
-            return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" muted loop playsinline preload="metadata"></video>`;
+            return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" autoplay muted loop playsinline preload="auto"></video>`;
         }
 
         if (needsTunnelBlob(mediaUrl)) {

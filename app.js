@@ -1446,11 +1446,12 @@ const PortfolioPage = {
     renderMedia(item) {
         if (!item.image) return '';
 
-        if (isVideoUrl(item.image)) {
-            return `<video class="portfolio-item__media" data-src="${escapeHtml(item.image)}" muted loop playsinline preload="none"></video>`;
+        const mediaUrl = resolveMediaUrl(item.image);
+        if (isVideoUrl(mediaUrl)) {
+            return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" muted loop playsinline preload="none"></video>`;
         }
 
-        return `<img class="portfolio-item__media" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
+        return `<img class="portfolio-item__media" src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
     },
 
     initEvents() {
@@ -4790,6 +4791,19 @@ if (API_URL.includes('loca.lt')) {
     };
 }
 
+function resolveMediaUrl(url) {
+    if (!url) return '';
+    const apiBase = (API_URL || LOCAL_API_TUNNEL || '').replace(/\/$/, '');
+    if (!apiBase) return url;
+    if (url.includes('bot.yanksweb.ru/')) {
+        const uploadsIdx = url.indexOf('/uploads/');
+        if (uploadsIdx >= 0) return `${apiBase}${url.slice(uploadsIdx)}`;
+        const tgIdx = url.indexOf('/api/tg-file/');
+        if (tgIdx >= 0) return `${apiBase}${url.slice(tgIdx)}`;
+    }
+    return url;
+}
+
 async function loadLiveData() {
     const endpoints = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];
 
@@ -4809,7 +4823,7 @@ async function loadLiveData() {
                             category: i.category || 'sites',
                             title: i.title_ru || i.title || '',
                             description: i.description_ru || i.description || '',
-                            image: i.media_file_id || i.media_url || '',
+                            image: resolveMediaUrl(i.media_file_id || i.media_url || ''),
                             url: i.url || '',
                             tags: i.category || '',
                         }));
@@ -4819,7 +4833,7 @@ async function loadLiveData() {
                             name: i.client_name || '',
                             company: i.company || '',
                             text: i.text_ru || '',
-                            image: i.media_file_id || '',
+                            image: resolveMediaUrl(i.media_file_id || ''),
                             url: i.url || '',
                             channel_post_url: i.channel_post_url || '',
                         }));
@@ -4834,8 +4848,8 @@ async function loadLiveData() {
                             return parts.join('/') + '?v=2';
                         };
                         DATA.cases = json.items.map(i => {
-                            const imgBefore = i.before_media_id || '';
-                            const imgAfter = i.after_media_id || '';
+                            const imgBefore = resolveMediaUrl(i.before_media_id || '');
+                            const imgAfter = resolveMediaUrl(i.after_media_id || '');
                             return {
                                 id: i.id,
                                 title: i.title_ru || '',

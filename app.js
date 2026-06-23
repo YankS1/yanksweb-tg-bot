@@ -4841,8 +4841,7 @@ const API_URL = IS_SAME_ORIGIN_API
 
 const IS_GITHUB_PAGES = window.location.hostname.endsWith('github.io');
 const USE_TUNNEL_BYPASS = IS_GITHUB_PAGES && Boolean(
-    (LOCAL_API_TUNNEL && LOCAL_API_TUNNEL.includes('loca.lt'))
-    || (API_URL && API_URL.includes('loca.lt'))
+    LOCAL_API_TUNNEL && LOCAL_API_TUNNEL.includes('loca.lt')
 );
 
 function needsTunnelBlob(url) {

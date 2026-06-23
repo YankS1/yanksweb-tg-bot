@@ -1458,9 +1458,8 @@ const PortfolioPage = {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const video = entry.target;
-                if (entry.isIntersecting && !video.src) {
-                    video.src = video.dataset.src;
-                    video.play().catch(() => {});
+                if (entry.isIntersecting && !video.src && video.dataset.src) {
+                    loadVideoSource(video);
                 }
             });
         }, { rootMargin: '200px' });
@@ -1469,8 +1468,7 @@ const PortfolioPage = {
             observer.observe(v);
             const rect = v.getBoundingClientRect();
             if (rect.top < window.innerHeight + 200 && !v.src && v.dataset.src) {
-                v.src = v.dataset.src;
-                v.play().catch(() => {});
+                loadVideoSource(v);
             }
         });
         this._videoObserver = observer;
@@ -4812,17 +4810,26 @@ function initOverlay() {
 
 /* === Load Live Data from API === */
 
-/* API URL - relative on prod, tunnel for GitHub Pages / local */
+/* API URL - relative on prod/tunnel, tunnel only for GitHub Pages */
 const LOCAL_API_TUNNEL = (typeof window.YANKSWEB_API_BASE === 'string' && window.YANKSWEB_API_BASE)
     ? window.YANKSWEB_API_BASE
-    : 'https://few-ants-sit.loca.lt';
+    : '';
+const IS_TUNNEL_HOST = window.location.hostname.endsWith('loca.lt')
+    || window.location.hostname.includes('trycloudflare.com');
 const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.location.hostname === '185.103.252.41')
     ? ''
     : (window.location.hostname.endsWith('github.io'))
     ? LOCAL_API_TUNNEL
+    : IS_TUNNEL_HOST
+    ? ''
     : 'https://bot.yanksweb.ru';
 
-if (API_URL.includes('loca.lt')) {
+const NEEDS_TUNNEL_BYPASS = Boolean(
+    (API_URL && API_URL.includes('loca.lt'))
+    || (LOCAL_API_TUNNEL && LOCAL_API_TUNNEL.includes('loca.lt') && window.location.hostname.endsWith('github.io'))
+);
+
+if (NEEDS_TUNNEL_BYPASS) {
     const _fetch = window.fetch.bind(window);
     window.fetch = (url, opts = {}) => {
         const headers = { ...(opts.headers || {}), 'Bypass-Tunnel-Reminder': 'true' };
@@ -4832,15 +4839,42 @@ if (API_URL.includes('loca.lt')) {
 
 function resolveMediaUrl(url) {
     if (!url) return '';
-    const apiBase = (API_URL || LOCAL_API_TUNNEL || '').replace(/\/$/, '');
-    if (!apiBase) return url;
+    const apiBase = (API_URL || (IS_TUNNEL_HOST ? '' : LOCAL_API_TUNNEL) || '').replace(/\/$/, '');
+    if (!apiBase && !url.includes('bot.yanksweb.ru')) return url;
     if (url.includes('bot.yanksweb.ru/')) {
         const uploadsIdx = url.indexOf('/uploads/');
-        if (uploadsIdx >= 0) return `${apiBase}${url.slice(uploadsIdx)}`;
+        if (uploadsIdx >= 0) {
+            return apiBase ? `${apiBase}${url.slice(uploadsIdx)}` : url;
+        }
         const tgIdx = url.indexOf('/api/tg-file/');
-        if (tgIdx >= 0) return `${apiBase}${url.slice(tgIdx)}`;
+        if (tgIdx >= 0) {
+            return apiBase ? `${apiBase}${url.slice(tgIdx)}` : url;
+        }
+    }
+    if (!url.startsWith('http') && url.startsWith('/')) {
+        return apiBase ? `${apiBase}${url}` : url;
     }
     return url;
+}
+
+async function loadVideoSource(video) {
+    const url = video.dataset.src;
+    if (!url || video.src) return;
+    const needsFetch = window.location.hostname.endsWith('github.io') && url.includes('loca.lt');
+    try {
+        if (needsFetch) {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('video fetch failed');
+            const blob = await res.blob();
+            video.src = URL.createObjectURL(blob);
+        } else {
+            video.src = url;
+        }
+        await video.play().catch(() => {});
+    } catch (e) {
+        video.src = url;
+        video.play().catch(() => {});
+    }
 }
 
 async function loadLiveData() {

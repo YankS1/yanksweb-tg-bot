@@ -2349,7 +2349,9 @@ const DATA_LIVE = {
       "seo_report.pages_checked": "страниц проверено",
       "seo_report.top_issues": "Основные проблемы",
       "seo_report.cta_order": "Заказать полный аудит и исправления",
-      "seo_report.cta_good": "Сайт в отличной форме!"
+      "seo_report.cta_good": "Сайт в отличной форме!",
+      "start.maintenance_notice": "⚠️ <b>Сейчас идут технические доработки<\/b>\n\nБот открывается и работает, но возможны сбои: превью работ, mini app или отдельные разделы могут подгружаться медленно или с ошибкой. Мы уже чиним - скоро всё станет стабильнее.\n\nСпасибо, что остаётесь с нами. Приношу извинения за неудобства 🙏",
+      "promo.temporarily_unavailable": "Раздел «Акции» временно недоступен. Скоро верну - уже работаю над этим."
     },
     "en": {
       "start.welcome": "<tg-emoji emoji-id=\"5870764288364252592\">🙂<\/tg-emoji> <b>Hey! I'm Daniel — YankSWeb.<\/b>\n\n<tg-emoji emoji-id=\"5940433880585605708\">🔧<\/tg-emoji> I build websites end-to-end — design, development, launch. No agencies, no middlemen: I do everything myself.\n\n<tg-emoji emoji-id=\"6041731551845159060\">🎉<\/tg-emoji> This bot is here for your convenience. Browse my work, estimate costs, or drop a project request. I read every request personally and usually reply the same day.\n\nWhat can I help you with?",
@@ -3072,7 +3074,9 @@ const DATA_LIVE = {
       "seo_report.pages_checked": "pages checked",
       "seo_report.top_issues": "Top Issues",
       "seo_report.cta_order": "Order full audit & fixes",
-      "seo_report.cta_good": "The site is in great shape!"
+      "seo_report.cta_good": "The site is in great shape!",
+      "start.maintenance_notice": "⚠️ <b>Technical maintenance in progress<\/b>\n\nThe bot is available, but some features may be unstable: portfolio previews, the mini app, or individual sections may load slowly or fail. We're fixing it - things will be back to normal soon.\n\nThanks for your patience, and sorry for the inconvenience 🙏",
+      "promo.temporarily_unavailable": "The Promotions section is temporarily unavailable. I'll bring it back soon - already working on it."
     }
   },
   "services": [
@@ -3770,6 +3774,7 @@ const DATA_LIVE_ICON_MAP = {
     title: pick(item.title_ru, item.title_en, item.title),
     description: pick(item.description_ru, item.description_en, item.description),
     image: pick(item.media_file_id, item.media_url, item.image),
+    mediaType: pick(item.media_type, "photo"),
     url: pick(item.url),
     tags: pick(item.category, item.tags),
   });

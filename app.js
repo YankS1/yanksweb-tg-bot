@@ -9,6 +9,7 @@ const tg = window.Telegram?.WebApp;
 const PROD_HOSTS = new Set(['bot.yanksweb.ru', '185.103.252.41']);
 const REVIEWS_CHANNEL_URL = 'https://t.me/yanksweb_reviews';
 const IS_PROD_MINIAPP = PROD_HOSTS.has(window.location.hostname);
+const PROMOS_ENABLED = false;
 const BOOT_STARTED_AT = performance.now();
 const MIN_LOADER_VISIBLE_MS = 320;
 const LOADER_FADE_MS = 240;
@@ -527,6 +528,10 @@ const Router = {
     history: [],
 
     navigate(pageId) {
+        if (pageId === 'promos' && !PROMOS_ENABLED) {
+            promosDisabledNotice();
+            return;
+        }
         if (pageId === 'more') {
             toggleMoreMenu();
             return;
@@ -928,12 +933,22 @@ const HomePage = {
             btn.addEventListener('click', () => {
                 haptic();
                 const page = btn.dataset.navigate;
+                if (page === 'promos' && !PROMOS_ENABLED) {
+                    promosDisabledNotice();
+                    return;
+                }
                 if (btn.closest('.more-menu')) {
                     closeMoreMenu();
                 }
                 Router.navigate(page);
             });
         });
+
+        const promosMenuBtn = document.querySelector('#more-menu [data-navigate="promos"]');
+        if (promosMenuBtn && !PROMOS_ENABLED) {
+            promosMenuBtn.classList.add('more-menu__item--disabled');
+            promosMenuBtn.setAttribute('aria-disabled', 'true');
+        }
 
         HomePage.refreshActiveRequestBanner();
         if (HomePage._bannerPollInterval) clearInterval(HomePage._bannerPollInterval);
@@ -1341,10 +1356,21 @@ const ServicesPage = {
 
 const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.webm'];
 
-function isVideoUrl(url) {
+function isVideoUrl(url, mediaType) {
+    if (mediaType === 'video' || mediaType === 'animation') return true;
     if (!url) return false;
+    if (url.includes('/api/tg-file/')) return true;
     const lower = url.toLowerCase();
-    return VIDEO_EXTENSIONS.some(ext => lower.endsWith(ext));
+    return VIDEO_EXTENSIONS.some(ext => lower.includes(ext));
+}
+
+function promosDisabledNotice() {
+    const msg = text('promo.temporarily_unavailable', 'Раздел «Акции» временно недоступен. Скоро верну - уже работаю над этим.');
+    if (tg?.showAlert) {
+        tg.showAlert(msg);
+        return;
+    }
+    showToast(msg, { type: 'info', duration: 3200 });
 }
 
 function toggleFavorite(id) {
@@ -1439,7 +1465,14 @@ const PortfolioPage = {
             });
         }, { rootMargin: '200px' });
 
-        videos.forEach(v => observer.observe(v));
+        videos.forEach(v => {
+            observer.observe(v);
+            const rect = v.getBoundingClientRect();
+            if (rect.top < window.innerHeight + 200 && !v.src && v.dataset.src) {
+                v.src = v.dataset.src;
+                v.play().catch(() => {});
+            }
+        });
         this._videoObserver = observer;
     },
 
@@ -1447,8 +1480,9 @@ const PortfolioPage = {
         if (!item.image) return '';
 
         const mediaUrl = resolveMediaUrl(item.image);
-        if (isVideoUrl(mediaUrl)) {
-            return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" muted loop playsinline preload="none"></video>`;
+        const mediaType = item.mediaType || item.media_type || '';
+        if (isVideoUrl(mediaUrl, mediaType)) {
+            return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" muted loop playsinline preload="metadata"></video>`;
         }
 
         return `<img class="portfolio-item__media" src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
@@ -3170,7 +3204,7 @@ const QuizPage = {
 
         if (state === 'success') {
             const success = quizSuccessCopy();
-            const hasPromos = DATA.promos && DATA.promos.length > 0;
+            const hasPromos = PROMOS_ENABLED && DATA.promos && DATA.promos.length > 0;
             const appliedNotice = AppState.quiz._promoApplied
                 ? `<p class="quiz-done__promo-applied">✅ ${escapeHtml(text('quiz.thank_you_promo', 'Ваш промокод применён - я зафиксирую скидку при обсуждении деталей.'))}</p>`
                 : '';
@@ -4459,6 +4493,11 @@ const PromosPage = {
     },
 
     render() {
+        if (!PROMOS_ENABLED) {
+            promosDisabledNotice();
+            Router.navigate('home');
+            return;
+        }
         const list = document.getElementById('promos-list');
         const empty = document.getElementById('promosEmpty');
 
@@ -4824,6 +4863,7 @@ async function loadLiveData() {
                             title: i.title_ru || i.title || '',
                             description: i.description_ru || i.description || '',
                             image: resolveMediaUrl(i.media_file_id || i.media_url || ''),
+                            mediaType: i.media_type || 'photo',
                             url: i.url || '',
                             tags: i.category || '',
                         }));
@@ -5004,9 +5044,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         await nextFrame();
         await nextFrame();
+
+        if (shouldWarmRemoteContent() && API_URL) {
+            setBootStatus(text('miniapp_ui.loader_almost', 'Почти готово...'));
+            try {
+                await loadLiveData();
+                PortfolioPage.updateFavoritesCount();
+            } catch (e) {
+                /* live data unavailable, fallback to bundled DATA */
+            }
+        }
+
         await revealApp();
 
-        if (shouldWarmRemoteContent()) {
+        if (shouldWarmRemoteContent() && !API_URL) {
             const schedule = window.requestIdleCallback
                 ? (cb) => window.requestIdleCallback(cb, { timeout: 1500 })
                 : (cb) => setTimeout(cb, 120);
@@ -5021,6 +5072,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     /* warm content failed - non-critical */
                 }
             });
+        } else if (shouldWarmRemoteContent() && API_URL) {
+            refreshCurrentPageData();
+            applyStaticTexts();
         }
     } catch (e) {
         console.error('Mini App boot failed', e);

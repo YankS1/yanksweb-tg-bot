@@ -3804,6 +3804,12 @@ body.app-ready #app {
     background: var(--secondary-bg);
 }
 
+.more-menu__item--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .more-menu__item-icon {
     width: 36px;
     height: 36px;

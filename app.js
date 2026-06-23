@@ -11,7 +11,7 @@ const REVIEWS_CHANNEL_URL = 'https://t.me/yanksweb_reviews';
 const IS_PROD_MINIAPP = PROD_HOSTS.has(window.location.hostname);
 const PROMOS_ENABLED = false;
 const BOOT_STARTED_AT = performance.now();
-const MIN_LOADER_VISIBLE_MS = 320;
+const MIN_LOADER_VISIBLE_MS = 120;
 const LOADER_FADE_MS = 240;
 if (tg) {
     tg.ready();
@@ -1445,7 +1445,6 @@ const PortfolioPage = {
         lucide.createIcons();
         animateIn(feed);
         this.observeVideos();
-        hydrateTunnelMedia(feed);
     },
 
     observeVideos() {
@@ -1478,14 +1477,10 @@ const PortfolioPage = {
     renderMedia(item) {
         if (!item.image) return '';
 
-        const mediaUrl = resolveMediaUrl(item.image);
+        const mediaUrl = resolveMediaUrl(item.image, item.tgFileId || item.tg_file_id);
         const mediaType = item.mediaType || item.media_type || '';
         if (isVideoUrl(mediaUrl, mediaType)) {
             return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" muted loop playsinline preload="metadata"></video>`;
-        }
-
-        if (NEEDS_TUNNEL_MEDIA_FETCH && isTunnelMediaUrl(mediaUrl)) {
-            return `<img class="portfolio-item__media" data-media-src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
         }
 
         return `<img class="portfolio-item__media" src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
@@ -2505,12 +2500,9 @@ const CasesPage = {
             const timeline = escapeHtml(c.timeline || '');
             const emoji = nicheEmoji(c.niche, c.title);
             const thumb = c.thumb_after || c.thumb_before || c.image_after || c.image_before || '';
-            const thumbAttr = thumb && NEEDS_TUNNEL_MEDIA_FETCH && isTunnelMediaUrl(thumb)
-                ? `data-media-src="${escapeHtml(thumb)}"`
-                : (thumb ? `src="${escapeHtml(thumb)}"` : '');
             return `<button class="cases-item animate-in" data-case-idx="${i}">
                 ${thumb
-                    ? `<div class="cases-item__thumb"><img ${thumbAttr} alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`
+                    ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`
                     : `<div class="cases-item__emoji">${emoji}</div>`
                 }
                 <div class="cases-item__info">
@@ -2533,7 +2525,6 @@ const CasesPage = {
 
         lucide?.createIcons?.();
         animateIn(list);
-        hydrateTunnelMedia(list);
     },
 
     _renderDetail() {
@@ -4833,164 +4824,189 @@ const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.locati
     ? ''
     : 'https://bot.yanksweb.ru';
 
-function resolveMediaUrl(url) {
+const TG_FILE_ID_RE = /^[A-Za-z0-9_-]{20,200}$/;
+
+function apiBaseUrl() {
+    return (API_URL || (IS_TUNNEL_HOST ? '' : LOCAL_API_TUNNEL) || '').replace(/\/$/, '');
+}
+
+function resolveMediaUrl(url, tgFileId) {
+    const base = apiBaseUrl();
+    const tgId = tgFileId || (url && !String(url).startsWith('http') && TG_FILE_ID_RE.test(url) ? url : '');
+    if (base && tgId && TG_FILE_ID_RE.test(tgId)) {
+        return `${base}/api/tg-file/${encodeURIComponent(tgId)}`;
+    }
     if (!url) return '';
-    const apiBase = (API_URL || (IS_TUNNEL_HOST ? '' : LOCAL_API_TUNNEL) || '').replace(/\/$/, '');
-    if (!apiBase && !url.includes('bot.yanksweb.ru')) return url;
+    if (!base && !url.includes('bot.yanksweb.ru')) return url;
     if (url.includes('bot.yanksweb.ru/')) {
         const uploadsIdx = url.indexOf('/uploads/');
         if (uploadsIdx >= 0) {
-            return apiBase ? `${apiBase}${url.slice(uploadsIdx)}` : url;
+            return base ? `${base}${url.slice(uploadsIdx)}` : url;
         }
         const tgIdx = url.indexOf('/api/tg-file/');
         if (tgIdx >= 0) {
-            return apiBase ? `${apiBase}${url.slice(tgIdx)}` : url;
+            return base ? `${base}${url.slice(tgIdx)}` : url;
         }
     }
     if (!url.startsWith('http') && url.startsWith('/')) {
-        return apiBase ? `${apiBase}${url}` : url;
+        return base ? `${base}${url}` : url;
     }
     return url;
 }
 
-const IS_GITHUB_PAGES = window.location.hostname.endsWith('github.io');
-const NEEDS_TUNNEL_MEDIA_FETCH = IS_GITHUB_PAGES && Boolean(
-    (LOCAL_API_TUNNEL && LOCAL_API_TUNNEL.includes('loca.lt'))
-    || (API_URL && API_URL.includes('loca.lt'))
-);
-
-function isTunnelMediaUrl(url) {
-    return Boolean(url && (url.includes('loca.lt') || url.includes('trycloudflare.com')));
+function normalizeEmbeddedMedia() {
+    if (!apiBaseUrl()) return;
+    if (Array.isArray(DATA.portfolio)) {
+        DATA.portfolio = DATA.portfolio.map((item) => {
+            const tgId = item.tgFileId || item.tg_file_id;
+            return {
+                ...item,
+                image: resolveMediaUrl(item.image, tgId),
+                mediaType: item.mediaType || item.media_type || 'photo',
+            };
+        });
+    }
+    if (Array.isArray(DATA.cases)) {
+        DATA.cases = DATA.cases.map((item) => ({
+            ...item,
+            image_before: resolveMediaUrl(item.image_before),
+            image_after: resolveMediaUrl(item.image_after),
+            thumb_before: resolveMediaUrl(item.thumb_before),
+            thumb_after: resolveMediaUrl(item.thumb_after),
+        }));
+    }
+    if (Array.isArray(DATA.reviews)) {
+        DATA.reviews = DATA.reviews.map((item) => ({
+            ...item,
+            image: resolveMediaUrl(item.image),
+        }));
+    }
 }
 
-async function loadTunnelMedia(el) {
-    const url = el.dataset.mediaSrc || el.dataset.src;
-    if (!url || el.dataset.mediaLoaded) return;
-    try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('media fetch failed');
-        const blob = await res.blob();
-        el.src = URL.createObjectURL(blob);
-        el.dataset.mediaLoaded = '1';
-        if (el.tagName === 'VIDEO') {
-            await el.play().catch(() => {});
-        }
-    } catch (e) {
-        el.src = url;
-        if (el.tagName === 'VIDEO') {
-            el.play().catch(() => {});
-        }
-    }
+function fetchWithTimeout(url, opts = {}, ms = 3500) {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), ms);
+    return fetch(url, { ...opts, signal: controller.signal }).finally(() => {
+        window.clearTimeout(timer);
+    });
 }
 
 async function loadVideoSource(video) {
-    if (NEEDS_TUNNEL_MEDIA_FETCH && isTunnelMediaUrl(video.dataset.src)) {
-        return loadTunnelMedia(video);
-    }
     const url = video.dataset.src;
     if (!url || video.src) return;
     video.src = url;
     video.play().catch(() => {});
 }
 
-function hydrateTunnelMedia(root) {
-    if (!NEEDS_TUNNEL_MEDIA_FETCH || !root) return;
-    root.querySelectorAll('img[data-media-src], video[data-src]').forEach((el) => {
-        if (isTunnelMediaUrl(el.dataset.mediaSrc || el.dataset.src)) {
-            loadTunnelMedia(el);
-        }
-    });
-}
-
 async function loadLiveData() {
+    if (!API_URL) return;
     const endpoints = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];
 
-    for (const key of endpoints) {
+    const applyKey = (key, json) => {
+        if (!json.success || !json.items) return;
+        if (key === 'portfolio') {
+            DATA.portfolio = json.items.map(i => ({
+                id: i.id,
+                category: i.category || 'sites',
+                title: i.title_ru || i.title || '',
+                description: i.description_ru || i.description || '',
+                image: resolveMediaUrl(i.media_file_id || i.media_url || '', i.tg_file_id),
+                mediaType: i.media_type || 'photo',
+                url: i.url || '',
+                tags: i.category || '',
+            }));
+        } else if (key === 'reviews') {
+            DATA.reviews = json.items.map(i => ({
+                id: i.id,
+                name: i.client_name || '',
+                company: i.company || '',
+                text: i.text_ru || '',
+                image: resolveMediaUrl(i.media_file_id || '', i.tg_file_id),
+                url: i.url || '',
+                channel_post_url: i.channel_post_url || '',
+            }));
+        } else if (key === 'cases') {
+            const thumbUrl = (url) => {
+                if (!url) return '';
+                const ext = (url.split('.').pop() || '').toLowerCase();
+                if (!['jpg','jpeg','png','webp'].includes(ext)) return '';
+                const parts = url.split('/');
+                const fname = parts.pop();
+                parts.push('thumbs', fname.replace(/\.[^.]+$/, '.webp'));
+                return parts.join('/') + '?v=2';
+            };
+            DATA.cases = json.items.map(i => {
+                const imgBefore = resolveMediaUrl(i.before_media_id || '');
+                const imgAfter = resolveMediaUrl(i.after_media_id || '');
+                return {
+                    id: i.id,
+                    title: i.title_ru || '',
+                    task: i.task_ru || '',
+                    solution: i.solution_ru || '',
+                    result: i.result_ru || '',
+                    url: i.url || '',
+                    image_before: imgBefore,
+                    image_after: imgAfter,
+                    thumb_before: thumbUrl(imgBefore),
+                    thumb_after: thumbUrl(imgAfter),
+                    client_name: i.client_name || '',
+                    niche: i.niche || '',
+                    stack: i.stack || '',
+                    timeline: i.timeline || '',
+                };
+            });
+        } else if (key === 'faq') {
+            DATA.faq = json.items.map(i => ({
+                id: i.id,
+                question: i.question_ru || '',
+                answer: i.answer_ru || '',
+            }));
+        } else if (key === 'promos') {
+            DATA.promos = json.items.filter(i => i.is_active).map(i => ({
+                id: i.id,
+                title: i.title_ru || '',
+                text: i.text_ru || '',
+                code: i.promo_code || '',
+                discount: i.discount_percent ? `-${i.discount_percent}%` : '',
+                deadline: i.deadline || '',
+                is_eternal: Boolean(i.is_eternal),
+                activation_duration_days: i.activation_duration_days || null,
+                user_activation: i.user_activation || null,
+            }));
+        }
+    };
+
+    await Promise.all(endpoints.map(async (key) => {
         try {
             const isPromos = key === 'promos';
             const initDataParam = isPromos && tg?.initData
                 ? `?initData=${encodeURIComponent(tg.initData)}`
                 : '';
-            const res = await fetch(`${API_URL}/api/${key}${initDataParam}`);
-            if (res.ok) {
-                const json = await res.json();
-                if (json.success && json.items) {
-                    if (key === 'portfolio') {
-                        DATA.portfolio = json.items.map(i => ({
-                            id: i.id,
-                            category: i.category || 'sites',
-                            title: i.title_ru || i.title || '',
-                            description: i.description_ru || i.description || '',
-                            image: resolveMediaUrl(i.media_file_id || i.media_url || ''),
-                            mediaType: i.media_type || 'photo',
-                            url: i.url || '',
-                            tags: i.category || '',
-                        }));
-                    } else if (key === 'reviews') {
-                        DATA.reviews = json.items.map(i => ({
-                            id: i.id,
-                            name: i.client_name || '',
-                            company: i.company || '',
-                            text: i.text_ru || '',
-                            image: resolveMediaUrl(i.media_file_id || ''),
-                            url: i.url || '',
-                            channel_post_url: i.channel_post_url || '',
-                        }));
-                    } else if (key === 'cases') {
-                        const thumbUrl = (url) => {
-                            if (!url) return '';
-                            const ext = (url.split('.').pop() || '').toLowerCase();
-                            if (!['jpg','jpeg','png','webp'].includes(ext)) return '';
-                            const parts = url.split('/');
-                            const fname = parts.pop();
-                            parts.push('thumbs', fname.replace(/\.[^.]+$/, '.webp'));
-                            return parts.join('/') + '?v=2';
-                        };
-                        DATA.cases = json.items.map(i => {
-                            const imgBefore = resolveMediaUrl(i.before_media_id || '');
-                            const imgAfter = resolveMediaUrl(i.after_media_id || '');
-                            return {
-                                id: i.id,
-                                title: i.title_ru || '',
-                                task: i.task_ru || '',
-                                solution: i.solution_ru || '',
-                                result: i.result_ru || '',
-                                url: i.url || '',
-                                image_before: imgBefore,
-                                image_after: imgAfter,
-                                thumb_before: thumbUrl(imgBefore),
-                                thumb_after: thumbUrl(imgAfter),
-                                client_name: i.client_name || '',
-                                niche: i.niche || '',
-                                stack: i.stack || '',
-                                timeline: i.timeline || '',
-                            };
-                        });
-                    } else if (key === 'faq') {
-                        DATA.faq = json.items.map(i => ({
-                            id: i.id,
-                            question: i.question_ru || '',
-                            answer: i.answer_ru || '',
-                        }));
-                    } else if (key === 'promos') {
-                        DATA.promos = json.items.filter(i => i.is_active).map(i => ({
-                            id: i.id,
-                            title: i.title_ru || '',
-                            text: i.text_ru || '',
-                            code: i.promo_code || '',
-                            discount: i.discount_percent ? `-${i.discount_percent}%` : '',
-                            deadline: i.deadline || '',
-                            is_eternal: Boolean(i.is_eternal),
-                            activation_duration_days: i.activation_duration_days || null,
-                            user_activation: i.user_activation || null,
-                        }));
-                    }
-                }
-            }
+            const res = await fetchWithTimeout(`${API_URL}/api/${key}${initDataParam}`);
+            if (!res.ok) return;
+            const json = await res.json();
+            applyKey(key, json);
         } catch (e) {
             /* live data unavailable, fallback to bundled DATA */
         }
-    }
+    }));
+}
+
+function scheduleBackgroundDataLoad() {
+    if (!shouldWarmRemoteContent()) return;
+
+    const run = async () => {
+        try {
+            await loadLiveData();
+            refreshCurrentPageData();
+            applyStaticTexts();
+            PortfolioPage.updateFavoritesCount();
+        } catch (e) {
+            /* warm content failed - non-critical */
+        }
+    };
+
+    run();
 }
 
 function shouldWarmRemoteContent() {
@@ -5029,6 +5045,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         AuditPage.init();
         ContactPage.init();
         PortfolioPage.bootstrap();
+        normalizeEmbeddedMedia();
 
         const portfolioList = Array.isArray(DATA.portfolio) ? DATA.portfolio : [];
         if (portfolioList.length) {
@@ -5104,37 +5121,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         await nextFrame();
         await nextFrame();
 
-        if (shouldWarmRemoteContent() && API_URL) {
-            setBootStatus(text('miniapp_ui.loader_almost', 'Почти готово...'));
-            try {
-                await loadLiveData();
-                PortfolioPage.updateFavoritesCount();
-            } catch (e) {
-                /* live data unavailable, fallback to bundled DATA */
-            }
-        }
-
         await revealApp();
-
-        if (shouldWarmRemoteContent() && !API_URL) {
-            const schedule = window.requestIdleCallback
-                ? (cb) => window.requestIdleCallback(cb, { timeout: 1500 })
-                : (cb) => setTimeout(cb, 120);
-
-            schedule(async () => {
-                try {
-                    await loadLiveData();
-                    refreshCurrentPageData();
-                    applyStaticTexts();
-                    PortfolioPage.updateFavoritesCount();
-                } catch (e) {
-                    /* warm content failed - non-critical */
-                }
-            });
-        } else if (shouldWarmRemoteContent() && API_URL) {
-            refreshCurrentPageData();
-            applyStaticTexts();
-        }
+        scheduleBackgroundDataLoad();
     } catch (e) {
         console.error('Mini App boot failed', e);
         if (typeof tg !== 'undefined' && tg && tg.showAlert) {

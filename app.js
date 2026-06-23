@@ -1445,6 +1445,7 @@ const PortfolioPage = {
         lucide.createIcons();
         animateIn(feed);
         this.observeVideos();
+        hydrateTunnelMedia(feed);
     },
 
     observeVideos() {
@@ -1458,7 +1459,7 @@ const PortfolioPage = {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const video = entry.target;
-                if (entry.isIntersecting && !video.src && video.dataset.src) {
+                if (entry.isIntersecting && !video.dataset.mediaLoaded && video.dataset.src) {
                     loadVideoSource(video);
                 }
             });
@@ -1467,7 +1468,7 @@ const PortfolioPage = {
         videos.forEach(v => {
             observer.observe(v);
             const rect = v.getBoundingClientRect();
-            if (rect.top < window.innerHeight + 200 && !v.src && v.dataset.src) {
+            if (rect.top < window.innerHeight + 200 && !v.dataset.mediaLoaded && v.dataset.src) {
                 loadVideoSource(v);
             }
         });
@@ -1482,6 +1483,10 @@ const PortfolioPage = {
         const mediaType = item.mediaType || item.media_type || '';
         if (isVideoUrl(mediaUrl, mediaType)) {
             return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" muted loop playsinline preload="metadata"></video>`;
+        }
+
+        if (needsTunnelBlob(mediaUrl)) {
+            return `<img class="portfolio-item__media" data-media-src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
         }
 
         return `<img class="portfolio-item__media" src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title)}" width="800" height="450" loading="lazy">`;
@@ -2501,11 +2506,13 @@ const CasesPage = {
             const timeline = escapeHtml(c.timeline || '');
             const emoji = nicheEmoji(c.niche, c.title);
             const thumb = c.thumb_after || c.thumb_before || c.image_after || c.image_before || '';
+            const thumbHtml = thumb
+                ? (needsTunnelBlob(thumb)
+                    ? `<div class="cases-item__thumb"><img data-media-src="${escapeHtml(thumb)}" alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`
+                    : `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`)
+                : `<div class="cases-item__emoji">${emoji}</div>`;
             return `<button class="cases-item animate-in" data-case-idx="${i}">
-                ${thumb
-                    ? `<div class="cases-item__thumb"><img src="${escapeHtml(thumb)}" alt="${escapeHtml(c.title || '')}" width="52" height="52" loading="lazy" decoding="async"></div>`
-                    : `<div class="cases-item__emoji">${emoji}</div>`
-                }
+                ${thumbHtml}
                 <div class="cases-item__info">
                     <span class="cases-item__name">${name}</span>
                     ${subtitle ? `<span class="cases-item__niche">${subtitle}</span>` : ''}
@@ -2526,6 +2533,7 @@ const CasesPage = {
 
         lucide?.createIcons?.();
         animateIn(list);
+        hydrateTunnelMedia(list);
     },
 
     _renderDetail() {
@@ -2548,9 +2556,9 @@ const CasesPage = {
         if (hasBoth) {
             mediaHtml = `
                 <div class="ba-slider" data-ba-slider>
-                    <img class="ba-slider__after" src="${escapeHtml(c.image_after)}" alt="After" draggable="false">
+                    ${tunnelImgTag(c.image_after, 'ba-slider__after', 'After', 'draggable="false"')}
                     <div class="ba-slider__before-wrap" style="width:50%">
-                        <img class="ba-slider__before" src="${escapeHtml(c.image_before)}" alt="Before" draggable="false">
+                        ${tunnelImgTag(c.image_before, 'ba-slider__before', 'Before', 'draggable="false"')}
                     </div>
                     <div class="ba-slider__handle" style="left:50%">
                         <div class="ba-slider__handle-line"></div>
@@ -2563,9 +2571,9 @@ const CasesPage = {
                     <span class="ba-slider__label ba-slider__label--after">${escapeHtml(text('cases.after', 'После'))}</span>
                 </div>`;
         } else if (hasAfter) {
-            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_after)}" alt="${escapeHtml(c.title || '')}" width="800" height="450" loading="lazy"></div>`;
+            mediaHtml = `<div class="case-card__image">${tunnelImgTag(c.image_after, 'case-card__image-img', c.title || '', 'width="800" height="450" loading="lazy"')}</div>`;
         } else if (hasBefore) {
-            mediaHtml = `<div class="case-card__image"><img src="${escapeHtml(c.image_before)}" alt="${escapeHtml(c.title || '')}" width="800" height="450" loading="lazy"></div>`;
+            mediaHtml = `<div class="case-card__image">${tunnelImgTag(c.image_before, 'case-card__image-img', c.title || '', 'width="800" height="450" loading="lazy"')}</div>`;
         }
 
         const metaParts = [];
@@ -2639,6 +2647,8 @@ const CasesPage = {
         });
 
         document.querySelector('[data-page="cases"]')?.scrollTo({ top: 0, behavior: 'smooth' });
+
+        hydrateTunnelMedia(detail);
 
         if (hasBoth) this._initSlider(detail.querySelector('[data-ba-slider]'));
 
@@ -4825,6 +4835,37 @@ const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.locati
     ? ''
     : 'https://bot.yanksweb.ru';
 
+const IS_GITHUB_PAGES = window.location.hostname.endsWith('github.io');
+const USE_TUNNEL_BYPASS = IS_GITHUB_PAGES && Boolean(
+    (LOCAL_API_TUNNEL && LOCAL_API_TUNNEL.includes('loca.lt'))
+    || (API_URL && API_URL.includes('loca.lt'))
+);
+
+function needsTunnelBlob(url) {
+    return USE_TUNNEL_BYPASS && Boolean(url && url.includes('loca.lt'));
+}
+
+function tunnelImgTag(url, className, alt, extraAttrs = '') {
+    if (!url) return '';
+    if (needsTunnelBlob(url)) {
+        return `<img class="${className}" data-media-src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" ${extraAttrs}>`;
+    }
+    return `<img class="${className}" src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" ${extraAttrs}>`;
+}
+
+if (USE_TUNNEL_BYPASS) {
+    const _fetch = window.fetch.bind(window);
+    window.fetch = (input, opts = {}) => {
+        const urlStr = typeof input === 'string' ? input : (input instanceof Request ? input.url : String(input));
+        if (urlStr.includes('loca.lt')) {
+            const headers = new Headers(opts.headers || {});
+            headers.set('Bypass-Tunnel-Reminder', 'true');
+            return _fetch(input, { ...opts, headers });
+        }
+        return _fetch(input, opts);
+    };
+}
+
 const TG_FILE_ID_RE = /^[A-Za-z0-9_-]{20,200}$/;
 
 function apiBaseUrl() {
@@ -4895,11 +4936,38 @@ function fetchWithTimeout(url, opts = {}, ms = 3500) {
     });
 }
 
+async function loadTunnelBlobMedia(el) {
+    const url = el.dataset.src || el.dataset.mediaSrc;
+    if (!url || el.dataset.mediaLoaded) return;
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(String(res.status));
+        const blob = await res.blob();
+        el.src = URL.createObjectURL(blob);
+        el.dataset.mediaLoaded = '1';
+        if (el.tagName === 'VIDEO') await el.play().catch(() => {});
+    } catch (e) {
+        console.warn('Tunnel media load failed', url, e);
+    }
+}
+
 async function loadVideoSource(video) {
     const url = video.dataset.src;
-    if (!url || video.src) return;
+    if (!url || video.dataset.mediaLoaded) return;
+    if (needsTunnelBlob(url)) {
+        return loadTunnelBlobMedia(video);
+    }
     video.src = url;
+    video.dataset.mediaLoaded = '1';
     video.play().catch(() => {});
+}
+
+function hydrateTunnelMedia(root) {
+    if (!root) return;
+    root.querySelectorAll('video[data-src]:not([data-media-loaded]), img[data-media-src]:not([data-media-loaded])').forEach((el) => {
+        const url = el.dataset.src || el.dataset.mediaSrc;
+        if (needsTunnelBlob(url)) loadTunnelBlobMedia(el);
+    });
 }
 
 async function loadLiveData() {

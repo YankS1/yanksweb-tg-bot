@@ -4772,9 +4772,12 @@ function initOverlay() {
 
 /* === Load Live Data from API === */
 
-/* API URL - relative when on same server, absolute for GitHub Pages */
+/* API URL - relative on prod, tunnel for GitHub Pages */
+const LOCAL_API_TUNNEL = 'https://summaries-injuries-stephanie-going.trycloudflare.com';
 const API_URL = (window.location.hostname === 'bot.yanksweb.ru' || window.location.hostname === '185.103.252.41')
     ? ''
+    : (window.location.hostname.endsWith('github.io'))
+    ? LOCAL_API_TUNNEL
     : 'https://bot.yanksweb.ru';
 
 async function loadLiveData() {

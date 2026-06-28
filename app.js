@@ -4846,20 +4846,35 @@ let USE_TUNNEL_BYPASS = IS_GITHUB_PAGES && Boolean(
 let TUNNEL_ALIVE = true;
 
 function needsTunnelBlob(url) {
-    return USE_TUNNEL_BYPASS && TUNNEL_ALIVE && Boolean(url && url.includes('loca.lt'));
+    // Decoupled from TUNNEL_ALIVE on purpose: a single cold-start health-probe
+    // failure must NOT permanently disable the blob bypass for the whole session.
+    // loadTunnelBlobMedia() already falls back to a direct <video src> if the
+    // blob fetch fails, so using the bypass path whenever we're on GitHub Pages
+    // talking to a loca.lt tunnel is always the safer default.
+    return USE_TUNNEL_BYPASS && Boolean(url && url.includes('loca.lt'));
 }
 
 async function probeTunnelHealth() {
     if (!USE_TUNNEL_BYPASS || !LOCAL_API_TUNNEL) return;
-    try {
-        const res = await fetchWithTimeout(LOCAL_API_TUNNEL + '/api/health', {
-            headers: { 'Bypass-Tunnel-Reminder': 'true' }
-        }, 4000);
-        if (!res.ok) throw new Error(String(res.status));
-        TUNNEL_ALIVE = true;
-    } catch (e) {
-        console.warn('Tunnel dead, disabling blob bypass');
-        TUNNEL_ALIVE = false;
+    // Retry a few times with a generous timeout: the very first request to a
+    // freshly-spun loca.lt tunnel can be slow (cold DNS / first TLS handshake),
+    // which previously timed out and falsely marked the tunnel dead.
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            const res = await fetchWithTimeout(LOCAL_API_TUNNEL + '/api/health', {
+                headers: { 'Bypass-Tunnel-Reminder': 'true' }
+            }, 9000);
+            if (!res.ok) throw new Error(String(res.status));
+            TUNNEL_ALIVE = true;
+            return;
+        } catch (e) {
+            if (attempt === 2) {
+                console.warn('Tunnel health probe failed after retries (media still uses tunnel base)');
+                TUNNEL_ALIVE = false;
+            } else {
+                await new Promise((r) => setTimeout(r, 1200));
+            }
+        }
     }
 }
 
@@ -4888,7 +4903,11 @@ const TG_FILE_ID_RE = /^[A-Za-z0-9_-]{20,200}$/;
 
 function apiBaseUrl() {
     if (IS_SAME_ORIGIN_API || IS_TUNNEL_HOST) return '';
-    if (!TUNNEL_ALIVE && IS_GITHUB_PAGES) return '';
+    // On GitHub Pages the API/media can ONLY live on the tunnel. Returning ''
+    // here makes media URLs relative to github.io (which serves no /api/*),
+    // producing 404 grey videos. Always anchor to the absolute tunnel base,
+    // regardless of the (best-effort) TUNNEL_ALIVE health flag.
+    if (IS_GITHUB_PAGES) return (LOCAL_API_TUNNEL || API_URL || '').replace(/\/$/, '');
     return (API_URL || LOCAL_API_TUNNEL || '').replace(/\/$/, '');
 }
 
@@ -5008,7 +5027,9 @@ function hydrateTunnelMedia(root) {
 }
 
 async function loadLiveData() {
-    if (!API_URL || (IS_GITHUB_PAGES && !TUNNEL_ALIVE)) return;
+    // Don't gate on TUNNEL_ALIVE: per-endpoint fetches are wrapped in try/catch,
+    // so a stale health flag must not block the live content refresh.
+    if (!API_URL) return;
     const endpoints = ['portfolio', 'reviews', 'cases', 'faq', 'promos'];
 
     const applyKey = (key, json) => {

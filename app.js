@@ -1364,6 +1364,43 @@ function isVideoUrl(url, mediaType) {
     return VIDEO_EXTENSIONS.some(ext => lower.includes(ext));
 }
 
+function staticUploadFilename(mediaFileId) {
+    if (!mediaFileId) return '';
+    const idx = String(mediaFileId).indexOf('/uploads/');
+    if (idx >= 0) return String(mediaFileId).slice(idx + '/uploads/'.length);
+    return '';
+}
+
+function staticUploadUrl(mediaFileId) {
+    const name = staticUploadFilename(mediaFileId);
+    return name ? `uploads/${name}` : '';
+}
+
+function staticVideoPosterUrl(mediaFileId) {
+    const name = staticUploadFilename(mediaFileId);
+    if (!name) return '';
+    const dot = name.lastIndexOf('.');
+    const base = dot > 0 ? name.slice(0, dot) : name;
+    return `uploads/posters/${base}.jpg`;
+}
+
+function portfolioEmbeddedMediaFileId(item) {
+    const liveItem = window.DATA_LIVE?.portfolio?.find((p) => p.id === item.id);
+    return liveItem?.media_file_id || item.image || '';
+}
+
+function portfolioMediaUrl(item) {
+    if (IS_GITHUB_PAGES) {
+        const staticUrl = staticUploadUrl(portfolioEmbeddedMediaFileId(item));
+        if (staticUrl) return staticUrl;
+    }
+    const liveItem = window.DATA_LIVE?.portfolio?.find((p) => p.id === item.id);
+    return resolveMediaUrl(
+        item.image,
+        liveItem?.tg_file_id || item.tgFileId || item.tg_file_id
+    );
+}
+
 function promosDisabledNotice() {
     const msg = text('promo.temporarily_unavailable', 'Раздел «Акции» временно недоступен. Скоро верну - уже работаю над этим.');
     if (tg?.showAlert) {
@@ -1461,6 +1498,8 @@ const PortfolioPage = {
                 const video = entry.target;
                 if (entry.isIntersecting && !video.dataset.mediaLoaded && video.dataset.src) {
                     loadVideoSource(video);
+                } else if (!entry.isIntersecting && video.dataset.mediaLoaded) {
+                    video.pause();
                 }
             });
         }, { rootMargin: '200px' });
@@ -1476,13 +1515,20 @@ const PortfolioPage = {
     },
 
     renderMedia(item) {
-        if (!item.image) return '';
-
         const liveItem = window.DATA_LIVE?.portfolio?.find((p) => p.id === item.id);
-        const mediaUrl = resolveMediaUrl(item.image, liveItem?.tg_file_id || item.tgFileId || item.tg_file_id);
-        const mediaType = item.mediaType || item.media_type || '';
+        const embeddedMedia = portfolioEmbeddedMediaFileId(item);
+        // raadigital.mp4: Telegram file_id expired, static file unavailable on gh-pages
+        if (IS_GITHUB_PAGES && item.id === 9) return '';
+        const mediaUrl = portfolioMediaUrl(item);
+        if (!mediaUrl) return '';
+
+        const mediaType = item.mediaType || liveItem?.media_type || item.media_type || '';
         if (isVideoUrl(mediaUrl, mediaType)) {
-            return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}" autoplay muted loop playsinline preload="auto"></video>`;
+            const poster = IS_GITHUB_PAGES && embeddedMedia
+                ? staticVideoPosterUrl(embeddedMedia)
+                : '';
+            const posterAttr = poster ? ` poster="${escapeHtml(poster)}"` : '';
+            return `<video class="portfolio-item__media" data-src="${escapeHtml(mediaUrl)}"${posterAttr} autoplay muted loop playsinline preload="metadata"></video>`;
         }
 
         if (needsTunnelBlob(mediaUrl)) {
@@ -4943,7 +4989,9 @@ function normalizeEmbeddedMedia() {
             const tgId = liveItem?.tg_file_id || item.tgFileId || item.tg_file_id;
             return {
                 ...item,
-                image: resolveMediaUrl(item.image, tgId),
+                image: (IS_GITHUB_PAGES && liveItem?.media_file_id)
+                    ? staticUploadUrl(liveItem.media_file_id)
+                    : resolveMediaUrl(item.image, tgId),
                 mediaType: item.mediaType || liveItem?.media_type || item.media_type || 'photo',
             };
         });
@@ -5040,7 +5088,9 @@ async function loadLiveData() {
                 category: i.category || 'sites',
                 title: i.title_ru || i.title || '',
                 description: i.description_ru || i.description || '',
-                image: resolveMediaUrl(i.media_file_id || i.media_url || '', i.tg_file_id),
+                image: (IS_GITHUB_PAGES && i.media_file_id)
+                    ? staticUploadUrl(i.media_file_id)
+                    : resolveMediaUrl(i.media_file_id || i.media_url || '', i.tg_file_id),
                 mediaType: i.media_type || 'photo',
                 url: i.url || '',
                 tags: i.category || '',

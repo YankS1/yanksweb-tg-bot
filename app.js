@@ -1425,11 +1425,40 @@ const PortfolioPage = {
     _filtersBound: false,
     _eventsBound: false,
     _videoObserver: null,
+    _videoScrollBound: false,
 
     bootstrap() {
         this.initFilters();
         this.initEvents();
         this.updateFavoritesCount();
+        this.bindVideoScrollSync();
+    },
+
+    bindVideoScrollSync() {
+        if (this._videoScrollBound) return;
+        this._videoScrollBound = true;
+        let ticking = false;
+        const sync = () => {
+            ticking = false;
+            if (AppState.currentPage !== 'portfolio') return;
+            this.syncVisibleVideos();
+        };
+        window.addEventListener('scroll', () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(sync);
+        }, { passive: true });
+    },
+
+    syncVisibleVideos() {
+        const feed = document.getElementById('portfolio-feed');
+        if (!feed) return;
+        feed.querySelectorAll('video[data-src]').forEach((video) => {
+            const rect = video.getBoundingClientRect();
+            if (rect.bottom > -320 && rect.top < window.innerHeight + 320) {
+                loadVideoSource(video);
+            }
+        });
     },
 
     render(filter) {
@@ -1482,6 +1511,9 @@ const PortfolioPage = {
         lucide.createIcons();
         animateIn(feed);
         this.observeVideos();
+        this.syncVisibleVideos();
+        requestAnimationFrame(() => this.syncVisibleVideos());
+        setTimeout(() => this.syncVisibleVideos(), 500);
         hydrateTunnelMedia(feed);
     },
 
@@ -1490,7 +1522,7 @@ const PortfolioPage = {
             this._videoObserver.disconnect();
             this._videoObserver = null;
         }
-        const videos = document.querySelectorAll('video[data-src]');
+        const videos = document.querySelectorAll('#portfolio-feed video[data-src]');
         if (!videos.length) return;
 
         const observer = new IntersectionObserver((entries) => {
@@ -1498,19 +1530,11 @@ const PortfolioPage = {
                 const video = entry.target;
                 if (entry.isIntersecting && video.dataset.src) {
                     loadVideoSource(video);
-                } else if (!entry.isIntersecting && video.dataset.mediaLoaded) {
-                    video.pause();
                 }
             });
-        }, { rootMargin: '300px' });
+        }, { rootMargin: '320px' });
 
-        videos.forEach(v => {
-            observer.observe(v);
-            const rect = v.getBoundingClientRect();
-            if (rect.bottom > -300 && rect.top < window.innerHeight + 300 && v.dataset.src) {
-                loadVideoSource(v);
-            }
-        });
+        videos.forEach(v => observer.observe(v));
         this._videoObserver = observer;
     },
 

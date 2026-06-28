@@ -1496,18 +1496,18 @@ const PortfolioPage = {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const video = entry.target;
-                if (entry.isIntersecting && !video.dataset.mediaLoaded && video.dataset.src) {
+                if (entry.isIntersecting && video.dataset.src) {
                     loadVideoSource(video);
                 } else if (!entry.isIntersecting && video.dataset.mediaLoaded) {
                     video.pause();
                 }
             });
-        }, { rootMargin: '200px' });
+        }, { rootMargin: '300px' });
 
         videos.forEach(v => {
             observer.observe(v);
             const rect = v.getBoundingClientRect();
-            if (rect.top < window.innerHeight + 200 && !v.dataset.mediaLoaded && v.dataset.src) {
+            if (rect.bottom > -300 && rect.top < window.innerHeight + 300 && v.dataset.src) {
                 loadVideoSource(v);
             }
         });
@@ -5055,15 +5055,55 @@ async function loadTunnelBlobMedia(el) {
     }
 }
 
+function ensureVideoPlaying(video) {
+    if (!video || !video.dataset.mediaLoaded || !video.src) return;
+    if (video.paused) {
+        video.play().catch(() => {});
+    }
+}
+
 async function loadVideoSource(video) {
     const url = video.dataset.src;
-    if (!url || video.dataset.mediaLoaded) return;
-    if (needsTunnelBlob(url)) {
-        return loadTunnelBlobMedia(video);
+    if (!url) return;
+
+    if (video.dataset.mediaLoaded) {
+        ensureVideoPlaying(video);
+        return;
     }
+
+    if (video.dataset.mediaLoading === '1') return;
+    video.dataset.mediaLoading = '1';
+
+    if (needsTunnelBlob(url)) {
+        try {
+            await loadTunnelBlobMedia(video);
+        } finally {
+            delete video.dataset.mediaLoading;
+        }
+        return;
+    }
+
+    const finishLoad = () => {
+        if (video.dataset.mediaLoaded) return;
+        video.dataset.mediaLoaded = '1';
+        delete video.dataset.mediaLoading;
+        ensureVideoPlaying(video);
+    };
+
+    const onReady = () => {
+        video.removeEventListener('loadeddata', onReady);
+        video.removeEventListener('canplay', onReady);
+        finishLoad();
+    };
+
+    video.addEventListener('loadeddata', onReady);
+    video.addEventListener('canplay', onReady);
     video.src = url;
-    video.dataset.mediaLoaded = '1';
-    video.play().catch(() => {});
+    video.load();
+
+    if (video.readyState >= 2) {
+        onReady();
+    }
 }
 
 function hydrateTunnelMedia(root) {
